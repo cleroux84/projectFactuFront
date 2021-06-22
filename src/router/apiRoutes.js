@@ -4,4 +4,7 @@ export default {
         return('/deleteCustomer/' + id)
     },
     addCustomer: '/addCustomer',
+    updateCustomer: function (id) {
+        return('/updateCustomer/' + id)
+    }
 }

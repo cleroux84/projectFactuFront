@@ -2,14 +2,13 @@
   <v-container>
     <v-col cols="12">
       <v-tab>
-        <v-col cols="6">
+        <v-col cols="10">
           <h1>Liste des clients</h1>
         </v-col>
-        <v-col cols="6">
-          <v-btn outlined color="primary" @click.stop="showAddCustomerForm=true">Ajouter un client</v-btn>
+        <v-col cols="2">
+          <v-btn outlined color="primary" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
         </v-col>
       </v-tab>
-      <add-customer-form :visible="showAddCustomerForm" @close="showAddCustomerForm=false"></add-customer-form>
     </v-col>
 
     <v-col cols="auto">
@@ -41,35 +40,39 @@
           <template v-slot:item.delete="{ item }">
             <v-row>
               <v-icon class="material-icons" color="red" @click="deleteCustomer(item.id)">mdi-delete</v-icon>
-<!--              <v-icon class="material-icons" color="">mdi-account-edit-outline</v-icon>-->
+              <v-icon class="material-icons" color="red" @click="openUpdateCustomer(item)">mdi-account-edit-outline</v-icon>
             </v-row>
           </template>
 
         </v-data-table>
       </v-card-text>
     </v-col>
-
+    <add-customer-form :visible="showAddCustomerForm"></add-customer-form>
+    <update-customer-form :visible="showUpdateCustomerForm" :updateCustomer="updateCustomer"></update-customer-form>
   </v-container>
-
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import AddCustomerForm from "./AddCustomerForm";
+import UpdateCustomerForm from "./UpdateCustomerForm";
 
 export default {
+
   name: "CustomerList",
-  components: {AddCustomerForm},
+  components: {UpdateCustomerForm, AddCustomerForm},
   computed: {
     ...mapGetters(['apiRoutes'])
   },
   component: {
-    AddCustomerForm
+    AddCustomerForm, UpdateCustomerForm
   },
 
   data() {
     return {
+      updateCustomer: {},
       showAddCustomerForm: false,
+      showUpdateCustomerForm: false,
       search: "",
       headers: [
         { text: 'Actions', value: 'delete'},
@@ -108,6 +111,10 @@ export default {
             console.log(response);
           }
       )
+    },
+    openUpdateCustomer(item) {
+      this.updateCustomer = item;
+      this.showUpdateCustomerForm = true;
     },
     checkStringContainsValue(string, value) {
       return (string !== null && string !== undefined && string.toLowerCase().includes(value));

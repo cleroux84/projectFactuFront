@@ -5,14 +5,14 @@
         <v-dialog v-model="show" scrollable max-width="700px">
           <v-card class="mt-2">
             <v-toolbar color="blue-grey darken-2" dark>Ajouter un client</v-toolbar>
-            <v-form fill-width ref="addCustomerForm" lazy-validation>
+            <v-form fill-width ref="updateCustomerForm" lazy-validation>
               <v-container>
                 <v-row>
                   <v-card-text v-if="this.formErrors.length > 0">Merci de remplir les champs obligatoires</v-card-text>
                   <v-col cols =2>
                     <v-select
                         :items="civilityItems"
-                        v-model="formAddCustomer.civility"
+                        v-model="updateCustomer.civility"
                         :label= labelForm.civility
                         required
                     >
@@ -20,7 +20,7 @@
                   </v-col>
                   <v-col cols =5>
                     <v-text-field
-                        v-model="formAddCustomer.firstName"
+                        v-model="updateCustomer.firstName"
                         :label= labelForm.firstName
                         required
                     >
@@ -28,7 +28,7 @@
                   </v-col>
                   <v-col cols =5>
                     <v-text-field
-                        v-model="formAddCustomer.lastName"
+                        v-model="updateCustomer.lastName"
                         :label= labelForm.lastName
                         required
                     >
@@ -38,14 +38,14 @@
                 <v-row>
                   <v-col cols =4>
                     <v-text-field
-                        v-model="formAddCustomer.company"
+                        v-model="updateCustomer.company"
                         :label=labelForm.company
                     >
                     </v-text-field>
                   </v-col>
                   <v-col cols =4>
                     <v-text-field
-                        v-model="formAddCustomer.email"
+                        v-model="updateCustomer.email"
                         :label= labelForm.email
                         required
                     >
@@ -53,7 +53,7 @@
                   </v-col>
                   <v-col cols =4>
                     <v-text-field
-                        v-model="formAddCustomer.VATNumber"
+                        v-model="updateCustomer.VATNumber"
                         :label= labelForm.VATNumber
                         required
                     >
@@ -63,7 +63,7 @@
                 <v-row>
                   <v-col cols =12>
                     <v-text-field
-                        v-model="formAddCustomer.address"
+                        v-model="updateCustomer.address"
                         :label=labelForm.address
                         required
                     >
@@ -73,7 +73,7 @@
                 <v-row>
                   <v-col cols =4>
                     <v-text-field
-                        v-model="formAddCustomer.zipCode"
+                        v-model="updateCustomer.zipCode"
                         :label= labelForm.zipCode
                         required
                     >
@@ -81,7 +81,7 @@
                   </v-col>
                   <v-col cols =8>
                     <v-text-field
-                        v-model="formAddCustomer.city"
+                        v-model="updateCustomer.city"
                         :label= labelForm.city
                         required
                     >
@@ -91,7 +91,7 @@
                 <v-row>
                   <v-col cols =4>
                     <v-text-field
-                        v-model="formAddCustomer.phone"
+                        v-model="updateCustomer.phone"
                         :label= labelForm.phone
                         required
                     >
@@ -99,7 +99,7 @@
                   </v-col>
                   <v-col cols =8>
                     <v-text-field
-                        v-model="formAddCustomer.phone2"
+                        v-model="updateCustomer.phone2"
                         :label= labelForm.phone2
                     >
                     </v-text-field>
@@ -129,7 +129,7 @@
 import {mapGetters} from "vuex";
 
 export default {
-  name: "AddCustomerForm",
+  name: "UpdateCustomerForm",
   computed: {
     ...mapGetters(['apiRoutes']),
     show: {
@@ -144,28 +144,32 @@ export default {
       }
     }
   },
-  props: ['visible', 'item'],
+  props: ['visible', 'updateCustomer'],
 
   methods: {
   checkAddCustomerForm: function () {
-      if(this.formAddCustomer.civility &&
-          this.formAddCustomer.firstName &&
-          this.formAddCustomer.lastName &&
-          this.formAddCustomer.address &&
-          this.formAddCustomer.zipCode &&
-          this.formAddCustomer.city &&
-          this.formAddCustomer.VATNumber &&
-          this.formAddCustomer.phone &&
-          this.formAddCustomer.email
+      if(this.updateCustomer.civility &&
+          this.updateCustomer.firstName &&
+          this.updateCustomer.lastName &&
+          this.updateCustomer.address &&
+          this.updateCustomer.zipCode &&
+          this.updateCustomer.city &&
+          this.updateCustomer.VATNumber &&
+          this.updateCustomer.phone &&
+          this.updateCustomer.email
       ) {
-        this.addNewCustomer()
+        this.updateCurrentCustomer()
+        // this.nextTick()(() => {
+        //   this.updateCurrentCustomer()
+        // })
 
       } else this.formErrors.push("errors")
 
     },
-  addNewCustomer: function () {
-      this.$axios.post(this.apiRoutes.addCustomer, this.formAddCustomer).then(
+    updateCurrentCustomer: function () {
+      this.$axios.post(this.apiRoutes.updateCustomer(this.updateCustomer.id), this.updateCustomer).then(
           () => {
+            console.log(this.updateCustomer)
             this.resetForm()
           },
           response => {
@@ -174,26 +178,27 @@ export default {
       )
     },
     resetForm: function () {
-    this.formAddCustomer = ""
+    this.updateCustomer = ""
     }
   },
 
   data() {
     return {
+      updatedCustomer: this.$props.updateCustomer,
       formErrors: [],
-      formAddCustomer : {
-        civility : "",
-        firstName: "",
-        lastName: "",
-        company: "",
-        phone: "",
-        phone2: "",
-        VATNumber: "",
-        email: "",
-        address: "",
-        zipCode: "",
-        city: ""
-      },
+      // formAddCustomer : {
+      //   civility : "",
+      //   firstName: "",
+      //   lastName: "",
+      //   company: "",
+      //   phone: "",
+      //   phone2: "",
+      //   VATNumber: "",
+      //   email: "",
+      //   address: "",
+      //   zipCode: "",
+      //   city: ""
+      // },
       labelForm : {
         civility : "Civilité*",
         firstName: "Nom*",
