@@ -1,0 +1,217 @@
+<template>
+  <v-container>
+    <v-row justify="space-around">
+      <v-col cols="auto">
+        <v-dialog v-model="show" scrollable max-width="700px">
+          <v-card class="mt-2">
+            <v-toolbar color="blue-grey darken-2" dark>Ajouter un client</v-toolbar>
+            <v-form fill-width ref="addCustomerForm" lazy-validation>
+              <v-container>
+                <v-row>
+                  <v-card-text v-if="this.formErrors.length > 0">Merci de remplir les champs obligatoires</v-card-text>
+                  <v-col cols =2>
+                    <v-select
+                        :items="civilityItems"
+                        v-model="formAddCustomer.civility"
+                        :label= labelForm.civility
+                        required
+                    >
+                    </v-select>
+                  </v-col>
+                  <v-col cols =5>
+                    <v-text-field
+                        v-model="formAddCustomer.firstName"
+                        :label= labelForm.firstName
+                        required
+                    >
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols =5>
+                    <v-text-field
+                        v-model="formAddCustomer.lastName"
+                        :label= labelForm.lastName
+                        required
+                    >
+                    </v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols =4>
+                    <v-text-field
+                        v-model="formAddCustomer.company"
+                        :label=labelForm.company
+                    >
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols =4>
+                    <v-text-field
+                        v-model="formAddCustomer.email"
+                        :label= labelForm.email
+                        required
+                    >
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols =4>
+                    <v-text-field
+                        v-model="formAddCustomer.VATNumber"
+                        :label= labelForm.VATNumber
+                        required
+                    >
+                    </v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols =12>
+                    <v-text-field
+                        v-model="formAddCustomer.address"
+                        :label=labelForm.address
+                        required
+                    >
+                    </v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols =4>
+                    <v-text-field
+                        v-model="formAddCustomer.zipCode"
+                        :label= labelForm.zipCode
+                        required
+                    >
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols =8>
+                    <v-text-field
+                        v-model="formAddCustomer.city"
+                        :label= labelForm.city
+                        required
+                    >
+                    </v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols =4>
+                    <v-text-field
+                        v-model="formAddCustomer.phone"
+                        :label= labelForm.phone
+                        required
+                    >
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols =8>
+                    <v-text-field
+                        v-model="formAddCustomer.phone2"
+                        :label= labelForm.phone2
+                    >
+                    </v-text-field>
+                  </v-col>
+                </v-row>
+                <v-row
+                    align="center"
+                    justify="end"
+                >
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                      <v-btn  text color="blue-grey darken-2" @click="checkAddCustomerForm()">Valider</v-btn>
+                  </v-card-actions>
+                </v-row>
+              </v-container>
+            </v-form>
+          </v-card>
+        </v-dialog>
+      </v-col>
+    </v-row>
+  </v-container>
+
+
+</template>
+
+<script>
+import {mapGetters} from "vuex";
+
+export default {
+  name: "AddCustomerForm",
+  computed: {
+    ...mapGetters(['apiRoutes']),
+    show: {
+      get () {
+        return this.visible
+      },
+      set (value) {
+        if(!value) {
+          this.$emit('close')
+        }
+      }
+    }
+  },
+  props: ['visible'],
+
+  methods: {
+  checkAddCustomerForm: function () {
+      if(this.formAddCustomer.civility &&
+          this.formAddCustomer.firstName &&
+          this.formAddCustomer.lastName &&
+          this.formAddCustomer.address &&
+          this.formAddCustomer.zipCode &&
+          this.formAddCustomer.city &&
+          this.formAddCustomer.VATNumber &&
+          this.formAddCustomer.phone &&
+          this.formAddCustomer.email
+      ) {
+        this.addNewCustomer()
+
+      } else this.formErrors.push("errors")
+
+    },
+  addNewCustomer: function () {
+      this.$axios.post(this.apiRoutes.addCustomer, this.formAddCustomer).then(
+          () => {
+            this.resetForm()
+          },
+          response => {
+            console.log(response)
+          }
+      )
+    },
+    resetForm: function () {
+    this.formAddCustomer = ""
+    }
+  },
+
+  data() {
+    return {
+      formErrors: [],
+      formAddCustomer : {
+        civility : "",
+        firstName: "",
+        lastName: "",
+        company: "",
+        phone: "",
+        phone2: "",
+        VATNumber: "",
+        email: "",
+        address: "",
+        zipCode: "",
+        city: ""
+      },
+      labelForm : {
+        civility : "Civilité*",
+        firstName: "Nom*",
+        lastName: "Prénom*",
+        company: "Entreprise",
+        phone: "Téléphone*",
+        phone2: "Téléphone 2",
+        VATNumber: "Numéro TVA*",
+        email: "Email*",
+        address: "Adresse*",
+        zipCode: "Code postal*",
+        city: "Ville*"
+      },
+      civilityItems: ['M.', 'Mme', 'Mlle']
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
