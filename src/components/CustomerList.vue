@@ -48,7 +48,7 @@
       </v-card-text>
     </v-col>
     <add-customer-form :visible="showAddCustomerForm"></add-customer-form>
-    <update-customer-form :visible="showUpdateCustomerForm" :updateCustomer="updateCustomer"></update-customer-form>
+    <update-customer-form v-model="showUpdateCustomerForm" :updateCustomer="updateCustomer"></update-customer-form>
   </v-container>
 </template>
 
@@ -127,15 +127,12 @@ export default {
           this.checkStringContainsValue(item.firstName, search) ||
           this.checkStringContainsValue(item.lastName, search) ||
           this.checkStringContainsValue(item.email, search) ||
-          this.checkStringContainsValue(item.phoneNumber, search) ||
+          this.checkStringContainsValue(item.phone, search) ||
           this.checkStringContainsValue(item.zipCode, search) ||
           this.checkStringContainsValue(item.city, search) ||
           this.checkStringContainsValue(item.VATNumber, search) ||
           this.checkStringContainsValue(item.company, search)
     },
-    openAddAppartment() {
-      console.log("dialog open")
-    }
   },
 }
 </script>

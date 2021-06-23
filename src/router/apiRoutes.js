@@ -1,4 +1,5 @@
 export default {
+    //Customer
     listCustomer: '/listCustomer',
     deleteCustomer: function (id) {
         return('/deleteCustomer/' + id)
@@ -6,5 +7,9 @@ export default {
     addCustomer: '/addCustomer',
     updateCustomer: function (id) {
         return('/updateCustomer/' + id)
-    }
+    },
+
+    // Bill
+    listBill: '/listBill',
+
 }

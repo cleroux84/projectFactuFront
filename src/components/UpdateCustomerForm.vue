@@ -12,7 +12,7 @@
                   <v-col cols =2>
                     <v-select
                         :items="civilityItems"
-                        v-model="updateCustomer.civility"
+                        v-model="updateCustomerComputed.civility"
                         :label= labelForm.civility
                         required
                     >
@@ -20,7 +20,7 @@
                   </v-col>
                   <v-col cols =5>
                     <v-text-field
-                        v-model="updateCustomer.firstName"
+                        v-model="updateCustomerComputed.firstName"
                         :label= labelForm.firstName
                         required
                     >
@@ -28,7 +28,7 @@
                   </v-col>
                   <v-col cols =5>
                     <v-text-field
-                        v-model="updateCustomer.lastName"
+                        v-model="updateCustomerComputed.lastName"
                         :label= labelForm.lastName
                         required
                     >
@@ -38,14 +38,14 @@
                 <v-row>
                   <v-col cols =4>
                     <v-text-field
-                        v-model="updateCustomer.company"
+                        v-model="updateCustomerComputed.company"
                         :label=labelForm.company
                     >
                     </v-text-field>
                   </v-col>
                   <v-col cols =4>
                     <v-text-field
-                        v-model="updateCustomer.email"
+                        v-model="updateCustomerComputed.email"
                         :label= labelForm.email
                         required
                     >
@@ -53,7 +53,7 @@
                   </v-col>
                   <v-col cols =4>
                     <v-text-field
-                        v-model="updateCustomer.VATNumber"
+                        v-model="updateCustomerComputed.VATNumber"
                         :label= labelForm.VATNumber
                         required
                     >
@@ -63,7 +63,7 @@
                 <v-row>
                   <v-col cols =12>
                     <v-text-field
-                        v-model="updateCustomer.address"
+                        v-model="updateCustomerComputed.address"
                         :label=labelForm.address
                         required
                     >
@@ -73,7 +73,7 @@
                 <v-row>
                   <v-col cols =4>
                     <v-text-field
-                        v-model="updateCustomer.zipCode"
+                        v-model="updateCustomerComputed.zipCode"
                         :label= labelForm.zipCode
                         required
                     >
@@ -81,7 +81,7 @@
                   </v-col>
                   <v-col cols =8>
                     <v-text-field
-                        v-model="updateCustomer.city"
+                        v-model="updateCustomerComputed.city"
                         :label= labelForm.city
                         required
                     >
@@ -91,7 +91,7 @@
                 <v-row>
                   <v-col cols =4>
                     <v-text-field
-                        v-model="updateCustomer.phone"
+                        v-model="updateCustomerComputed.phone"
                         :label= labelForm.phone
                         required
                     >
@@ -99,7 +99,7 @@
                   </v-col>
                   <v-col cols =8>
                     <v-text-field
-                        v-model="updateCustomer.phone2"
+                        v-model="updateCustomerComputed.phone2"
                         :label= labelForm.phone2
                     >
                     </v-text-field>
@@ -130,11 +130,14 @@ import {mapGetters} from "vuex";
 
 export default {
   name: "UpdateCustomerForm",
+  created() {
+    this.show = this.value
+  },
   computed: {
     ...mapGetters(['apiRoutes']),
-    show: {
+    /* show: {
       get () {
-        console.log()
+        console.log(this.visible)
         return this.visible
       },
       set (value) {
@@ -142,63 +145,59 @@ export default {
           this.$emit('close')
         }
       }
+    }, */
+    updateCustomerComputed: {
+      get: function() {
+        return this.updateCustomer
+      },
+      set: function(value) {
+        this.$emit('customerChange', value)
+      }
     }
   },
-  props: ['visible', 'updateCustomer'],
-
+  props: ['value', 'updateCustomer'],
+  watch: {
+    value (v) {
+      this.show = v
+    }
+  },
   methods: {
-  checkAddCustomerForm: function () {
-      if(this.updateCustomer.civility &&
-          this.updateCustomer.firstName &&
-          this.updateCustomer.lastName &&
-          this.updateCustomer.address &&
-          this.updateCustomer.zipCode &&
-          this.updateCustomer.city &&
-          this.updateCustomer.VATNumber &&
-          this.updateCustomer.phone &&
-          this.updateCustomer.email
-      ) {
-        this.updateCurrentCustomer()
-        // this.nextTick()(() => {
-        //   this.updateCurrentCustomer()
-        // })
-
-      } else this.formErrors.push("errors")
-
+    toggleDialog () {
+      this.show = !this.show
+      this.$emit('update:value', this.show)
     },
+    checkAddCustomerForm: function () {
+        if(this.updateCustomerComputed.civility &&
+            this.updateCustomerComputed.firstName &&
+            this.updateCustomerComputed.lastName &&
+            this.updateCustomerComputed.address &&
+            this.updateCustomerComputed.zipCode &&
+            this.updateCustomerComputed.city &&
+            this.updateCustomerComputed.VATNumber &&
+            this.updateCustomerComputed.phone &&
+            this.updateCustomerComputed.email
+        ) {
+          this.updateCurrentCustomer()
+
+        } else this.formErrors.push("errors")
+
+      },
     updateCurrentCustomer: function () {
-      this.$axios.post(this.apiRoutes.updateCustomer(this.updateCustomer.id), this.updateCustomer).then(
+      this.$axios.post(this.apiRoutes.updateCustomer(this.updateCustomerComputed.id), this.updateCustomerComputed).then(
           () => {
-            console.log(this.updateCustomer)
-            this.resetForm()
+            this.toggleDialog()
           },
           response => {
             console.log(response)
           }
       )
     },
-    resetForm: function () {
-    this.updateCustomer = ""
-    }
   },
 
   data() {
     return {
-      updatedCustomer: this.$props.updateCustomer,
+      show: false,
       formErrors: [],
-      // formAddCustomer : {
-      //   civility : "",
-      //   firstName: "",
-      //   lastName: "",
-      //   company: "",
-      //   phone: "",
-      //   phone2: "",
-      //   VATNumber: "",
-      //   email: "",
-      //   address: "",
-      //   zipCode: "",
-      //   city: ""
-      // },
       labelForm : {
         civility : "Civilité*",
         firstName: "Nom*",
