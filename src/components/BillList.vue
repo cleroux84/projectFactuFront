@@ -7,7 +7,8 @@
         <v-row>
           <v-btn>Ajouter une facture</v-btn>
           <v-btn>Ajouter un client</v-btn>
-          <v-btn>Liste des clients</v-btn>
+          <v-btn><router-link to="/customerList">Liste des clients</router-link></v-btn>
+
         </v-row>
       </v-tab>
         <v-card-title>
