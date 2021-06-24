@@ -56,13 +56,18 @@
 import { mapGetters } from 'vuex'
 import AddCustomerForm from "./AddCustomerForm";
 import UpdateCustomerForm from "./UpdateCustomerForm";
+// import mapActions from "vuex/dist/vuex 2.mjs";
 
 export default {
 
   name: "CustomerList",
   components: {UpdateCustomerForm, AddCustomerForm},
+  mounted() {
+    this.$store.dispatch('getAllCustomers');
+
+  },
   computed: {
-    ...mapGetters(['apiRoutes'])
+    ...mapGetters(['apiRoutes', 'allCustomers']),
   },
   component: {
     AddCustomerForm, UpdateCustomerForm
@@ -87,26 +92,25 @@ export default {
         { text: 'Code Postal', value: 'zipCode' },
         { text: 'Ville', value: 'city' },
       ],
-
-      allCustomers: [],
     }
   },
 
   created() {
-    this.getAllCustomers();
+
   },
   methods: {
-    getAllCustomers() {
-      this.$axios.get(this.apiRoutes.listCustomer).then(
-          (response) => {
-            this.allCustomers= response.data
-          }
-      )
-    },
+    // getAllCustomers() {
+    //   this.$axios.get(this.apiRoutes.listCustomer).then(
+    //       (response) => {
+    //         this.allCustomers= response.data
+    //       }
+    //   )
+    // },
+
     deleteCustomer(id) {
       this.$axios.delete(this.apiRoutes.deleteCustomer(id)).then(
-          () => {
-            this.getAllCustomers()
+          response => {
+            console.log(response)
           }, response => {
             console.log(response);
           }

@@ -42,8 +42,11 @@ import {mapGetters} from "vuex";
 
 export default {
   name: "BillList",
+  mounted() {
+    this.$store.dispatch('getAllCustomers');
+  },
   computed: {
-    ...mapGetters(['apiRoutes'])
+    ...mapGetters(['apiRoutes', 'allCustomers'])
   },
 
   created() {
@@ -51,11 +54,16 @@ export default {
   },
 
   methods: {
+    // getCurrentCustomer(customerId) {
+    //   return this.allCustomers.filter(this.allCustomers, currentCustomer => {
+    //     return currentCustomer.id === customerId
+    //
+    //   })
+    // },
     getAllBills() {
       this.$axios.get(this.apiRoutes.listBill).then(
           (response) => {
             this.allBills = response.data
-            console.log(response.data)
           }
       )
     },

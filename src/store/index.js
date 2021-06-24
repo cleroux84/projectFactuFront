@@ -6,15 +6,27 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    apiRoutes: ApiRoutes
+    apiRoutes: ApiRoutes,
+    allCustomers: []
   },
   mutations: {
+     setAllCustomers (state, allCustomers) {
+       state.allCustomers = allCustomers
+     }
   },
   actions: {
+    getAllCustomers({rootState, commit}) {
+         Vue.axios.get(rootState.apiRoutes.listCustomer).then(
+            response => {
+              commit('setAllCustomers', response.data)
+            }
+        )
+    },
   },
   modules: {
   },
   getters: {
-    apiRoutes: state => { return state.apiRoutes }
+    allCustomers: state => {return state.allCustomers},
+    apiRoutes: state => { return state.apiRoutes },
   }
 })
