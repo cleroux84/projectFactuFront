@@ -5,9 +5,9 @@
           <h1>Liste des factures</h1>
         </v-col>
         <v-row>
-          <v-btn>Ajouter une facture</v-btn>
-          <v-btn>Ajouter un client</v-btn>
-          <v-btn><router-link to="/customerList">Liste des clients</router-link></v-btn>
+          <v-btn outlined color="blue-grey darken-2">Ajouter une facture</v-btn>
+          <v-btn outlined color="blue-grey darken-2">Ajouter un client</v-btn>
+          <v-btn outlined color="blue-grey darken-2"><router-link class="linkBtn" to="/customerList">Liste des clients</router-link></v-btn>
 
         </v-row>
       </v-tab>
@@ -30,6 +30,11 @@
             :search="search"
             sort-by="firstName"
             >
+            <template v-slot:item.customerId=" { item }">
+              <span >{{ (item.customer.civility).charAt(0).toUpperCase()+ (item.customer.civility).slice(1) }}
+                {{ (item.customer.firstName).toUpperCase() }}
+                {{ (item.customer.lastName).charAt(0).toUpperCase()+ (item.customer.lastName).slice(1) }} </span>
+            </template>
           </v-data-table>
         </v-card-text>
 
@@ -55,15 +60,10 @@ export default {
   },
 
   methods: {
-    // getCurrentCustomer(customerId) {
-    //   return this.allCustomers.filter(this.allCustomers, currentCustomer => {
-    //     return currentCustomer.id === customerId
-    //
-    //   })
-    // },
     getAllBills() {
       this.$axios.get(this.apiRoutes.listBill).then(
           (response) => {
+            console.log(response.data)
             this.allBills = response.data
           }
       )
@@ -77,7 +77,8 @@ export default {
           search != null &&
           typeof value === 'string' &&
           this.checkStringContainsValue(item.billNumber, search) ||
-          this.checkStringContainsValue(item.customerId, search) ||
+          this.checkStringContainsValue(item.customer.firstName, search) ||
+          this.checkStringContainsValue(item.customer.lastName, search) ||
           this.checkStringContainsValue(item.periodCovered, search) ||
           this.checkStringContainsValue(item.benefit, search) ||
           this.checkStringContainsValue(item.unitPrice, search) ||
@@ -89,11 +90,11 @@ export default {
       search: "",
       headers: [
         {text: "Numéro facture", value: 'billNumber'},
-        {text: "Numéro client", value: 'customerId'},
+        {text: "Nom du client", value: 'customerId'},
 //                 created: DateTime,
         {text: "Période couverte", value: 'periodCovered'},
         {text: "Avantages", value: 'benefit'},
-        {text: "Prix unitaire", value: 'unitPrice'},
+        {text: "Total facture HT", value: 'totalHT'},
         {text: "Taux TVA", value: 'vatRate'}
       ],
       allBills: []
@@ -103,6 +104,9 @@ export default {
 
 </script>
 
-<style scoped>
+<style>
+.linkBtn{
+  text-decoration: none;
+}
 
 </style>

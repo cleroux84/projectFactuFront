@@ -2,11 +2,14 @@
   <v-container>
     <v-col cols="12">
       <v-tab>
-        <v-col cols="10">
+
           <h1>Liste des clients</h1>
-        </v-col>
+
         <v-col cols="2">
-          <v-btn outlined color="primary" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
+          <v-btn outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
+          <v-btn  outlined >
+            <router-link class="linkBtn" to="/">Liste des factures</router-link>
+          </v-btn>
         </v-col>
       </v-tab>
     </v-col>
