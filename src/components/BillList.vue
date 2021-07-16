@@ -1,16 +1,10 @@
 <template>
   <v-container>
-      <v-tab>
-        <v-col cols="10">
           <h1>Liste des factures</h1>
-        </v-col>
-        <v-row>
-          <v-btn outlined color="blue-grey darken-2" @click="showAddBillForm = true">Créer une facture</v-btn>
-          <v-btn outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
+          <v-btn style="margin-right: 20px" outlined color="blue-grey darken-2" @click="showAddBillForm = true">Créer une facture</v-btn>
+          <v-btn style="margin-right: 20px" outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
           <v-btn outlined color="blue-grey darken-2"><router-link class="linkBtn" to="/customerList">Liste des clients</router-link></v-btn>
 
-        </v-row>
-      </v-tab>
         <v-card-title>
           <v-spacer></v-spacer>
           <v-text-field
@@ -34,6 +28,9 @@
               <span >{{ (item.customer.civility).charAt(0).toUpperCase()+ (item.customer.civility).slice(1) }}
                 {{ (item.customer.firstName).toUpperCase() }}
                 {{ (item.customer.lastName).charAt(0).toUpperCase()+ (item.customer.lastName).slice(1) }} </span>
+            </template>
+            <template v-slot:item.company=" {item} ">
+              <span>{{(item.customer.company).charAt(0).toUpperCase()+ (item.customer.company).slice(1) }}</span>
             </template>
             <template v-slot:item.benefit=" { item }">
               <v-row v-for="benefitItem in item.benefit" v-bind:key="benefitItem.id">
@@ -98,6 +95,7 @@ export default {
           this.checkStringContainsValue(item.billNumber, search) ||
           this.checkStringContainsValue(item.customer.firstName, search) ||
           this.checkStringContainsValue(item.customer.lastName, search) ||
+          this.checkStringContainsValue(item.customer.company, search) ||
           this.checkStringContainsValue(item.periodCovered, search) ||
           this.checkStringContainsValue(item.benefit, search) ||
           this.checkStringContainsValue(item.unitPrice, search) ||
@@ -119,13 +117,15 @@ export default {
       showAddCustomerForm: false,
       search: "",
       headers: [
-        {text: "", value: 'actions'},//TODO mettre icon oeil pour voir détail de la facture + icon print pour l'imprimer en pdf
+        {text: "", value: 'actions', sortable: false},//TODO mettre icon oeil pour voir détail de la facture + icon print pour l'imprimer en pdf
+        {text: "Date d'émission", value: 'dateOfIssue', sortable: false},
         {text: "Numéro facture", value: 'billNumber'},
-        {text: "Nom du client", value: 'customerId'},
-        {text: "Période couverte", value: 'periodCovered'},
-        {text: "Prestations", value: 'benefit'},
-        {text: "Total facture HT", value: 'totalHT'},
-      ],
+        {text: "Entreprise", value: 'company', sortable: false},
+        {text: "Nom du client", value: 'customerId', sortable: false},
+        {text: "Période couverte", value: 'periodCovered', sortable: false},
+        {text: "Prestations", value: 'benefit', sortable: false},
+        {text: "Total facture HT", value: 'totalHT', sortable: false},
+  ],
       allBills: []
     }
     }

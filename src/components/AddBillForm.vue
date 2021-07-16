@@ -121,7 +121,6 @@ export default {
   },
   data() {
    return {
-     hidden: false,
      benefitComponents: [],
      formBenefit: {
        name: "",

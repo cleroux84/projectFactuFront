@@ -1,15 +1,11 @@
 <template>
   <v-container>
     <v-col cols="12">
-      <v-tab>
           <h1>Liste des clients</h1>
-        <v-col cols="2">
-          <v-btn outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
-          <v-btn  outlined >
+          <v-btn style="margin-right: 20px" outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
+          <v-btn  outlined style="margin-right: 20px" >
             <router-link class="linkBtn" to="/">Liste des factures</router-link>
           </v-btn>
-        </v-col>
-      </v-tab>
     </v-col>
 
     <v-col cols="auto">
@@ -100,9 +96,8 @@ export default {
   methods: {
     deleteCustomer(id) {
       this.$axios.delete(this.apiRoutes.deleteCustomer(id)).then(
-          response => {
+          () => {
             this.$store.dispatch('getAllCustomers');
-            console.log(response)
           }, response => {
             console.log(response);
           }
