@@ -2,9 +2,7 @@
   <v-container>
     <v-col cols="12">
       <v-tab>
-
           <h1>Liste des clients</h1>
-
         <v-col cols="2">
           <v-btn outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
           <v-btn  outlined >
@@ -40,7 +38,7 @@
             :search="search"
             sort-by="firstName"
         >
-          <template v-slot:item.delete="{ item }">
+          <template v-slot:item.actions="{ item }">
             <v-row>
               <v-icon class="material-icons" color="red" @click="deleteCustomer(item.id)">mdi-delete</v-icon>
               <v-icon class="material-icons" color="red" @click="openUpdateCustomer(item)">mdi-account-edit-outline</v-icon>
@@ -59,7 +57,6 @@
 import { mapGetters } from 'vuex'
 import AddCustomerForm from "./AddCustomerForm";
 import UpdateCustomerForm from "./UpdateCustomerForm";
-// import mapActions from "vuex/dist/vuex 2.mjs";
 
 export default {
 
@@ -67,7 +64,6 @@ export default {
   components: {UpdateCustomerForm, AddCustomerForm},
   mounted() {
     this.$store.dispatch('getAllCustomers');
-
   },
   computed: {
     ...mapGetters(['apiRoutes', 'allCustomers']),
@@ -83,7 +79,7 @@ export default {
       showUpdateCustomerForm: false,
       search: "",
       headers: [
-        { text: 'Actions', value: 'delete'},
+        { text: '', value: 'actions'},
         { text: 'Entreprise', value: 'company' },
         { text: 'Civilité', align: 'start', sortable: false, value: 'civility'},
         { text: 'Prénom', value: 'lastName' },
@@ -102,17 +98,10 @@ export default {
 
   },
   methods: {
-    // getAllCustomers() {
-    //   this.$axios.get(this.apiRoutes.listCustomer).then(
-    //       (response) => {
-    //         this.allCustomers= response.data
-    //       }
-    //   )
-    // },
-
     deleteCustomer(id) {
       this.$axios.delete(this.apiRoutes.deleteCustomer(id)).then(
           response => {
+            this.$store.dispatch('getAllCustomers');
             console.log(response)
           }, response => {
             console.log(response);

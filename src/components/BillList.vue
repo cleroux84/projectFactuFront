@@ -5,8 +5,8 @@
           <h1>Liste des factures</h1>
         </v-col>
         <v-row>
-          <v-btn outlined color="blue-grey darken-2">Ajouter une facture</v-btn>
-          <v-btn outlined color="blue-grey darken-2">Ajouter un client</v-btn>
+          <v-btn outlined color="blue-grey darken-2" @click="showAddBillForm = true">Créer une facture</v-btn>
+          <v-btn outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
           <v-btn outlined color="blue-grey darken-2"><router-link class="linkBtn" to="/customerList">Liste des clients</router-link></v-btn>
 
         </v-row>
@@ -35,9 +35,25 @@
                 {{ (item.customer.firstName).toUpperCase() }}
                 {{ (item.customer.lastName).charAt(0).toUpperCase()+ (item.customer.lastName).slice(1) }} </span>
             </template>
+            <template v-slot:item.benefit=" { item }">
+              <v-row v-for="benefitItem in item.benefit" v-bind:key="benefitItem.id">
+                <span>{{benefitItem.name}}</span>
+              </v-row>
+            </template>
+            <template v-slot:item.totalHT=" { item }">
+              <v-row v-for="benefitItem in item.benefit" v-bind:key="benefitItem.id">
+                <span>{{benefitItem.quantity * benefitItem.unitPrice}} €</span>
+              </v-row>
+            </template>
+<!--            <template v-slot:item.actions="{ item }">-->
+<!--              <v-row>-->
+<!--                <v-icon class="material-icons" color="red" @click="deleteBill(item.id)">mdi-delete</v-icon>-->
+<!--              </v-row>-->
+<!--            </template>-->
           </v-data-table>
         </v-card-text>
-
+      <AddCustomerForm :visible="showAddCustomerForm"/>
+      <AddBillForm :visible="showAddBillForm" />
 
   </v-container>
 
@@ -45,14 +61,17 @@
 
 <script>
 import {mapGetters} from "vuex";
+import AddCustomerForm from "./AddCustomerForm";
+import AddBillForm from "./AddBillForm";
 
 export default {
   name: "BillList",
+  components: { AddCustomerForm, AddBillForm },
   mounted() {
     this.$store.dispatch('getAllCustomers');
   },
   computed: {
-    ...mapGetters(['apiRoutes', 'allCustomers'])
+    ...mapGetters(['apiRoutes', 'allCustomers']),
   },
 
   created() {
@@ -63,7 +82,7 @@ export default {
     getAllBills() {
       this.$axios.get(this.apiRoutes.listBill).then(
           (response) => {
-            console.log(response.data)
+            // console.log(response.data)
             this.allBills = response.data
           }
       )
@@ -84,18 +103,28 @@ export default {
           this.checkStringContainsValue(item.unitPrice, search) ||
           this.checkStringContainsValue(item.vatRate, search)
     },
+    // deleteBill(id) {
+    //   this.$axios.delete(this.apiRoutes.deleteBill(id)).then(
+    //       () => {
+    //         this.getAllBills();
+    //       }, response => {
+    //         console.log(response)
+    //       }
+    //   )
+    // }
   },
   data() {
     return {
+      showAddBillForm: false,
+      showAddCustomerForm: false,
       search: "",
       headers: [
+        {text: "", value: 'actions'},//TODO mettre icon oeil pour voir détail de la facture + icon print pour l'imprimer en pdf
         {text: "Numéro facture", value: 'billNumber'},
         {text: "Nom du client", value: 'customerId'},
-//                 created: DateTime,
         {text: "Période couverte", value: 'periodCovered'},
-        {text: "Avantages", value: 'benefit'},
+        {text: "Prestations", value: 'benefit'},
         {text: "Total facture HT", value: 'totalHT'},
-        {text: "Taux TVA", value: 'vatRate'}
       ],
       allBills: []
     }

@@ -134,7 +134,6 @@ export default {
     ...mapGetters(['apiRoutes']),
     show: {
       get () {
-        console.log()
         return this.visible
       },
       set (value) {

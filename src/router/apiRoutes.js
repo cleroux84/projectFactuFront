@@ -11,5 +11,10 @@ export default {
 
     // Bill
     listBill: '/listBill',
+    deleteBill: function (id) {
+        return('/deleteBill/'  + id)
+    },
+    addBill: '/addBill',
+
 
 }
