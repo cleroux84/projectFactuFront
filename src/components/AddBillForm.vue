@@ -105,7 +105,6 @@ export default {
       this.$axios.post(this.apiRoutes.addBill, this.formAddBill).then(
           () => {
             this.resetForm()
-            // console.log(this.formAddBill)
       },
           () => {
             console.log("error")
@@ -121,7 +120,7 @@ export default {
   },
   data() {
    return {
-     benefitComponents: [],
+     benefitComponents: [this.formBenefit],
      formBenefit: {
        name: "",
        quantity: "",
