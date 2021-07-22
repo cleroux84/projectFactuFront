@@ -1,6 +1,7 @@
 <template>
   <v-container>
           <h1>Liste des factures</h1>
+
           <v-btn style="margin-right: 20px" outlined color="blue-grey darken-2" @click="showAddBillForm = true">Créer une facture</v-btn>
           <v-btn style="margin-right: 20px" outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
           <v-btn outlined color="blue-grey darken-2"><router-link class="linkBtn" to="/customerList">Liste des clients</router-link></v-btn>
@@ -82,7 +83,7 @@ export default {
     getAllBills() {
       this.$axios.get(this.apiRoutes.listBill).then(
           (response) => {
-            console.log(response.data)
+            // console.log(response.data)
             this.allBills = response.data
           }
       )
@@ -160,7 +161,7 @@ export default {
 .linkBtn{
   text-decoration: none;
 }
-span {
+table span {
   width: 80px;
 }
 .taleClass{
