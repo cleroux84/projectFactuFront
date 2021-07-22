@@ -79,29 +79,42 @@ export default {
   methods: {
     addBenefit() {
       this.benefitComponents.push(this.formBenefit)
+      console.log("benefitComponents nombre presta")
+      console.log(this.benefitComponents)
     },
     checkAddBillForm: function () {
-      if(this.formAddBill.customerId &&
-          this.formAddBill.periodCovered) {
-        this.composeAddBillForm()
-      } else {
-        this.formErrors.push("errors")
-        console.log("manque customerId ou periode couverte")
-      }
+      this.composeAddBillForm()
+    //   if(this.formAddBill.customerId &&
+    //       this.formAddBill.periodCovered) {
+    //     this.composeAddBillForm()
+    //   } else {
+    //     this.formErrors.push("errors")
+    //     console.log("manque customerId ou periode couverte")
+    //   }
     },
     composeAddBillForm: function () {
+      // console.log("benefitComponents length :")
+      // console.log(this.benefitComponents.length)
       for(let i = 0; i < this.benefitComponents.length; i++) {
-        if(this.$refs.benefitFormComponent[i].checkBenefitForm() === true) {
+        // if(this.$refs.benefitFormComponent[i].checkBenefitForm() === true) {
           this.formAddBill.benefits.push(this.$refs.benefitFormComponent[i].formBenefit)
-          this.addBill()
-        } else {
-          this.formErrors.push("errors")
-          console.log("prestation mal remplie")
-        }
+        console.log("refs : ")
+        console.log(this.$refs.benefitFormComponent[i].formBenefit)
+        console.log("benefits")
+        console.log(this.formAddBill.benefits)
+        console.log("formAddBill")
+        console.log(this.formAddBill)
+
+        // } else {
+        //   this.formErrors.push("errors")
+        //   console.log("prestation mal remplie")
+        // }
       }
+      this.addBill() //si addbill dans le for = probleme TODO voir comment gérer les conditions
     },
 
     addBill: function () {
+      console.log(this.formAddBill)
       this.$axios.post(this.apiRoutes.addBill, this.formAddBill).then(
           () => {
             this.resetForm()
@@ -120,7 +133,7 @@ export default {
   },
   data() {
    return {
-     benefitComponents: [this.formBenefit],
+     benefitComponents: [],
      formBenefit: {
        name: "",
        quantity: "",

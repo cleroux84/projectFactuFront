@@ -42,11 +42,11 @@
                 <span>{{benefitItem.quantity * benefitItem.unitPrice}} €</span>
               </v-row>
             </template>
-<!--            <template v-slot:item.actions="{ item }">-->
-<!--              <v-row>-->
-<!--                <v-icon class="material-icons" color="red" @click="deleteBill(item.id)">mdi-delete</v-icon>-->
-<!--              </v-row>-->
-<!--            </template>-->
+            <template v-slot:item.actions="{ item }">
+              <v-row>
+                <v-icon class="material-icons" @click="exportBillPdf(item.id)">mdi-printer</v-icon>
+              </v-row>
+            </template>
           </v-data-table>
         </v-card-text>
       <AddCustomerForm :visible="showAddCustomerForm"/>
@@ -84,6 +84,25 @@ export default {
           }
       )
     },
+
+    //test pour afficher pdf helloworld
+    exportBillPdf(id) {
+      this.$axios.get(this.apiRoutes.exportBillPdf(id), { responseType: 'blob'}).then(response => {
+        return new Blob([response.data], {type: 'application/pdf'});
+      }).then(blob => {
+        let objectUrl = window.URL.createObjectURL(blob);
+
+        let anchor = document.createElement('a');
+        anchor.setAttribute("type", "hidden");
+        anchor.href = objectUrl;
+        document.body.appendChild(anchor);
+        anchor.click();
+        window.URL.revokeObjectURL(objectUrl);
+
+      });
+    },
+
+
     checkStringContainsValue(string, value) {
       return (string !== null && string !== undefined && string.toString().toLowerCase().includes(value));
     },

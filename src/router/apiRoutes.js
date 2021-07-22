@@ -11,10 +11,13 @@ export default {
 
     // Bill
     listBill: '/listBill',
-    deleteBill: function (id) {
-        return('/deleteBill/'  + id)
-    },
+    // deleteBill: function (id) {
+    //     return('/deleteBill/'  + id)
+    // },
     addBill: '/addBill',
-
+    exportBillPdf: function (id) {
+        return('/export/bill.pdf/' + id)
+    }
+    // exportPdf: '/export/test.pdf'
 
 }
