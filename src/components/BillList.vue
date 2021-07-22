@@ -18,29 +18,32 @@
         <v-divider></v-divider>
         <v-card-text>
           <v-data-table
+             class="taleClass"
             :headers="headers"
             :items="allBills"
             :custom-filter="customSearch"
             :search="search"
             sort-by="firstName"
             >
-            <template v-slot:item.customerId=" { item }">
-              <span >{{ (item.customer.civility).charAt(0).toUpperCase()+ (item.customer.civility).slice(1) }}
-                {{ (item.customer.firstName).toUpperCase() }}
-                {{ (item.customer.lastName).charAt(0).toUpperCase()+ (item.customer.lastName).slice(1) }} </span>
-            </template>
+<!--            <template v-slot:item.customerId=" { item }">-->
+<!--              <span >{{ (item.customer.civility).charAt(0).toUpperCase()+ (item.customer.civility).slice(1) }}-->
+<!--                {{ (item.customer.firstName).toUpperCase() }}-->
+<!--                {{ (item.customer.lastName).charAt(0).toUpperCase()+ (item.customer.lastName).slice(1) }} </span>-->
+<!--            </template>-->
             <template v-slot:item.company=" {item} ">
               <span>{{(item.customer.company).charAt(0).toUpperCase()+ (item.customer.company).slice(1) }}</span>
             </template>
             <template v-slot:item.benefit=" { item }">
-              <v-row v-for="benefitItem in item.benefit" v-bind:key="benefitItem.id">
-                <span>{{benefitItem.name}}</span>
-              </v-row>
+              <v-list>
+                <v-list-item v-for="benefitItem in item.benefit" v-bind:key="benefitItem.id">
+                  <span>{{benefitItem.name}}</span><span> : </span><span>{{benefitItem.quantity * benefitItem.unitPrice}} €HT</span>
+                </v-list-item>
+              </v-list>
             </template>
             <template v-slot:item.totalHT=" { item }">
-              <v-row v-for="benefitItem in item.benefit" v-bind:key="benefitItem.id">
-                <span>{{benefitItem.quantity * benefitItem.unitPrice}} €</span>
-              </v-row>
+                <span>{{item.amountHt}} €</span>
+            </template>  <template v-slot:item.totalTtc=" { item }">
+                <span>{{item.amountTtc}} €</span>
             </template>
             <template v-slot:item.actions="{ item }">
               <v-row>
@@ -79,7 +82,7 @@ export default {
     getAllBills() {
       this.$axios.get(this.apiRoutes.listBill).then(
           (response) => {
-            // console.log(response.data)
+            console.log(response.data)
             this.allBills = response.data
           }
       )
@@ -136,14 +139,15 @@ export default {
       showAddCustomerForm: false,
       search: "",
       headers: [
-        {text: "", value: 'actions', sortable: false},//TODO mettre icon oeil pour voir détail de la facture + icon print pour l'imprimer en pdf
-        {text: "Date d'émission", value: 'dateOfIssue', sortable: false},
-        {text: "Numéro facture", value: 'billNumber'},
-        {text: "Entreprise", value: 'company', sortable: false},
-        {text: "Nom du client", value: 'customerId', sortable: false},
-        {text: "Période couverte", value: 'periodCovered', sortable: false},
+        {text: "Imprimer", value: 'actions', sortable: false, align: "center"},//TODO mettre icon oeil pour voir détail de la facture + icon print pour l'imprimer en pdf
+        {text: "Date d'émission", value: 'dateOfIssue', sortable: false, align: "center"},
+        {text: "Numéro facture", value: 'billNumber', align: "center"},
+        {text: "Entreprise", value: 'company', sortable: false, align: "center"},
+        // {text: "Nom du client", value: 'customerId', sortable: false},
+        {text: "Période couverte", value: 'periodCovered', sortable: false, align: "center"},
         {text: "Prestations", value: 'benefit', sortable: false},
-        {text: "Total facture HT", value: 'totalHT', sortable: false},
+        {text: "Total HT", value: 'totalHT', sortable: false, align: "center"},
+        {text: "Total TTC", value: 'totalTtc', sortable: false, align: "center"},
   ],
       allBills: []
     }
@@ -156,5 +160,10 @@ export default {
 .linkBtn{
   text-decoration: none;
 }
-
+span {
+  width: 80px;
+}
+.taleClass{
+  table-layout : fixed;
+}
 </style>
