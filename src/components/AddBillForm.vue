@@ -98,7 +98,10 @@ export default {
       for(let i = 0; i < this.benefitComponents.length; i++) {
         // console.log(this.$refs.benefitFormComponent[i].formBenefit)
         // if(this.$refs.benefitFormComponent[i].checkBenefitForm() === true) {
+        //   this.formAddBill.created = "2000-12-20"
+          this.formAddBill.created = Date.now()
           this.formAddBill.benefits.push(this.$refs.benefitFormComponent[i].formBenefit)
+        console.log(this.formAddBill)
         // console.log("refs : ")
         // console.log(this.$refs.benefitFormComponent[i].formBenefit)
         // console.log("benefits")
