@@ -41,15 +41,28 @@
                 </v-list-item>
               </v-list>
             </template>
-            <template v-slot:item.totalHT=" { item }">
+            <template v-slot:item.dateOfIssue=" { item }">
+                <span>{{item.created}}</span>
+            </template>  <template v-slot:item.totalHT=" { item }">
                 <span>{{item.amountHt}} €</span>
-            </template>  <template v-slot:item.totalTtc=" { item }">
+            </template>
+            <template v-slot:item.totalTtc=" { item }">
                 <span>{{item.amountTtc}} €</span>
             </template>
             <template v-slot:item.actions="{ item }">
-              <v-row>
-                <v-icon class="material-icons" @click="exportBillPdf(item.id)">mdi-printer</v-icon>
-              </v-row>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                      class="material-icons"
+                      @click="exportBillPdf(item.id)"
+                      v-bind="attrs"
+                      v-on="on"
+                  >
+                    mdi-printer
+                  </v-icon>
+                </template>
+                <span>Imprimer la facture</span>
+              </v-tooltip>
             </template>
           </v-data-table>
         </v-card-text>
@@ -83,13 +96,12 @@ export default {
     getAllBills() {
       this.$axios.get(this.apiRoutes.listBill).then(
           (response) => {
-            // console.log(response.data)
+            console.log(response.data)
             this.allBills = response.data
           }
       )
     },
 
-    //test pour afficher pdf helloworld
     exportBillPdf(id) {
       this.$axios.get(this.apiRoutes.exportBillPdf(id), { responseType: 'blob'}).then(response => {
         return new Blob([response.data], {type: 'application/pdf'});
@@ -140,7 +152,7 @@ export default {
       showAddCustomerForm: false,
       search: "",
       headers: [
-        {text: "Imprimer", value: 'actions', sortable: false, align: "center"},//TODO mettre icon oeil pour voir détail de la facture + icon print pour l'imprimer en pdf
+        {text: "", value: 'actions', sortable: false, align: "center"},
         {text: "Date d'émission", value: 'dateOfIssue', sortable: false, align: "center"},
         {text: "Numéro facture", value: 'billNumber', align: "center"},
         {text: "Entreprise", value: 'company', sortable: false, align: "center"},

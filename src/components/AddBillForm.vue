@@ -96,14 +96,15 @@ export default {
       // console.log("benefitComponents length :")
       // console.log(this.benefitComponents.length)
       for(let i = 0; i < this.benefitComponents.length; i++) {
+        // console.log(this.$refs.benefitFormComponent[i].formBenefit)
         // if(this.$refs.benefitFormComponent[i].checkBenefitForm() === true) {
           this.formAddBill.benefits.push(this.$refs.benefitFormComponent[i].formBenefit)
-        console.log("refs : ")
-        console.log(this.$refs.benefitFormComponent[i].formBenefit)
-        console.log("benefits")
-        console.log(this.formAddBill.benefits)
-        console.log("formAddBill")
-        console.log(this.formAddBill)
+        // console.log("refs : ")
+        // console.log(this.$refs.benefitFormComponent[i].formBenefit)
+        // console.log("benefits")
+        // console.log(this.formAddBill.benefits)
+        // console.log("formAddBill")
+        // console.log(this.formAddBill)
 
         // } else {
         //   this.formErrors.push("errors")
@@ -133,7 +134,14 @@ export default {
   },
   data() {
    return {
-     benefitComponents: [],
+     benefitComponents: [
+       {
+          name: "",
+          quantity: "",
+          unitPrice: "",
+          vatRate: ""
+        }
+     ],
      formBenefit: {
        name: "",
        quantity: "",
