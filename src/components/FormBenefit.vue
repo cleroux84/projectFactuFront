@@ -23,11 +23,18 @@
       </v-text-field>
     </v-col>
     <v-col cols="2">
-      <v-text-field
+<!--      <v-text-field-->
+<!--          v-model.number="formBenefit.vatRate"-->
+<!--          :label="labelForm.vatRate"-->
+<!--          required>-->
+<!--      </v-text-field>-->
+      <v-autocomplete
           v-model.number="formBenefit.vatRate"
           :label="labelForm.vatRate"
+          :placeholder="labelForm.vatRate"
+          :items="allVatRate"
           required>
-      </v-text-field>
+      </v-autocomplete>
     </v-col>
   </v-row>
 </template>
@@ -55,6 +62,7 @@ export default {
         unitPrice: "",
         vatRate: ""
       },
+      allVatRate: [5.5, 10, 20],
       labelForm: {
         name: "Sélectionner la prestation",
         quantity: "Quantité",

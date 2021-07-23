@@ -66,8 +66,8 @@
             </template>
           </v-data-table>
         </v-card-text>
-      <AddCustomerForm :visible="showAddCustomerForm"/>
-      <AddBillForm :visible="showAddBillForm" />
+      <AddCustomerForm :visible="showAddCustomerForm" @close="closeAddCustomerForm"/>
+      <AddBillForm :visible="showAddBillForm" @close="closeAddBillForm" />
 
   </v-container>
 
@@ -93,6 +93,12 @@ export default {
   },
 
   methods: {
+    closeAddBillForm() {
+      this.showAddBillForm = false
+    },
+    closeAddCustomerForm() {
+      this.showAddCustomerForm = false
+    },
     getAllBills() {
       this.$axios.get(this.apiRoutes.listBill).then(
           (response) => {
@@ -158,7 +164,7 @@ export default {
         {text: "Entreprise", value: 'company', sortable: false, align: "center"},
         // {text: "Nom du client", value: 'customerId', sortable: false},
         {text: "Période couverte", value: 'periodCovered', sortable: false, align: "center"},
-        {text: "Prestations", value: 'benefit', sortable: false},
+        {text: "Prestations", value: 'benefit', sortable: false, align: "center"},
         {text: "Total HT", value: 'totalHT', sortable: false, align: "center"},
         {text: "Total TTC", value: 'totalTtc', sortable: false, align: "center"},
   ],

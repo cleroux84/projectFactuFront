@@ -111,7 +111,8 @@
                 >
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                      <v-btn  text color="blue-grey darken-2" @click="checkAddCustomerForm()">Valider</v-btn>
+                    <v-btn color="blue darken-1" text @click="show = false">Annuler</v-btn>
+                    <v-btn  text color="blue-grey darken-2" @click="checkAddCustomerForm()">Valider</v-btn>
                   </v-card-actions>
                 </v-row>
               </v-container>

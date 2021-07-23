@@ -38,9 +38,9 @@
                   <form-benefit ref="benefitFormComponent"/>
                 </div>
                 <v-icon class="material-icons" @click="addBenefit()">mdi-folder-plus</v-icon>
-
                 <v-card-actions>
                     <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="show = false">Annuler</v-btn>
                     <v-btn  text color="blue-grey darken-2" @click="checkAddBillForm()">Valider</v-btn>
                   </v-card-actions>
               </v-container>

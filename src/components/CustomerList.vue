@@ -44,8 +44,8 @@
         </v-data-table>
       </v-card-text>
     </v-col>
-    <add-customer-form :visible="showAddCustomerForm"></add-customer-form>
-    <update-customer-form v-model="showUpdateCustomerForm" :updateCustomer="updateCustomer"></update-customer-form>
+    <add-customer-form :visible="showAddCustomerForm" @close="closeAddCustomerForm"></add-customer-form>
+    <update-customer-form v-model="showUpdateCustomerForm" :updateCustomer="updateCustomer" @close="closeUpdateCustomerForm"></update-customer-form>
   </v-container>
 </template>
 
@@ -94,6 +94,12 @@ export default {
 
   },
   methods: {
+    closeAddCustomerForm() {
+      this.showAddCustomerForm = false
+    },
+    closeUpdateCustomerForm() {
+      this.showAddCustomerForm = false
+    },
     deleteCustomer(id) {
       this.$axios.delete(this.apiRoutes.deleteCustomer(id)).then(
           () => {
