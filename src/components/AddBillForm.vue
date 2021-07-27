@@ -5,7 +5,7 @@
         <v-dialog v-model="show" scrollable max-width="700px">
           <v-card class="mt-2">
             <v-toolbar color="blue-grey darken-2" dark>Nouvelle facture</v-toolbar>
-            <v-form fill-width ref="addBillForm" lazy-validation>
+            <v-form fill-width ref="addBillForm" lazy-validation v-model="valid">
               <v-container>
                 <v-row>
                   <v-card-title v-if="this.formErrors.length > 0" >
@@ -34,15 +34,18 @@
                     </v-text-field>
                   </v-col>
                 </v-row>
-                <div v-for="(newComponent, index) in benefitComponents" :key="index">
-                  <form-benefit ref="benefitFormComponent"/>
+                <div>
+                  <div v-for="(newComponent, index) in benefitComponents" :key="index">
+                    <form-benefit ref="benefitForm"/>
+                  </div>
                 </div>
                 <v-icon class="material-icons" @click="addBenefit()">mdi-folder-plus</v-icon>
+                <v-icon v-bind:disabled="benefitComponents.length <= 1" class="material-icons" @click="deleteBenefit()">mdi-minus-circle-outline</v-icon>
                 <v-card-actions>
                     <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click="show = false">Annuler</v-btn>
-                    <v-btn  text color="blue-grey darken-2" @click="checkAddBillForm()">Valider</v-btn>
-                  </v-card-actions>
+                  <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click="checkAddBillForm()">Valider</v-btn>
+                </v-card-actions>
               </v-container>
             </v-form>
           </v-card>
@@ -73,83 +76,93 @@ export default {
           this.$emit('close')
         }
       }
-    }
+    },
+
+  },
+  watch: {
+
   },
   props: ['visible', 'formBenefits'],
   methods: {
+    deleteBenefit() {
+      this.benefitComponents.pop()
+    },
     addBenefit() {
       this.benefitComponents.push(this.formBenefit)
-      console.log("benefitComponents nombre presta")
-      console.log(this.benefitComponents)
     },
     checkAddBillForm: function () {
-      this.composeAddBillForm()
-    //   if(this.formAddBill.customerId &&
-    //       this.formAddBill.periodCovered) {
-    //     this.composeAddBillForm()
-    //   } else {
-    //     this.formErrors.push("errors")
-    //     console.log("manque customerId ou periode couverte")
-    //   }
-    },
-    composeAddBillForm: function () {
-      // console.log("benefitComponents length :")
-      // console.log(this.benefitComponents.length)
-      for(let i = 0; i < this.benefitComponents.length; i++) {
-        // console.log(this.$refs.benefitFormComponent[i].formBenefit)
-        // if(this.$refs.benefitFormComponent[i].checkBenefitForm() === true) {
-        //   this.formAddBill.created = "2000-12-20"
-          this.formAddBill.created = Date.now()
-          this.formAddBill.benefits.push(this.$refs.benefitFormComponent[i].formBenefit)
-        console.log(this.formAddBill)
-        // console.log("refs : ")
-        // console.log(this.$refs.benefitFormComponent[i].formBenefit)
-        // console.log("benefits")
-        // console.log(this.formAddBill.benefits)
-        // console.log("formAddBill")
-        // console.log(this.formAddBill)
-
-        // } else {
-        //   this.formErrors.push("errors")
-        //   console.log("prestation mal remplie")
-        // }
+      if(this.formAddBill.customerId &&
+          this.formAddBill.periodCovered) {
+        this.checkFormBenefits()
+      } else {
+        this.formErrors.push("errors")
+        console.log("manque customerId ou periode couverte")
       }
-      this.addBill() //si addbill dans le for = probleme TODO voir comment gérer les conditions
+    },
+
+    checkFormBenefits: function () {
+      for(let i = 0; i < this.benefitComponents.length; i++) {
+        if(this.$refs.benefitForm[i].checkBenefitForm() === true) {
+          this.formAddBill.benefits.push(this.$refs.benefitForm[i].formBenefit)
+
+           // this.composeAddBillForm()
+        } else {
+          this.$refs.benefitForm[i].resetFormBenefit()
+          //TODO dire : tu valides pas mais tu gardes pas en mémoire
+          console.log("presta mal remplie non prise en compte")
+          this.formErrors.push("errors")
+        }
+      }
+        this.composeAddBillForm()
+
+      // console.log("this.formAddBill.benefits.length")
+      // console.log(this.formAddBill.benefits.length)
+      // console.log("this.benefitComponents.length")
+      // console.log(this.benefitComponents.length)
+      // if(this.formAddBill.benefits.length === this.benefitComponents.length){
+      //   this.composeAddBillForm()
+      // } else {
+      //   console.log(this.formAddBill)
+      // }
+    },
+
+    composeAddBillForm: function () {
+      this.formAddBill.created = Date.now()
+      this.addBill()
     },
 
     addBill: function () {
-      console.log(this.formAddBill)
+      if (this.$refs.addBillForm.validate())
       this.$axios.post(this.apiRoutes.addBill, this.formAddBill).then(
           () => {
-            this.resetForm()
+            console.log(this.formAddBill)
+            this.show = false
       },
           () => {
             console.log("error")
-            console.log(this.formAddBill)
+            // console.log(this.formAddBill)
           }
       )
     },
-    resetForm: function () {
-      this.formAddBill = ""
-    },
   },
-  created() {
-  },
+
   data() {
    return {
+     valid: false,
+     minusSign: false,
      benefitComponents: [
        {
           name: "",
-          quantity: "",
-          unitPrice: "",
-          vatRate: ""
+          quantity: null,
+          unitPrice: null,
+          vatRate: null
         }
      ],
      formBenefit: {
        name: "",
-       quantity: "",
-       unitPrice: "",
-       vatRate: ""
+       quantity: null,
+       unitPrice: null,
+       vatRate: null
      },
      formErrors: [],
      formAddBill : {

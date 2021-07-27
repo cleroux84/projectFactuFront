@@ -67,7 +67,7 @@
           </v-data-table>
         </v-card-text>
       <AddCustomerForm :visible="showAddCustomerForm" @close="closeAddCustomerForm"/>
-      <AddBillForm :visible="showAddBillForm" @close="closeAddBillForm" />
+      <AddBillForm v-if="showAddBillForm" :visible="showAddBillForm" @close="closeAddBillForm" />
 
   </v-container>
 
@@ -95,6 +95,7 @@ export default {
   methods: {
     closeAddBillForm() {
       this.showAddBillForm = false
+      this.getAllBills()
     },
     closeAddCustomerForm() {
       this.showAddCustomerForm = false
@@ -102,7 +103,7 @@ export default {
     getAllBills() {
       this.$axios.get(this.apiRoutes.listBill).then(
           (response) => {
-            console.log(response.data)
+            // console.log(response.data)
             this.allBills = response.data
           }
       )

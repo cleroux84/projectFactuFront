@@ -167,6 +167,7 @@ export default {
       this.$axios.post(this.apiRoutes.addCustomer, this.formAddCustomer).then(
           () => {
             this.resetForm()
+            this.show = false;
           },
           response => {
             console.log(response)
