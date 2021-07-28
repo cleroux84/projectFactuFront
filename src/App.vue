@@ -6,9 +6,10 @@
       dark
     >
       <div class="d-flex align-center">
-        FACTRUC
+        <v-toolbar-title>FACTRUC</v-toolbar-title>
       </div>
       <v-spacer></v-spacer>
+      <v-toolbar-title>{{ currentUser.email }}</v-toolbar-title>
     </v-app-bar>
     <v-main>
       <router-view/>
@@ -18,9 +19,16 @@
 
 <script>
 
+import {mapGetters} from "vuex";
+
 export default {
   name: 'App',
-
+  mounted() {
+    this.$store.dispatch('getCurrentUser')
+  },
+  computed: {
+    ...mapGetters(['currentUser'])
+  },
   data: () => ({
     //
   }),

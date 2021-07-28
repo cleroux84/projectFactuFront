@@ -17,7 +17,13 @@ export default {
     addBill: '/addBill',
     exportBillPdf: function (id) {
         return('/export/bill.pdf/' + id)
+    },
+
+    //User
+    getAllUsers: '/getUserList',
+    getCurrentUser: function (id) {
+        return('/getCurrentUser/' + id)
     }
-    // exportPdf: '/export/test.pdf'
+
 
 }

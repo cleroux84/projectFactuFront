@@ -1,19 +1,24 @@
 <template>
   <v-container>
-    <v-col cols="12">
-          <h1>Liste des clients</h1>
-          <v-btn style="margin-right: 20px" outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
-          <v-btn  outlined style="margin-right: 20px" >
-            <router-link class="linkBtn" to="/">Liste des factures</router-link>
-          </v-btn>
-    </v-col>
+    <h1>Liste des clients</h1>
+    <v-card-title>
+      <v-spacer></v-spacer>
+      <h5>Connecté en tant que : </h5>
+      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
 
-    <v-col cols="auto">
-      <v-dialog
-          transition="dialog-top-transition"
-          max-width="600"
-      >
-      </v-dialog>
+    </v-card-title>
+      <v-btn  outlined style="margin-right: 20px" >
+        <router-link class="linkBtn" to="/">Accueil</router-link>
+      </v-btn>
+      <v-btn style="margin-right: 20px" outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
+      <v-btn  outlined style="margin-right: 20px" >
+        <router-link class="linkBtn" to="/BillList">Liste des factures</router-link>
+      </v-btn>
+<!--      <v-dialog-->
+<!--          transition="dialog-top-transition"-->
+<!--          max-width="600"-->
+<!--      >-->
+<!--      </v-dialog>-->
 
       <v-card-title>
         <v-spacer></v-spacer>
@@ -43,7 +48,6 @@
 
         </v-data-table>
       </v-card-text>
-    </v-col>
     <add-customer-form :visible="showAddCustomerForm" @close="closeAddCustomerForm"></add-customer-form>
     <update-customer-form v-model="showUpdateCustomerForm" :updateCustomer="updateCustomer" @close="closeUpdateCustomerForm"></update-customer-form>
   </v-container>
@@ -60,9 +64,11 @@ export default {
   components: {UpdateCustomerForm, AddCustomerForm},
   mounted() {
     this.$store.dispatch('getAllCustomers');
+    this.$store.dispatch('getCurrentUser');
+    // console.log(this.allCustomers)
   },
   computed: {
-    ...mapGetters(['apiRoutes', 'allCustomers']),
+    ...mapGetters(['apiRoutes', 'allCustomers', 'currentUser']),
   },
   component: {
     AddCustomerForm, UpdateCustomerForm
