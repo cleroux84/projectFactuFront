@@ -30,7 +30,7 @@
                     <v-text-field
                         v-model="formAddBill.periodCovered"
                         :label="labelForm.periodCovered"
-                        :rules="[rules.required, rules.minimumCharacter]"
+                        :rules="rules.required"
                     >
                     </v-text-field>
                   </v-col>

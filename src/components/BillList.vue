@@ -51,10 +51,10 @@
         <template v-slot:item.dateOfIssue=" { item }">
             <span>{{item.created}}</span>
         </template>  <template v-slot:item.totalHT=" { item }">
-            <span>{{item.amountHt}} €</span>
+            <span>{{item.amountHt.toFixed(2)}} €</span>
         </template>
         <template v-slot:item.totalTtc=" { item }">
-            <span>{{item.amountTtc}} €</span>
+            <span>{{item.amountTtc.toFixed(2)}} €</span>
         </template>
         <template v-slot:item.actions="{ item }">
           <v-tooltip top>
@@ -119,15 +119,8 @@ export default {
       this.$axios.get(this.apiRoutes.exportBillPdf(id), { responseType: 'blob'}).then(response => {
         return new Blob([response.data], {type: 'application/pdf'});
       }).then(blob => {
-        let objectUrl = window.URL.createObjectURL(blob);
-
-        let anchor = document.createElement('a');
-        anchor.setAttribute("type", "hidden");
-        anchor.href = objectUrl;
-        document.body.appendChild(anchor);
-        anchor.click();
-        window.URL.revokeObjectURL(objectUrl);
-
+        let objectUrl = URL.createObjectURL(blob);
+        window.open(objectUrl)
       });
     },
 

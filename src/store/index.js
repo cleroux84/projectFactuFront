@@ -15,16 +15,12 @@ export default new Vuex.Store({
               const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
               return pattern.test(value) || 'Entrez une adresse mail valide'
           },
-          zipCode: value => {
-              return value.length === 5 || 'Le code postal doit être composé de 5 chiffres'
-          },
-          vatNumber: value => {
-              return value.length === 13 || 'Le numéro de TVA Intracommunautaire doit être composé de 11 chiffres'
-          },
-          phone: value => {
-              return value.length === 10 || 'Le numéro de téléphone doit être composé de 10 chiffres'
-          },
-          minimumCharacter: value => value.length >= 2 || 'Nombre de caractère minimum requis',
+          // zipCode: value => {
+          //     return value.length === 5 || 'Le code postal doit être composé de 5 chiffres'
+          // },
+          // vatNumber: value => value.length === 13 || 'Le numéro de TVA Intracommunautaire doit être composé de 11 chiffres',
+          // phone: value => value.length === 10 || 'Le numéro de téléphone doit être composé de 10 chiffres',
+          // minimumCharacter: value => value.length >= 2 || 'Nombre de caractère minimum requis',
           charOnly: value => {
               const pattern = /^[1-9]\d*(\.\d+)?$/
               return pattern.test(value) || 'Entrez un chiffre'

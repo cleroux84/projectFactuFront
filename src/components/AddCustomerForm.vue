@@ -25,7 +25,7 @@
                     <v-text-field
                         v-model="formAddCustomer.firstName"
                         :label= labelForm.firstName
-                        :rules="[rules.required, rules.minimumCharacter]"
+                        :rules="[rules.required]"
                     >
                     </v-text-field>
                   </v-col>
@@ -33,7 +33,7 @@
                     <v-text-field
                         v-model="formAddCustomer.lastName"
                         :label= labelForm.lastName
-                        :rules="[rules.required, rules.minimumCharacter]"
+                        :rules="[rules.required]"
                     >
                     </v-text-field>
                   </v-col>
@@ -59,7 +59,7 @@
                     <v-text-field
                         v-model="formAddCustomer.VATNumber"
                         :label= labelForm.VATNumber
-                        :rules="[rules.vatNumber, rules.required]"
+                        :rules="[rules.required]"
                     >
                     </v-text-field>
                   </v-col>
@@ -99,7 +99,7 @@
                     <v-text-field
                         v-model="formAddCustomer.phone"
                         :label= labelForm.phone
-                        :rules="[rules.phone, rules.required]"
+                        :rules="[rules.required]"
                         counter
                         maxlength="10"
                     >
@@ -109,7 +109,6 @@
                     <v-text-field
                         v-model="formAddCustomer.phone2"
                         :label= labelForm.phone2
-                        :rules="[rules.phone]"
                         counter
                         maxlength="10"
                     >
@@ -138,7 +137,7 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import { mapGetters } from 'vuex'
 
 export default {
   name: "AddCustomerForm",
