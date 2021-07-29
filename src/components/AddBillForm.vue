@@ -7,11 +7,11 @@
             <v-toolbar color="blue-grey darken-2" dark>Nouvelle facture</v-toolbar>
             <v-form fill-width ref="addBillForm" lazy-validation v-model="valid">
               <v-container>
+                <v-card-title v-if="this.formErrors.length > 0" >
+                  <v-icon color="red" style='padding-right: 20px' class="material-icons">mdi-alert</v-icon>
+                  Merci de remplir les champs obligatoires
+                </v-card-title>
                 <v-row>
-                  <v-card-title v-if="this.formErrors.length > 0" >
-                    <v-icon color="red" style='padding-right: 20px' class="material-icons">mdi-alert</v-icon>
-                    Remplir les champs obligatoires
-                  </v-card-title>
                   <v-col cols="12">
                     <v-autocomplete
                       :placeholder="labelForm.customerId"
@@ -19,7 +19,7 @@
                       item-value="id"
                       item-text="company"
                       v-model="formAddBill.customerId"
-                      required
+                      :rules="[rules.required]"
                       >
                     </v-autocomplete>
                   </v-col>
@@ -30,7 +30,8 @@
                     <v-text-field
                         v-model="formAddBill.periodCovered"
                         :label="labelForm.periodCovered"
-                        required>
+                        :rules="[rules.required, rules.minimumCharacter]"
+                    >
                     </v-text-field>
                   </v-col>
                 </v-row>
@@ -39,8 +40,37 @@
                     <form-benefit ref="benefitForm"/>
                   </div>
                 </div>
-                <v-icon class="material-icons" @click="addBenefit()">mdi-folder-plus</v-icon>
-                <v-icon v-bind:disabled="benefitComponents.length <= 1" class="material-icons" @click="deleteBenefit()">mdi-minus-circle-outline</v-icon>
+                <v-row>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-col cols="1">
+                        <v-icon class="material-icons"
+                                @click="addBenefit()"
+                                v-bind="attrs"
+                                v-on="on"
+                        >
+                          mdi-folder-plus
+                        </v-icon>
+                      </v-col>
+                    </template>
+                    <span>Ajouter une prestation à la facture</span>
+                  </v-tooltip>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-col cols="3">
+                        <v-icon v-bind:disabled="benefitComponents.length <= 1"
+                                class="material-icons"
+                                @click="deleteBenefit()"
+                                v-bind="attrs"
+                                v-on="on"
+                        >
+                          mdi-minus-circle-outline
+                        </v-icon>
+                      </v-col>
+                    </template>
+                    <span>Retirer une prestation de la facture</span>
+                  </v-tooltip>
+                </v-row>
                 <v-card-actions>
                     <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click="show = false">Annuler</v-btn>
@@ -66,7 +96,7 @@ export default {
   },
   components: { FormBenefit },
   computed: {
-    ...mapGetters(['apiRoutes', 'allCustomers']),
+    ...mapGetters(['apiRoutes', 'allCustomers', 'rules']),
     show: {
       get () {
         return this.visible

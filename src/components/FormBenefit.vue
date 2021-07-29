@@ -1,34 +1,39 @@
 <template>
   <v-form fill-width ref="benefitForm" lazy-validation>
     <v-row>
-      <v-col cols="5">
+      <v-col cols="3">
         <v-text-field
             v-model="formBenefit.name"
             :label="labelForm.name"
-            required>
+            :rules="[rules.required, rules.minimumCharacter]"
+        >
         </v-text-field>
       </v-col>
       <v-col cols="2">
         <v-text-field
             v-model.number="formBenefit.quantity"
+            type="number"
             :label="labelForm.quantity"
-            required>
+            :rules="[rules.required, rules.charOnly]">
+        >
         </v-text-field>
       </v-col>
-      <v-col cols="2">
+      <v-col cols="3">
         <v-text-field
             v-model.number="formBenefit.unitPrice"
             :label="labelForm.unitPrice"
-            required>
+            :rules="[rules.required, rules.charOnly]"
+          >
         </v-text-field>
       </v-col>
-      <v-col cols="2">
+      <v-col cols="3">
         <v-autocomplete
             v-model.number="formBenefit.vatRate"
             :label="labelForm.vatRate"
             :placeholder="labelForm.vatRate"
             :items="allVatRate"
-            required>
+            :rules="[rules.required]"
+        >
         </v-autocomplete>
       </v-col>
     </v-row>
@@ -36,8 +41,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: "FormBenefit.vue",
+  computed: {
+    ...mapGetters(['rules'])
+  },
   methods: {
     resetFormBenefit: function () {
       this.$nextTick(() => {
@@ -66,7 +75,7 @@ export default {
       },
       allVatRate: [5.5, 10, 20],
       labelForm: {
-        name: "Sélectionner la prestation",
+        name: " Prestation",
         quantity: "Quantité",
         unitPrice: "Prix unitaire",
         vatRate: "TVA appliquée",

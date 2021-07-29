@@ -7,14 +7,17 @@
             <v-toolbar color="blue-grey darken-2" dark>Ajouter un client</v-toolbar>
             <v-form fill-width ref="addCustomerForm" lazy-validation>
               <v-container>
+                <v-card-title v-if="this.formErrors.length > 0">
+                  <v-icon color="red" style='padding-right: 20px' class="material-icons">mdi-alert</v-icon>
+                  Merci de remplir les champs obligatoires
+                </v-card-title>
                 <v-row>
-                  <v-card-text v-if="this.formErrors.length > 0">Merci de remplir les champs obligatoires</v-card-text>
                   <v-col cols =2>
                     <v-select
                         :items="civilityItems"
                         v-model="formAddCustomer.civility"
                         :label= labelForm.civility
-                        required
+                        :rules="[rules.required]"
                     >
                     </v-select>
                   </v-col>
@@ -22,7 +25,7 @@
                     <v-text-field
                         v-model="formAddCustomer.firstName"
                         :label= labelForm.firstName
-                        required
+                        :rules="[rules.required, rules.minimumCharacter]"
                     >
                     </v-text-field>
                   </v-col>
@@ -30,7 +33,7 @@
                     <v-text-field
                         v-model="formAddCustomer.lastName"
                         :label= labelForm.lastName
-                        required
+                        :rules="[rules.required, rules.minimumCharacter]"
                     >
                     </v-text-field>
                   </v-col>
@@ -40,6 +43,7 @@
                     <v-text-field
                         v-model="formAddCustomer.company"
                         :label=labelForm.company
+                        :rules="[rules.required]"
                     >
                     </v-text-field>
                   </v-col>
@@ -47,7 +51,7 @@
                     <v-text-field
                         v-model="formAddCustomer.email"
                         :label= labelForm.email
-                        required
+                        :rules="[rules.email, rules.required]"
                     >
                     </v-text-field>
                   </v-col>
@@ -55,7 +59,7 @@
                     <v-text-field
                         v-model="formAddCustomer.VATNumber"
                         :label= labelForm.VATNumber
-                        required
+                        :rules="[rules.vatNumber, rules.required]"
                     >
                     </v-text-field>
                   </v-col>
@@ -65,7 +69,7 @@
                     <v-text-field
                         v-model="formAddCustomer.address"
                         :label=labelForm.address
-                        required
+                        :rules="[rules.required]"
                     >
                     </v-text-field>
                   </v-col>
@@ -75,7 +79,9 @@
                     <v-text-field
                         v-model="formAddCustomer.zipCode"
                         :label= labelForm.zipCode
-                        required
+                        :rules="[rules.required]"
+                        counter
+                        maxlength="5"
                     >
                     </v-text-field>
                   </v-col>
@@ -83,7 +89,7 @@
                     <v-text-field
                         v-model="formAddCustomer.city"
                         :label= labelForm.city
-                        required
+                        :rules="[rules.required]"
                     >
                     </v-text-field>
                   </v-col>
@@ -93,7 +99,9 @@
                     <v-text-field
                         v-model="formAddCustomer.phone"
                         :label= labelForm.phone
-                        required
+                        :rules="[rules.phone, rules.required]"
+                        counter
+                        maxlength="10"
                     >
                     </v-text-field>
                   </v-col>
@@ -101,6 +109,9 @@
                     <v-text-field
                         v-model="formAddCustomer.phone2"
                         :label= labelForm.phone2
+                        :rules="[rules.phone]"
+                        counter
+                        maxlength="10"
                     >
                     </v-text-field>
                   </v-col>
@@ -132,7 +143,7 @@ import {mapGetters} from "vuex";
 export default {
   name: "AddCustomerForm",
   computed: {
-    ...mapGetters(['apiRoutes']),
+    ...mapGetters(['apiRoutes', 'rules']),
     show: {
       get () {
         return this.visible
@@ -181,6 +192,7 @@ export default {
 
   data() {
     return {
+      tvaFR: "FR",
       formErrors: [],
       formAddCustomer : {
         civility : "",
@@ -189,7 +201,7 @@ export default {
         company: "",
         phone: "",
         phone2: "",
-        VATNumber: "",
+        VATNumber: "FR",
         email: "",
         address: "",
         zipCode: "",
