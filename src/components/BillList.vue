@@ -44,7 +44,7 @@
         <template v-slot:item.benefit=" { item }">
           <v-list>
             <v-list-item v-for="benefitItem in item.benefit" v-bind:key="benefitItem.id">
-              <span>{{benefitItem.name}}</span><span> : </span><span>{{benefitItem.quantity * benefitItem.unitPrice}} €HT</span>
+              <span>{{benefitItem.name}}</span><span> : </span><span>{{(benefitItem.quantity * benefitItem.unitPrice).toFixed(2)}} €HT</span>
             </v-list-item>
           </v-list>
         </template>
@@ -109,7 +109,7 @@ export default {
     getAllBills() {
       this.$axios.get(this.apiRoutes.listBill).then(
           (response) => {
-            // console.log(response.data)
+            console.log(response.data)
             this.allBills = response.data
           }
       )
