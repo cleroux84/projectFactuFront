@@ -26,7 +26,9 @@ export default new Vuex.Store({
           },
           minimumCharacter: value => value.length >= 2 || 'Nombre de caractère minimum requis',
           charOnly: value => {
-             return Number.isInteger(value) || 'Entrez un chiffre'
+              const pattern = /^[1-9]\d*(\.\d+)?$/
+              return pattern.test(value) || 'Entrez un chiffre'
+              // return Number.isInteger(value) || 'Entrez un chiffre'
           }
       }
   },

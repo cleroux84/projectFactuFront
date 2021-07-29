@@ -22,7 +22,7 @@
         <v-text-field
             v-model.number="formBenefit.unitPrice"
             :label="labelForm.unitPrice"
-            :rules="[rules.required, rules.charOnly]"
+            :rules="[rules.charOnly]"
           >
         </v-text-field>
       </v-col>
