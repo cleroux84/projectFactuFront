@@ -4,17 +4,20 @@
       <v-col cols="auto">
         <v-dialog v-model="show" scrollable max-width="700px">
           <v-card class="mt-2">
-            <v-toolbar color="blue-grey darken-2" dark>Ajouter un client</v-toolbar>
+            <v-toolbar color="blue-grey darken-2" dark>Modifier {{ updateCustomerComputed.company }}</v-toolbar>
             <v-form fill-width ref="updateCustomerForm" lazy-validation>
               <v-container>
+                <v-card-title v-if="this.formErrors.length > 0">
+                  <v-icon color="red" style='padding-right: 20px' class="material-icons">mdi-alert</v-icon>
+                  Merci de remplir les champs obligatoires
+                </v-card-title>
                 <v-row>
-                  <v-card-text v-if="this.formErrors.length > 0">Merci de remplir les champs obligatoires</v-card-text>
                   <v-col cols =2>
                     <v-select
                         :items="civilityItems"
                         v-model="updateCustomerComputed.civility"
                         :label= labelForm.civility
-                        required
+                        :rules="[rules.required]"
                     >
                     </v-select>
                   </v-col>
@@ -22,7 +25,7 @@
                     <v-text-field
                         v-model="updateCustomerComputed.firstName"
                         :label= labelForm.firstName
-                        required
+                        :rules="[rules.required, rules.minTwoChar]"
                     >
                     </v-text-field>
                   </v-col>
@@ -30,7 +33,7 @@
                     <v-text-field
                         v-model="updateCustomerComputed.lastName"
                         :label= labelForm.lastName
-                        required
+                        :rules="[rules.required, rules.minTwoChar]"
                     >
                     </v-text-field>
                   </v-col>
@@ -40,6 +43,7 @@
                     <v-text-field
                         v-model="updateCustomerComputed.company"
                         :label=labelForm.company
+                        :rules="[rules.required, rules.minTwoChar]"
                     >
                     </v-text-field>
                   </v-col>
@@ -47,7 +51,7 @@
                     <v-text-field
                         v-model="updateCustomerComputed.email"
                         :label= labelForm.email
-                        required
+                        :rules="[rules.required, rules.email]"
                     >
                     </v-text-field>
                   </v-col>
@@ -55,7 +59,7 @@
                     <v-text-field
                         v-model="updateCustomerComputed.VATNumber"
                         :label= labelForm.VATNumber
-                        required
+                        :rules="[rules.required, rules.vatNumber]"
                     >
                     </v-text-field>
                   </v-col>
@@ -65,7 +69,7 @@
                     <v-text-field
                         v-model="updateCustomerComputed.address"
                         :label=labelForm.address
-                        required
+                        :rules="[rules.required, rules.minTwoChar]"
                     >
                     </v-text-field>
                   </v-col>
@@ -75,7 +79,9 @@
                     <v-text-field
                         v-model="updateCustomerComputed.zipCode"
                         :label= labelForm.zipCode
-                        required
+                        :rules="[rules.required, rules.zipCode]"
+                        counter
+                        maxlength="5"
                     >
                     </v-text-field>
                   </v-col>
@@ -83,7 +89,7 @@
                     <v-text-field
                         v-model="updateCustomerComputed.city"
                         :label= labelForm.city
-                        required
+                        :rules="[rules.required]"
                     >
                     </v-text-field>
                   </v-col>
@@ -93,7 +99,7 @@
                     <v-text-field
                         v-model="updateCustomerComputed.phone"
                         :label= labelForm.phone
-                        required
+                        :rules="[rules.required]"
                     >
                     </v-text-field>
                   </v-col>
@@ -111,8 +117,8 @@
                 >
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="show = false">Annuler</v-btn>
-                    <v-btn  text color="blue-grey darken-2" @click="checkAddCustomerForm()">Valider</v-btn>
+                    <v-btn color="blue darken-1" text @click=toggleDialog()>Annuler</v-btn>
+                    <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click="checkAddCustomerForm()">Valider</v-btn>
                   </v-card-actions>
                 </v-row>
               </v-container>
@@ -135,18 +141,7 @@ export default {
     this.show = this.value
   },
   computed: {
-    ...mapGetters(['apiRoutes']),
-    /* show: {
-      get () {
-        console.log(this.visible)
-        return this.visible
-      },
-      set (value) {
-        if(!value) {
-          this.$emit('close')
-        }
-      }
-    }, */
+    ...mapGetters(['apiRoutes', 'rules']),
     updateCustomerComputed: {
       get: function() {
         return this.updateCustomer
@@ -165,7 +160,7 @@ export default {
   methods: {
     toggleDialog () {
       this.show = !this.show
-      this.$emit('update:value', this.show)
+      this.$emit('close', this.show)
     },
     checkAddCustomerForm: function () {
         if(this.updateCustomerComputed.civility &&
@@ -184,7 +179,8 @@ export default {
 
       },
     updateCurrentCustomer: function () {
-      this.$axios.post(this.apiRoutes.updateCustomer(this.updateCustomerComputed.id), this.updateCustomerComputed).then(
+      if (this.$refs.updateCustomerForm.validate())
+        this.$axios.post(this.apiRoutes.updateCustomer(this.updateCustomerComputed.id), this.updateCustomerComputed).then(
           () => {
             this.toggleDialog()
           },

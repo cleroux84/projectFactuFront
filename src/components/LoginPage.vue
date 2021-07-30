@@ -93,7 +93,7 @@
                         <v-text-field
                             v-model="formAddUser.email"
                             :label="labelForm.email"
-                            :rules="[rules.required, rules.email]"
+                            :rules="[rules.required, rules.email ]"
                         >
                         </v-text-field>
                       </v-col>

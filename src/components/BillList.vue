@@ -44,7 +44,7 @@
         <template v-slot:item.benefit=" { item }">
           <v-list>
             <v-list-item v-for="benefitItem in item.benefit" v-bind:key="benefitItem.id">
-              <span>{{benefitItem.name}}</span><span> : </span><span>{{(benefitItem.quantity * benefitItem.unitPrice).toFixed(2)}} €HT</span>
+              <span>{{benefitItem.name}}</span>:<span>{{(benefitItem.quantity * benefitItem.unitPrice).toFixed(2)}} €HT</span>
             </v-list-item>
           </v-list>
         </template>
@@ -73,7 +73,7 @@
         </template>
       </v-data-table>
     </v-card-text>
-    <AddCustomerForm :visible="showAddCustomerForm" @close="closeAddCustomerForm"/>
+    <AddCustomerForm v-if="showAddCustomerForm" :visible="showAddCustomerForm" @close="closeAddCustomerForm"/>
     <AddBillForm v-if="showAddBillForm" :visible="showAddBillForm" @close="closeAddBillForm" />
   </v-container>
 </template>
@@ -86,10 +86,6 @@ import AddBillForm from "./AddBillForm";
 export default {
   name: "BillList",
   components: { AddCustomerForm, AddBillForm },
-  mounted() {
-    this.$store.dispatch('getAllCustomers');
-    this.$store.dispatch('getCurrentUser');
-  },
   computed: {
     ...mapGetters(['apiRoutes', 'allCustomers', 'currentUser']),
   },
@@ -109,7 +105,7 @@ export default {
     getAllBills() {
       this.$axios.get(this.apiRoutes.listBill).then(
           (response) => {
-            console.log(response.data)
+            // console.log(response.data)
             this.allBills = response.data
           }
       )
@@ -162,7 +158,6 @@ export default {
         {text: "Date d'émission", value: 'dateOfIssue', sortable: false, align: "center"},
         {text: "Numéro facture", value: 'billNumber', align: "center"},
         {text: "Entreprise", value: 'company', sortable: false, align: "center"},
-        // {text: "Nom du client", value: 'customerId', sortable: false},
         {text: "Période couverte", value: 'periodCovered', sortable: false, align: "center"},
         {text: "Prestations", value: 'benefit', sortable: false, align: "center"},
         {text: "Total HT", value: 'totalHT', sortable: false, align: "center"},

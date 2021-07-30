@@ -48,7 +48,7 @@
 
         </v-data-table>
       </v-card-text>
-    <add-customer-form :visible="showAddCustomerForm" @close="closeAddCustomerForm"></add-customer-form>
+    <add-customer-form v-if="showAddCustomerForm" :visible="showAddCustomerForm" @close="closeAddCustomerForm"></add-customer-form>
     <update-customer-form v-model="showUpdateCustomerForm" :updateCustomer="updateCustomer" @close="closeUpdateCustomerForm"></update-customer-form>
   </v-container>
 </template>
@@ -63,9 +63,6 @@ export default {
   name: "CustomerList",
   components: {UpdateCustomerForm, AddCustomerForm},
   mounted() {
-    this.$store.dispatch('getAllCustomers');
-    this.$store.dispatch('getCurrentUser');
-    // console.log(this.allCustomers)
   },
   computed: {
     ...mapGetters(['apiRoutes', 'allCustomers', 'currentUser']),
@@ -96,15 +93,14 @@ export default {
     }
   },
 
-  created() {
-
+  watch: {
   },
   methods: {
     closeAddCustomerForm() {
       this.showAddCustomerForm = false
     },
     closeUpdateCustomerForm() {
-      this.showAddCustomerForm = false
+      this.showUpdateCustomerForm = false
     },
     deleteCustomer(id) {
       this.$axios.delete(this.apiRoutes.deleteCustomer(id)).then(

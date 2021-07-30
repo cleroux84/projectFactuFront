@@ -5,7 +5,7 @@
         <v-text-field
             v-model="formBenefit.name"
             :label="labelForm.name"
-            :rules="[rules.required]"
+            :rules="[rules.required, rules.minTwoChar]"
         >
         </v-text-field>
       </v-col>
@@ -14,7 +14,7 @@
             v-model.number="formBenefit.quantity"
             type="number"
             :label="labelForm.quantity"
-            :rules="[rules.required]">
+            :rules="[rules.required, rules.intOnly]">
         >
         </v-text-field>
       </v-col>
@@ -22,7 +22,7 @@
         <v-text-field
             v-model.number="formBenefit.unitPrice"
             :label="labelForm.unitPrice"
-            :rules="[rules.charOnly]"
+            :rules="[rules.decimals]"
           >
         </v-text-field>
       </v-col>

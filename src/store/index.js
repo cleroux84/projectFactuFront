@@ -12,18 +12,20 @@ export default new Vuex.Store({
       rules: {
           required: value => !!value || 'Champs obligatoire.',
           zipCode: value => value && value.length === 5 || 'Le code postal doit être composé de 5 chiffres !',
-          min: v => (v && v.length >= 6) || "Minimum 6 characters",
+          min: v => (v && v.length >= 6) || "Minimum 6 caractères",
+          minTwoChar: v => (v && v.length >= 2) || "Minimum 2 caractères",
           email: value => {
               const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
               return pattern.test(value) || 'Entrez une adresse mail valide'
           },
           vatNumber: value => value && value.length === 13 || 'Le numéro de TVA Intracommunautaire doit être composé de 11 chiffres',
           phone: value => value && value.length === 10 || 'Le numéro de téléphone doit être composé de 10 chiffres',
-          minimumCharacter: value => value && value.length >= 2 || 'Nombre de caractère minimum requis',
-          charOnly: value => {
+          decimals: value => {
               const pattern = /^[1-9]\d*(\.\d+)?$/
               return pattern.test(value) || 'Entrez un chiffre'
-              // return Number.isInteger(value) || 'Entrez un chiffre'
+          },
+          intOnly: value => {
+              return Number.isInteger(value) || 'Entrez un nombre entier'
           }
       }
   },

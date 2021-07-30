@@ -25,7 +25,7 @@
                     <v-text-field
                         v-model="formAddCustomer.firstName"
                         :label= labelForm.firstName
-                        :rules="[rules.required, rules.minimumCharacter]"
+                        :rules="[rules.required, rules.minTwoChar]"
                     >
                     </v-text-field>
                   </v-col>
@@ -33,7 +33,7 @@
                     <v-text-field
                         v-model="formAddCustomer.lastName"
                         :label= labelForm.lastName
-                        :rules="[rules.required, rules.minimumCharacter]"
+                        :rules="[rules.required, rules.minTwoChar]"
                     >
                     </v-text-field>
                   </v-col>
@@ -43,7 +43,7 @@
                     <v-text-field
                         v-model="formAddCustomer.company"
                         :label=labelForm.company
-                        :rules="[rules.required]"
+                        :rules="[rules.required, rules.minTwoChar]"
                     >
                     </v-text-field>
                   </v-col>
@@ -69,7 +69,7 @@
                     <v-text-field
                         v-model="formAddCustomer.address"
                         :label=labelForm.address
-                        :rules="[rules.required, rules.minimumCharacter]"
+                        :rules="[rules.required, rules.minTwoChar]"
                     >
                     </v-text-field>
                   </v-col>
@@ -109,9 +109,6 @@
                     <v-text-field
                         v-model="formAddCustomer.phone2"
                         :label= labelForm.phone2
-                        :rules="[rules.phone]"
-                        counter
-                        maxlength="10"
                     >
                     </v-text-field>
                   </v-col>
@@ -123,7 +120,7 @@
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="show = false">Annuler</v-btn>
-                    <v-btn  text color="blue-grey darken-2" @click="checkAddCustomerForm()">Valider</v-btn>
+                    <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click="checkAddCustomerForm()">Valider</v-btn>
                   </v-card-actions>
                 </v-row>
               </v-container>
@@ -175,10 +172,12 @@ export default {
 
     },
   addNewCustomer: function () {
+    if (this.$refs.addCustomerForm.validate())
       this.$axios.post(this.apiRoutes.addCustomer, this.formAddCustomer).then(
           () => {
             this.resetForm()
             this.show = false;
+            this.$store.dispatch('getAllCustomers')
           },
           response => {
             console.log(response)
@@ -211,7 +210,7 @@ export default {
         civility : "Civilité*",
         firstName: "Nom*",
         lastName: "Prénom*",
-        company: "Entreprise",
+        company: "Entreprise*",
         phone: "Téléphone*",
         phone2: "Téléphone 2",
         VATNumber: "Numéro TVA*",

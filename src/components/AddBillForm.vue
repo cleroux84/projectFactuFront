@@ -19,6 +19,7 @@
                       item-value="id"
                       item-text="company"
                       v-model="formAddBill.customerId"
+                      :rules="[rules.required]"
                       >
                     </v-autocomplete>
                   </v-col>
@@ -29,6 +30,7 @@
                     <v-text-field
                         v-model="formAddBill.periodCovered"
                         :label="labelForm.periodCovered"
+                        :rules="[rules.required, rules.minTwoChar]"
                     >
                     </v-text-field>
                   </v-col>
@@ -90,7 +92,6 @@ import FormBenefit from "./FormBenefit";
 export default {
   name: "AddBillForm.vue",
   mounted() {
-    this.$store.dispatch('getAllCustomers');
   },
   components: { FormBenefit },
   computed: {
@@ -163,7 +164,7 @@ export default {
       if (this.$refs.addBillForm.validate())
       this.$axios.post(this.apiRoutes.addBill, this.formAddBill).then(
           () => {
-            console.log(this.formAddBill)
+            // console.log(this.formAddBill)
             this.show = false
       },
           () => {

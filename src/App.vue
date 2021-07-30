@@ -25,6 +25,7 @@ export default {
   name: 'App',
   mounted() {
     this.$store.dispatch('getCurrentUser')
+    this.$store.dispatch('getAllCustomers')
   },
   computed: {
     ...mapGetters(['currentUser'])
