@@ -25,7 +25,7 @@
                     <v-text-field
                         v-model="formAddCustomer.firstName"
                         :label= labelForm.firstName
-                        :rules="[rules.required]"
+                        :rules="[rules.required, rules.minimumCharacter]"
                     >
                     </v-text-field>
                   </v-col>
@@ -33,7 +33,7 @@
                     <v-text-field
                         v-model="formAddCustomer.lastName"
                         :label= labelForm.lastName
-                        :rules="[rules.required]"
+                        :rules="[rules.required, rules.minimumCharacter]"
                     >
                     </v-text-field>
                   </v-col>
@@ -59,7 +59,7 @@
                     <v-text-field
                         v-model="formAddCustomer.VATNumber"
                         :label= labelForm.VATNumber
-                        :rules="[rules.required]"
+                        :rules="[rules.required, rules.vatNumber]"
                     >
                     </v-text-field>
                   </v-col>
@@ -69,7 +69,7 @@
                     <v-text-field
                         v-model="formAddCustomer.address"
                         :label=labelForm.address
-                        :rules="[rules.required]"
+                        :rules="[rules.required, rules.minimumCharacter]"
                     >
                     </v-text-field>
                   </v-col>
@@ -79,7 +79,7 @@
                     <v-text-field
                         v-model="formAddCustomer.zipCode"
                         :label= labelForm.zipCode
-                        :rules="[rules.required]"
+                        :rules="[rules.required, rules.zipCode]"
                         counter
                         maxlength="5"
                     >
@@ -99,7 +99,7 @@
                     <v-text-field
                         v-model="formAddCustomer.phone"
                         :label= labelForm.phone
-                        :rules="[rules.required]"
+                        :rules="[rules.required, rules.phone]"
                         counter
                         maxlength="10"
                     >
@@ -109,6 +109,7 @@
                     <v-text-field
                         v-model="formAddCustomer.phone2"
                         :label= labelForm.phone2
+                        :rules="[rules.phone]"
                         counter
                         maxlength="10"
                     >

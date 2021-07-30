@@ -5,7 +5,7 @@
         <v-text-field
             v-model="formBenefit.name"
             :label="labelForm.name"
-            :rules="[rules.required, rules.minimumCharacter]"
+            :rules="[rules.required]"
         >
         </v-text-field>
       </v-col>
@@ -14,7 +14,7 @@
             v-model.number="formBenefit.quantity"
             type="number"
             :label="labelForm.quantity"
-            :rules="[rules.required, rules.charOnly]">
+            :rules="[rules.required]">
         >
         </v-text-field>
       </v-col>

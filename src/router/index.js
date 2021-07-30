@@ -5,6 +5,7 @@ import CustomerList from "../components/CustomerList";
 // import BillList from "../components/BillList";
 import UserHome from "../components/UserHome";
 import BillList from "../components/BillList";
+import LoginPage from "../components/LoginPage";
 
 Vue.use(VueRouter)
 
@@ -13,6 +14,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: UserHome
+  },
+  {
+    path: '/login',
+    name: 'LoginPage',
+    component: LoginPage
   },
   {
     path: '/customerList',

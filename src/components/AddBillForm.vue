@@ -19,7 +19,6 @@
                       item-value="id"
                       item-text="company"
                       v-model="formAddBill.customerId"
-                      :rules="[rules.required]"
                       >
                     </v-autocomplete>
                   </v-col>
@@ -30,7 +29,6 @@
                     <v-text-field
                         v-model="formAddBill.periodCovered"
                         :label="labelForm.periodCovered"
-                        :rules="rules.required"
                     >
                     </v-text-field>
                   </v-col>
