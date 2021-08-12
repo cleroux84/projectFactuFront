@@ -23,7 +23,12 @@ export default {
     getAllUsers: '/getUserList',
     getCurrentUser: function (id) {
         return('/getCurrentUser/' + id)
-    }
+    },
+
+    testUser: function (id) {
+        return('/getUserTest/' + id)
+    },
+    addUser: '/addUser'
 
 
 }

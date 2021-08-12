@@ -5,15 +5,44 @@
       <v-spacer></v-spacer>
       <h5>Connecté en tant que : </h5>
       <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
-
     </v-card-title>
-      <v-btn  outlined style="margin-right: 20px" >
-        <router-link class="linkBtn" to="/">Accueil</router-link>
-      </v-btn>
-      <v-btn style="margin-right: 20px" outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
-      <v-btn  outlined style="margin-right: 20px" >
-        <router-link class="linkBtn" to="/BillList">Liste des factures</router-link>
-      </v-btn>
+    <v-card-actions>
+      <div class="text-center">
+        <v-btn class="ma-2" outlined >
+          <router-link class="linkBtn" to="/">Accueil</router-link>
+          <v-icon
+              right
+              dark
+          >
+            mdi-home
+          </v-icon>
+        </v-btn>
+        <v-btn
+            class="ma-2"
+            outlined color="blue-grey darken-2"
+            @click="showAddCustomerForm=true"
+        >
+          Nouveau Client
+          <v-icon
+              right
+              dark
+          >
+            mdi-factory
+          </v-icon>
+        </v-btn>
+        <v-btn class="ma-2" outlined color="blue-grey darken-2">
+          <router-link class="linkBtn" to="/BillList">
+            Liste des factures
+          </router-link>
+          <v-icon
+              right
+              dark
+          >
+            mdi-view-list
+          </v-icon>
+        </v-btn>
+      </div>
+    </v-card-actions>
 <!--      <v-dialog-->
 <!--          transition="dialog-top-transition"-->
 <!--          max-width="600"-->
@@ -41,9 +70,33 @@
         >
           <template v-slot:item.actions="{ item }">
             <v-row>
-              <v-icon class="material-icons" color="red" @click="deleteCustomer(item.id)">mdi-delete</v-icon>
-              <v-icon class="material-icons" color="red" @click="openUpdateCustomer(item)">mdi-account-edit-outline</v-icon>
+              <v-icon class="material-icons" color="black" @click="deleteCustomer(item.id)">mdi-delete</v-icon>
+              <v-icon class="material-icons" color="black" @click="openUpdateCustomer(item)">mdi-account-edit-outline</v-icon>
             </v-row>
+<!--            <div class="my-1">-->
+<!--              <v-row>-->
+<!--                <v-btn-->
+<!--                    class="material-icons"-->
+<!--                    color="black"-->
+<!--                    @click="deleteCustomer(item.id)"-->
+<!--                    fab-->
+<!--                    x-small-->
+<!--                    dark-->
+<!--                >-->
+<!--                  <v-icon>mdi-delete</v-icon>-->
+<!--                </v-btn>-->
+<!--                <v-btn-->
+<!--                    class="material-icons"-->
+<!--                    color="black"-->
+<!--                    fab-->
+<!--                    @click="openUpdateCustomer(item)"-->
+<!--                    x-small-->
+<!--                    dark-->
+<!--                >-->
+<!--                  <v-icon>mdi-account-edit-outline</v-icon>-->
+<!--                </v-btn>-->
+<!--              </v-row>-->
+<!--            </div>-->
           </template>
 
         </v-data-table>

@@ -2,10 +2,10 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 // import Home from '../views/Home.vue'
 import CustomerList from "../components/CustomerList";
-// import BillList from "../components/BillList";
 import UserHome from "../components/UserHome";
 import BillList from "../components/BillList";
 import LoginPage from "../components/LoginPage";
+import {authGuard} from "../auth/authGuard";
 
 Vue.use(VueRouter)
 
@@ -28,7 +28,8 @@ const routes = [
   {
     path: '/billList',
     name: 'BillList',
-    component: BillList
+    component: BillList,
+    beforeEnter: authGuard
   },
 
   {

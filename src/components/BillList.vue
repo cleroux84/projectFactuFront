@@ -3,16 +3,60 @@
     <h1>Liste des factures</h1>
     <v-card-title>
       <v-spacer></v-spacer>
-      <h5>Connecté en tant que : </h5>
-      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+<!--      <h5>Connecté en tant que : </h5>-->
+<!--      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>-->
 
     </v-card-title>
-    <v-btn  outlined style="margin-right: 20px" >
-      <router-link class="linkBtn" to="/">Accueil</router-link>
-    </v-btn>
-    <v-btn style="margin-right: 20px" outlined color="blue-grey darken-2" @click="showAddBillForm = true">Créer une facture</v-btn>
-    <v-btn style="margin-right: 20px" outlined color="blue-grey darken-2" @click="showAddCustomerForm=true">Ajouter un client</v-btn>
-    <v-btn outlined color="blue-grey darken-2"><router-link class="linkBtn" to="/customerList">Liste des clients</router-link></v-btn>
+    <v-card-actions>
+      <div class="text-center">
+        <v-btn class="ma-2" outlined >
+          <router-link class="linkBtn" to="/">Accueil</router-link>
+          <v-icon
+              right
+              dark
+          >
+            mdi-home
+          </v-icon>
+        </v-btn>
+        <v-btn class="ma-2" outlined color="blue-grey darken-2">
+          <router-link class="linkBtn text--darken-3" to="/customerList">
+            Liste des clients
+          </router-link>
+          <v-icon
+              right
+              dark
+          >
+            mdi-folder-account
+          </v-icon>
+        </v-btn>
+        <v-btn
+            class="ma-2"
+            outlined color="blue-grey darken-2"
+            @click="showAddBillForm = true"
+        >
+          Nouvelle Facture
+          <v-icon
+              right
+              dark
+          >
+            mdi-calculator
+          </v-icon>
+        </v-btn>
+        <v-btn
+            class="ma-2"
+            outlined color="blue-grey darken-2"
+            @click="showAddCustomerForm=true"
+        >
+          Nouveau Client
+          <v-icon
+              right
+              dark
+          >
+            mdi-factory
+          </v-icon>
+        </v-btn>
+      </div>
+    </v-card-actions>
     <v-card-title>
       <v-spacer></v-spacer>
       <v-text-field
@@ -102,8 +146,15 @@ export default {
     closeAddCustomerForm() {
       this.showAddCustomerForm = false
     },
-    getAllBills() {
-      this.$axios.get(this.apiRoutes.listBill).then(
+
+    async getAllBills() {
+      const accessToken = await this.$auth.getTokenSilently()
+      console.log(accessToken)
+      this.$axios.get(this.apiRoutes.listBill, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
           (response) => {
             // console.log(response.data)
             this.allBills = response.data
@@ -173,6 +224,9 @@ export default {
 <style>
 .linkBtn{
   text-decoration: none;
+}
+.v-application a{
+ color: black !important;
 }
 table span {
   width: 80px;

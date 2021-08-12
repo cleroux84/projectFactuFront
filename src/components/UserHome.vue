@@ -1,17 +1,49 @@
 <template>
   <v-container>
-    <h1>Welcome</h1>
+
+    <template>
+      <div class="nav-container mb-3">
+        <nav class="navbar navbar-expand-md navbar-light bg-light">
+          <div class="container">
+            <v-btn v-if="this.role === 1" @click="login">Nouvel utilisateur</v-btn>
+            <h3 v-if="$auth.isAuthenticated">Bienvenue, {{ $auth.user.name }}</h3>
+          </div>
+        </nav>
+      </div>
+    </template>
+
+<!--    <h1>Welcome</h1>-->
     <v-card-title>
     <v-spacer></v-spacer>
-      <h5>Connecté en tant que : </h5>
-      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+<!--      <h5>Connecté en tant que : </h5>-->
+<!--      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>-->
     </v-card-title>
-    <v-btn  outlined style="margin-right: 20px" >
-      <router-link class="linkBtn" to="/BillList">Liste des factures</router-link>
-    </v-btn>
-    <v-btn  outlined style="margin-right: 20px" >
-      <router-link class="linkBtn" to="/CustomerList">Liste des clients</router-link>
-    </v-btn>
+    <v-card-actions>
+      <div class="text-center">
+        <v-btn class="ma-2" outlined color="blue-grey darken-2">
+          <router-link class="linkBtn" to="/BillList">
+            Liste des factures
+          </router-link>
+          <v-icon
+              right
+              dark
+          >
+            mdi-view-list
+          </v-icon>
+        </v-btn>
+        <v-btn class="ma-2" outlined color="blue-grey darken-2">
+          <router-link class="linkBtn text--darken-3" to="/customerList">
+            Liste des clients
+          </router-link>
+          <v-icon
+              right
+              dark
+          >
+            mdi-folder-account
+          </v-icon>
+        </v-btn>
+      </div>
+    </v-card-actions>
     <v-card-title>
       <v-spacer></v-spacer>
       <v-text-field
@@ -57,6 +89,8 @@ export default {
   },
   created() {
     this.getAllUsers()
+    console.log(this.$auth.user)
+    // this.test(1)
   },
   methods: {
     getAllUsers() {
@@ -65,6 +99,35 @@ export default {
             this.allUsers = response.data
           }
       )
+    },
+    test(id) {
+      this.$axios.get(this.apiRoutes.testUser(id)).then(
+          response => {
+            console.log("TEST :")
+            console.log(response.data)
+          }
+      )
+    },
+
+    // async test(id) {
+    //   if(this.$auth.isAuthenticated) {
+    //     const accessToken = await this.$auth.getTokenSilently()
+    //     console.log(accessToken)
+    //     this.$axios.get(this.apiRoutes.testUser(id), {
+    //       headers: {
+    //         Authorization: `Bearer ${accessToken}`
+    //       }
+    //     }).then(
+    //         response => {
+    //           console.log("user en dur :")
+    //           console.log(response.data)
+    //         }
+    //     )
+    //   }
+    // },
+
+    login() {
+      this.$auth.loginWithRedirect();
     },
     // getCurrentUser() {
     //   this.$axios.get(this.apiRoutes.getCurrentUser(1).then(
@@ -89,6 +152,7 @@ export default {
   },
   data() {
     return {
+      role: 0,
       allUsers: [],
       search: "",
       headers: [

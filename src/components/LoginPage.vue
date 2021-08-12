@@ -9,54 +9,54 @@
               background-color="blue-grey darken-2"
               icons-and-text
               dark grow>
-            <v-tabs-slider color="blue-grey darken-2"></v-tabs-slider>
-            <v-tab v-for="i in tabs" :key="i.name">
-              <v-icon large>{{ i.icon }}</v-icon>
-              <div class="caption py-1">{{ i.name }}</div>
-            </v-tab>
-            <v-tab-item>
-              <v-card class="px-4">
-                <v-card-text>
-                  <v-form ref="loginForm" v-model="valid" lazy-validation>
-                    <v-row>
-                      <v-col cols="12">
-                        <v-text-field
-                            v-model="formLogin.email"
-                            :label="labelForm.email"
-                            :rules="[rules.required, rules.email]"
-                        >
-                        </v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field
-                            v-model="formLogin.password"
-                            :append-icon="show1?'mdi-eye':'mdi-eye-off'"
-                            :type="show1 ? 'text' : 'password'"
-                            name="input-10-1"
-                            :label="labelForm.password"
-                            :rules="[rules.min, rules.required]"
-                            hint="Au moins 6 caractères"
-                            counter
-                            @click:append="show1 = !show1">
-                        </v-text-field>
-                      </v-col>
-                      <v-col class="d-flex" cols="12" sm="6" xsm="12">
-                      </v-col>
-                      <v-spacer></v-spacer>
-                      <v-col class="d-flex" cols="12" sm="3" xsm="12" align-end>
-                        <v-btn
-                            x-large block :disabled="!valid"
-                            color="blue-grey darken-2" dark
-                            @click="validate"
-                        >
-                          Valider
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                  </v-form>
-                </v-card-text>
-              </v-card>
-            </v-tab-item>
+<!--            <v-tabs-slider color="blue-grey darken-2"></v-tabs-slider>-->
+<!--            <v-tab v-for="i in tabs" :key="i.name">-->
+<!--              <v-icon large>{{ i.icon }}</v-icon>-->
+<!--              <div class="caption py-1">{{ i.name }}</div>-->
+<!--            </v-tab>-->
+<!--            <v-tab-item>-->
+<!--              <v-card class="px-4">-->
+<!--                <v-card-text>-->
+<!--                  <v-form ref="loginForm" v-model="valid" lazy-validation>-->
+<!--                    <v-row>-->
+<!--                      <v-col cols="12">-->
+<!--                        <v-text-field-->
+<!--                            v-model="formLogin.email"-->
+<!--                            :label="labelForm.email"-->
+<!--                            :rules="[rules.required, rules.email]"-->
+<!--                        >-->
+<!--                        </v-text-field>-->
+<!--                      </v-col>-->
+<!--                      <v-col cols="12">-->
+<!--                        <v-text-field-->
+<!--                            v-model="formLogin.password"-->
+<!--                            :append-icon="show1?'mdi-eye':'mdi-eye-off'"-->
+<!--                            :type="show1 ? 'text' : 'password'"-->
+<!--                            name="input-10-1"-->
+<!--                            :label="labelForm.password"-->
+<!--                            :rules="[rules.min, rules.required]"-->
+<!--                            hint="Au moins 6 caractères"-->
+<!--                            counter-->
+<!--                            @click:append="show1 = !show1">-->
+<!--                        </v-text-field>-->
+<!--                      </v-col>-->
+<!--                      <v-col class="d-flex" cols="12" sm="6" xsm="12">-->
+<!--                      </v-col>-->
+<!--                      <v-spacer></v-spacer>-->
+<!--                      <v-col class="d-flex" cols="12" sm="3" xsm="12" align-end>-->
+<!--                        <v-btn-->
+<!--                            x-large block :disabled="!valid"-->
+<!--                            color="blue-grey darken-2" dark-->
+<!--                            @click="validate"-->
+<!--                        >-->
+<!--                          Valider-->
+<!--                        </v-btn>-->
+<!--                      </v-col>-->
+<!--                    </v-row>-->
+<!--                  </v-form>-->
+<!--                </v-card-text>-->
+<!--              </v-card>-->
+<!--            </v-tab-item>-->
             <v-tab-item>
               <v-card class="px-4">
                 <v-card-text>
@@ -91,9 +91,10 @@
                       </v-col>
                       <v-col cols="6">
                         <v-text-field
-                            v-model="formAddUser.email"
+                            v-model=$auth.user.email
                             :label="labelForm.email"
                             :rules="[rules.required, rules.email ]"
+                            disabled
                         >
                         </v-text-field>
                       </v-col>
@@ -137,37 +138,37 @@
                         >
                         </v-text-field>
                       </v-col>
-                      <v-col cols="6">
-                        <v-text-field
-                            v-model="formAddUser.password"
-                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                            :rules="[rules.required, rules.min]"
-                            :type="show1 ? 'text' : 'password'"
-                            name="input-10-1"
-                            :label="labelForm.password"
-                            hint="At least 6 characters"
-                            counter
-                            @click:append="show1 = !show1"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="6">
-                        <v-text-field
-                            block v-model="formAddUser.verifyPassword"
-                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                            :type="show1 ? 'text' : 'password'"
-                            name="input-10-1"
-                            :label="labelForm.verifyPassword"
-                            counter
-                            @click:append="show1 = !show1">
-                        </v-text-field>
-                      </v-col>
+<!--                      <v-col cols="6">-->
+<!--                        <v-text-field-->
+<!--                            v-model="formAddUser.password"-->
+<!--                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"-->
+<!--                            :rules="[rules.required, rules.min]"-->
+<!--                            :type="show1 ? 'text' : 'password'"-->
+<!--                            name="input-10-1"-->
+<!--                            :label="labelForm.password"-->
+<!--                            hint="At least 6 characters"-->
+<!--                            counter-->
+<!--                            @click:append="show1 = !show1"-->
+<!--                        ></v-text-field>-->
+<!--                      </v-col>-->
+<!--                      <v-col cols="6">-->
+<!--                        <v-text-field-->
+<!--                            block v-model="formAddUser.verifyPassword"-->
+<!--                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"-->
+<!--                            :type="show1 ? 'text' : 'password'"-->
+<!--                            name="input-10-1"-->
+<!--                            :label="labelForm.verifyPassword"-->
+<!--                            counter-->
+<!--                            @click:append="show1 = !show1">-->
+<!--                        </v-text-field>-->
+<!--                      </v-col>-->
                       <v-spacer></v-spacer>
                       <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
                         <v-btn
                             x-large block
                             :disabled="!valid"
                             color="blue-grey darken-2" dark
-                            @click="validate"
+                            @click="composeUserFormBeforeBankExist"
                         >
                           Valider
                         </v-btn>
@@ -209,7 +210,23 @@ export default {
     // resetValidation() {
     //   this.$refs.form.resetValidation();
     // }
+
+    composeUserFormBeforeBankExist: function() {
+      this.formAddUser.bankId = 2
+      this.formAddUser.email = this.$auth.user.email
+      this.addNewUser()
+    },
+
+    addNewUser: function () {
+      this.$axios.post(this.apiRoutes.addUser, this.formAddUser).then(
+          () => {
+            console.log(this.formAddUser)
+          },
+          () => console.log("error")
+      )
+    }
   },
+
   data: () => ({
     formAddUser: {
       civility: "",
@@ -222,7 +239,8 @@ export default {
       zipCode: "",
       siret: "",
       password: "",
-      verifyPassword: ""
+      verifyPassword: "",
+      bankId:""
     },
     formLogin: {
       email: "",
