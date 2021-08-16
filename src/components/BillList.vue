@@ -105,7 +105,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-icon
                   class="material-icons"
-                  @click="exportBillPdf(item.id)"
+                  @click="exportBillPdf(item.id, currentUser.email)"
                   v-bind="attrs"
                   v-on="on"
               >
@@ -181,8 +181,8 @@ export default {
       )
     },
 
-    exportBillPdf(id) {
-      this.$axios.get(this.apiRoutes.exportBillPdf(id), { responseType: 'blob'}).then(response => {
+    exportBillPdf(id, user) {
+      this.$axios.get(this.apiRoutes.exportBillPdf(id, user), { responseType: 'blob'}).then(response => {
         return new Blob([response.data], {type: 'application/pdf'});
       }).then(blob => {
         let objectUrl = URL.createObjectURL(blob);

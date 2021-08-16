@@ -18,8 +18,8 @@ export default {
     //     return('/deleteBill/'  + id)
     // },
     addBill: '/addBill',
-    exportBillPdf: function (id) {
-        return('/export/bill.pdf/' + id)
+    exportBillPdf: function (id, email) {
+        return('/export/bill.pdf/' + id + '/' + email)
     },
 
     //User
