@@ -212,8 +212,11 @@ export default {
     // }
 
     composeUserFormBeforeBankExist: function() {
-      this.formAddUser.bankId = 2
+      this.formAddUser.authId = this.$auth.user.sub
+      this.formAddUser.bankId = 1
+      this.formAddUser.role = 0
       this.formAddUser.email = this.$auth.user.email
+      console.log(this.formAddUser)
       this.addNewUser()
     },
 
@@ -238,9 +241,9 @@ export default {
       city: "",
       zipCode: "",
       siret: "",
-      password: "",
-      verifyPassword: "",
-      bankId:""
+      bankId:"",
+      role: "",
+      authId: ""
     },
     formLogin: {
       email: "",

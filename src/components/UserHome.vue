@@ -5,7 +5,6 @@
       <div class="nav-container mb-3">
         <nav class="navbar navbar-expand-md navbar-light bg-light">
           <div class="container">
-            <v-btn v-if="this.role === 1" @click="login">Nouvel utilisateur</v-btn>
             <h3 v-if="$auth.isAuthenticated">Bienvenue, {{ $auth.user.name }}</h3>
           </div>
         </nav>
@@ -20,6 +19,11 @@
     </v-card-title>
     <v-card-actions>
       <div class="text-center">
+        <v-btn class="ma-2" outlined color="blue-grey darken-2">
+          <router-link class="linkBtn" to="/Profile">
+            Mon Profile
+          </router-link>
+        </v-btn>
         <v-btn class="ma-2" outlined color="blue-grey darken-2">
           <router-link class="linkBtn" to="/BillList">
             Liste des factures
@@ -44,52 +48,66 @@
         </v-btn>
       </div>
     </v-card-actions>
-    <v-card-title>
-      <v-spacer></v-spacer>
-      <v-text-field
-          v-model="search"
-          append-icon="mdi-account-search"
-          search bar
-          single-line
-          hide-details
-      ></v-text-field>
-    </v-card-title>
-    <v-divider></v-divider>
 
-    <v-card-text>
-      <v-data-table
-          :headers="headers"
-          :items="allUsers"
-          :custom-filter="customSearch"
-          :search="search"
-          sort-by="firstName"
-      >
-        <template v-slot:item.actions="{ item }">
-          <v-row>
-            <v-icon class="material-icons" color="red" @click="deleteCustomer(item.id)">mdi-delete</v-icon>
-            <v-icon class="material-icons" color="red" @click="openUpdateCustomer(item)">mdi-account-edit-outline</v-icon>
-          </v-row>
-        </template>
+<!--    TODO : si role admin-->
+    <div v-if="$auth.isAuthenticated">
+        {{ currentUser.email }}
+      <div>
+      </div>
+    </div>
+    <div v-else>
+      Aucune connexion
+    </div>
+    <div v-if="this.currentUser.role === 1">
+      <v-card-title>
+        <v-spacer></v-spacer>
+        <v-text-field
+            v-model="search"
+            append-icon="mdi-account-search"
+            search bar
+            single-line
+            hide-details
+        ></v-text-field>
+      </v-card-title>
+      <v-divider></v-divider>
 
-      </v-data-table>
-    </v-card-text>
+      <v-card-text>
+        <v-data-table
+            :headers="headers"
+            :items="allUsers"
+            :custom-filter="customSearch"
+            :search="search"
+            sort-by="firstName"
+        >
+          <template v-slot:item.actions="{ item }">
+            <v-row>
+              <v-icon class="material-icons" color="red" @click="deleteCustomer(item.id)">mdi-delete</v-icon>
+              <v-icon class="material-icons" color="red" @click="openUpdateCustomer(item)">mdi-account-edit-outline</v-icon>
+            </v-row>
+          </template>
+
+        </v-data-table>
+      </v-card-text>
+    </div>
+
   </v-container>
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: "UserHome",
   mounted() {
-    this.$store.dispatch('getCurrentUser')
+    // this.$store.dispatch('getCurrentUser')
   },
   computed: {
+    ...mapActions(['getCurrentUser']),
     ...mapGetters(['apiRoutes', 'currentUser'])
   },
   created() {
+    this.$store.dispatch('getCurrentUser', this.$auth.user.email)
     this.getAllUsers()
-    console.log(this.$auth.user)
     // this.test(1)
   },
   methods: {
@@ -100,14 +118,7 @@ export default {
           }
       )
     },
-    test(id) {
-      this.$axios.get(this.apiRoutes.testUser(id)).then(
-          response => {
-            console.log("TEST :")
-            console.log(response.data)
-          }
-      )
-    },
+
 
     // async test(id) {
     //   if(this.$auth.isAuthenticated) {
@@ -156,6 +167,7 @@ export default {
       allUsers: [],
       search: "",
       headers: [
+        { text: '', sortable: false, value: 'actions'},
         { text: 'Civilité', align: 'start', sortable: false, value: 'civility'},
         { text: 'Prénom', value: 'firstName' },
         { text: 'Nom', value: 'lastName', },

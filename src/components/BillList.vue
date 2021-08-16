@@ -3,8 +3,8 @@
     <h1>Liste des factures</h1>
     <v-card-title>
       <v-spacer></v-spacer>
-<!--      <h5>Connecté en tant que : </h5>-->
-<!--      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>-->
+      <h5>Connecté en tant que : </h5>
+      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
 
     </v-card-title>
     <v-card-actions>
@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import AddCustomerForm from "./AddCustomerForm";
 import AddBillForm from "./AddBillForm";
 
@@ -132,10 +132,14 @@ export default {
   components: { AddCustomerForm, AddBillForm },
   computed: {
     ...mapGetters(['apiRoutes', 'allCustomers', 'currentUser']),
+    ...mapActions(['getCurrentUser'])
   },
 
   created() {
-    this.getAllBills();
+    this.$store.dispatch('getCurrentUser', this.$auth.user.email)
+    if (this.currentUser.role === 0)
+    this.getAllBillsByUser();
+    else this.getAllBills()
   },
 
   methods: {
@@ -145,6 +149,21 @@ export default {
     },
     closeAddCustomerForm() {
       this.showAddCustomerForm = false
+    },
+
+    async getAllBillsByUser() {
+      const accessToken = await this.$auth.getTokenSilently()
+      console.log(accessToken)
+      this.$axios.get(this.apiRoutes.listBillByUser(this.currentUser.id), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          (response) => {
+            // console.log(response.data)
+            this.allBills = response.data
+          }
+      )
     },
 
     async getAllBills() {

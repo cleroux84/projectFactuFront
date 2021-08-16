@@ -3,8 +3,8 @@
     <h1>Liste des clients</h1>
     <v-card-title>
       <v-spacer></v-spacer>
-      <h5>Connecté en tant que : </h5>
-      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+<!--      <h5>Connecté en tant que : </h5>-->
+<!--      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>-->
     </v-card-title>
     <v-card-actions>
       <div class="text-center">
@@ -118,7 +118,7 @@ export default {
   mounted() {
   },
   computed: {
-    ...mapGetters(['apiRoutes', 'allCustomers', 'currentUser']),
+    ...mapGetters(['apiRoutes', 'allCustomers'/*, 'currentUser'*/]),
   },
   component: {
     AddCustomerForm, UpdateCustomerForm

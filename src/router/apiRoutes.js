@@ -10,6 +10,9 @@ export default {
     },
 
     // Bill
+    listBillByUser: function (userId) {
+        return('/listBillByUser/' +userId)
+    },
     listBill: '/listBill',
     // deleteBill: function (id) {
     //     return('/deleteBill/'  + id)
@@ -21,8 +24,8 @@ export default {
 
     //User
     getAllUsers: '/getUserList',
-    getCurrentUser: function (id) {
-        return('/getCurrentUser/' + id)
+    getCurrentUser: function (email) {
+        return('/getCurrentUser/' + email)
     },
 
     testUser: function (id) {

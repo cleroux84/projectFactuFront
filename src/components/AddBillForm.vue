@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 import FormBenefit from "./FormBenefit";
 
 export default {
@@ -95,7 +95,8 @@ export default {
   },
   components: { FormBenefit },
   computed: {
-    ...mapGetters(['apiRoutes', 'allCustomers', 'rules']),
+    ...mapGetters(['apiRoutes', 'allCustomers', 'rules', 'currentUser']),
+    ...mapActions(['getCurrentUser']),
     show: {
       get () {
         return this.visible
@@ -157,6 +158,7 @@ export default {
 
     composeAddBillForm: function () {
       this.formAddBill.created = Date.now()
+      this.formAddBill.userId = this.currentUser.id
       this.addBill()
     },
 

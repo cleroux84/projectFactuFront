@@ -47,8 +47,8 @@ export default new Vuex.Store({
             }
         )
     },
-    getCurrentUser({rootState, commit}) {
-        Vue.axios.get(rootState.apiRoutes.getCurrentUser(1)).then(
+      getCurrentUser({rootState, commit}, authId) {
+        Vue.axios.get(rootState.apiRoutes.getCurrentUser(authId)).then(
             response => {
                 commit('setCurrentUser', response.data)
             }

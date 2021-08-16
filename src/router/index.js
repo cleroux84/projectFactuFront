@@ -6,6 +6,8 @@ import UserHome from "../components/UserHome";
 import BillList from "../components/BillList";
 import LoginPage from "../components/LoginPage";
 import {authGuard} from "../auth/authGuard";
+import Profile from "../components/Profile";
+// import HomePage from "../components/HomePage";
 
 Vue.use(VueRouter)
 
@@ -15,11 +17,22 @@ const routes = [
     name: 'Home',
     component: UserHome
   },
+  // {
+  //   path: '/',
+  //   name: 'home',
+  //   component: HomePage
+  // },
   {
     path: '/login',
     name: 'LoginPage',
     component: LoginPage
   },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile
+  },
+
   {
     path: '/customerList',
     name: 'CustomerList',
@@ -43,6 +56,8 @@ const routes = [
 ]
 
 const router = new VueRouter({
+  mode: 'history',
+  base: process.env.BASE_URL,
   routes
 })
 
