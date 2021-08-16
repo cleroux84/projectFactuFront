@@ -54,8 +54,30 @@
                 <v-expansion-panel-header>
                   Coordonnées bancaires
                 </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  banque adresse coordonnées
+                <v-expansion-panel-content v-if="!loading">
+                  <div>{{ myUser.bank.name }}</div>
+                  <div>IBAN : {{ myUser.bank.iban }}</div>
+                  <br>
+                  <div>
+                    <v-simple-table>
+                      <thead>
+                      <tr>
+                        <th>Code Banque</th>
+                        <th>Code Guichet</th>
+                        <th>Compte n°</th>
+                        <th>Clé RIB</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                        <td>{{ myUser.bank.bankCode}}</td>
+                        <td>{{ myUser.bank.guichetCode}}</td>
+                        <td>{{ myUser.bank.account}}</td>
+                        <td>{{ myUser.bank.ribKey}}</td>
+                      </tr>
+                      </tbody>
+                    </v-simple-table>
+                  </div>
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -72,20 +94,31 @@ export default {
   name: "Profile",
   data() {
     return {
-      myUser: {}
+      myUser: {},
+      loading: false,
     }
   },
   computed: {
     ...mapActions(['getCurrentUser']),
-    ...mapGetters(['apiRoutes', 'currentUser']),
+    ...mapGetters(['apiRoutes', 'currentUser', 'allCustomers']),
   },
   created () {
     // setTimeout(this.currentUser, 1000)
     this.$store.dispatch('getCurrentUser', this.$auth.user.email)
+    this.getProfileComplete()
 
     // setTimeout(this.getCurrentUserData, 2000)
   },
   methods: {
+    getProfileComplete() {
+      this.loading = true
+      this.$axios.get(this.apiRoutes.getProfile(this.currentUser.email)).then(
+          (response) => {
+            this.myUser = response.data
+            this.loading = false;
+          }
+      )
+    }
     // getCurrentUserData() {
     //   this.getCurrentUser("sousou@example.com")
     //   console.log(this.currentUser)

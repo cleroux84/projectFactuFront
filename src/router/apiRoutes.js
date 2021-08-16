@@ -27,6 +27,9 @@ export default {
     getCurrentUser: function (email) {
         return('/getCurrentUser/' + email)
     },
+    getProfile: function (email) {
+      return('/getProfile/' + email)
+    },
 
     testUser: function (id) {
         return('/getUserTest/' + id)
