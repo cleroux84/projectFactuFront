@@ -138,30 +138,6 @@
                         >
                         </v-text-field>
                       </v-col>
-<!--                      <v-col cols="6">-->
-<!--                        <v-text-field-->
-<!--                            v-model="formAddUser.password"-->
-<!--                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"-->
-<!--                            :rules="[rules.required, rules.min]"-->
-<!--                            :type="show1 ? 'text' : 'password'"-->
-<!--                            name="input-10-1"-->
-<!--                            :label="labelForm.password"-->
-<!--                            hint="At least 6 characters"-->
-<!--                            counter-->
-<!--                            @click:append="show1 = !show1"-->
-<!--                        ></v-text-field>-->
-<!--                      </v-col>-->
-<!--                      <v-col cols="6">-->
-<!--                        <v-text-field-->
-<!--                            block v-model="formAddUser.verifyPassword"-->
-<!--                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"-->
-<!--                            :type="show1 ? 'text' : 'password'"-->
-<!--                            name="input-10-1"-->
-<!--                            :label="labelForm.verifyPassword"-->
-<!--                            counter-->
-<!--                            @click:append="show1 = !show1">-->
-<!--                        </v-text-field>-->
-<!--                      </v-col>-->
                       <v-spacer></v-spacer>
                       <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
                         <v-btn
@@ -194,9 +170,9 @@ export default {
   name: "LoginPage",
   computed: {
     ...mapGetters(['apiRoutes', 'rules']),
-    passwordMatch() {
-      return () => this.formAddUser.password === this.formAddUser.verifyPassword || "Password must match";
-    }
+    // passwordMatch() {
+    //   return () => this.formAddUser.password === this.formAddUser.verifyPassword || "Password must match";
+    // }
   },
   methods: {
     validate() {
@@ -241,7 +217,6 @@ export default {
       city: "",
       zipCode: "",
       siret: "",
-      bankId:"",
       role: "",
       authId: ""
     },

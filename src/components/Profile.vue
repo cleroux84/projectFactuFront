@@ -6,7 +6,9 @@
           <v-col>
             <h3>Mon Profile</h3>
           </v-col>
-          <v-btn class="ma-2" outlined color="blue-grey darken-2">
+          <v-btn class="ma-2"
+                 outlined color="blue-grey darken-2"
+                 @click="showUpdateUserForm=true">
   <!--          <router-link class="linkBtn" to="/Profile">-->
               Modifier Mon Profile
   <!--          </router-link>-->
@@ -55,28 +57,40 @@
                   Coordonnées bancaires
                 </v-expansion-panel-header>
                 <v-expansion-panel-content v-if="!loading">
-                  <div>{{ myUser.bank.name }}</div>
-                  <div>IBAN : {{ myUser.bank.iban }}</div>
-                  <br>
-                  <div>
-                    <v-simple-table>
-                      <thead>
-                      <tr>
-                        <th>Code Banque</th>
-                        <th>Code Guichet</th>
-                        <th>Compte n°</th>
-                        <th>Clé RIB</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr>
-                        <td>{{ myUser.bank.bankCode}}</td>
-                        <td>{{ myUser.bank.guichetCode}}</td>
-                        <td>{{ myUser.bank.account}}</td>
-                        <td>{{ myUser.bank.ribKey}}</td>
-                      </tr>
-                      </tbody>
-                    </v-simple-table>
+                  <div v-if="this.myUser.bank !== undefined">
+                    <div>
+                      <div>{{ myUser.bank.name }}</div>
+                      <div>IBAN : {{ myUser.bank.iban }}</div>
+                      <br>
+                      <div>
+                        <v-simple-table>
+                          <thead>
+                          <tr>
+                            <th>Code Banque</th>
+                            <th>Code Guichet</th>
+                            <th>Compte n°</th>
+                            <th>Clé RIB</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr>
+                            <td>{{ myUser.bank.bankCode}}</td>
+                            <td>{{ myUser.bank.guichetCode}}</td>
+                            <td>{{ myUser.bank.account}}</td>
+                            <td>{{ myUser.bank.ribKey}}</td>
+                          </tr>
+                          </tbody>
+                        </v-simple-table>
+                      </div>
+                    </div>
+                  </div>
+                  <div v-else>
+                    <v-btn
+                        class="ma-2"
+                        outlined color="blue-grey darken-2"
+                        @click="showAddBankForm=true">
+                      Ajouter une banque
+                    </v-btn>
                   </div>
                 </v-expansion-panel-content>
               </v-expansion-panel>
@@ -84,18 +98,25 @@
         </div>
       </v-card>
     </template>
+    <AddBankForm v-if="showAddBankForm" :myUser="this.myUser" :visible="showAddBankForm" @close="closeAddBankForm"/>
+    <UpdateUserForm v-if="showUpdateUserForm" :myUser="this.myUser" :visible="showUpdateUserForm" @close="closeUpdateUserForm"/>
   </v-container>
 </template>
 
 <script>
 import {mapActions, mapGetters} from "vuex";
+import AddBankForm from "./AddBankForm";
+import UpdateUserForm from "./UpdateUserForm";
 
 export default {
   name: "Profile",
+  components: {UpdateUserForm, AddBankForm},
   data() {
     return {
       myUser: {},
       loading: false,
+      showAddBankForm: false,
+      showUpdateUserForm: false
     }
   },
   computed: {
@@ -110,11 +131,26 @@ export default {
     // setTimeout(this.getCurrentUserData, 2000)
   },
   methods: {
+    closeAddBankForm() {
+      this.showAddBankForm = false
+    },
+
+    closeUpdateUserForm() {
+      this.showUpdateUserForm = false
+    },
+
     getProfileComplete() {
       this.loading = true
       this.$axios.get(this.apiRoutes.getProfile(this.currentUser.email)).then(
           (response) => {
             this.myUser = response.data
+            // if (this.myUser.bank !== undefined) {
+            //   console.log("a une banque")
+            // } else {
+            //   console.log("n'a pas de banque")
+            // }
+            // console.log(response.data)
+            // console.log(this.currentUser)
             this.loading = false;
           }
       )

@@ -14,9 +14,6 @@ export default {
         return('/listBillByUser/' +userId)
     },
     listBill: '/listBill',
-    // deleteBill: function (id) {
-    //     return('/deleteBill/'  + id)
-    // },
     addBill: '/addBill',
     exportBillPdf: function (id, email) {
         return('/export/bill.pdf/' + id + '/' + email)
@@ -34,7 +31,13 @@ export default {
     testUser: function (id) {
         return('/getUserTest/' + id)
     },
-    addUser: '/addUser'
+    addUser: '/addUser',
+    updateUser: function (id) {
+        return('/updateUser/' + id)
+    },
+
+    //Bank
+    addBank: '/addBank'
 
 
 }
