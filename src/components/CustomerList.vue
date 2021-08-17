@@ -68,36 +68,17 @@
             :search="search"
             sort-by="firstName"
         >
-          <template v-slot:item.actions="{ item }">
+          <template v-slot:item.delete="{ item }">
             <v-row>
               <v-icon class="material-icons" color="black" @click="deleteCustomer(item.id)">mdi-delete</v-icon>
+            </v-row>
+          </template>
+          <template v-slot:item.update="{ item }">
+            <v-row>
               <v-icon class="material-icons" color="black" @click="openUpdateCustomer(item)">mdi-account-edit-outline</v-icon>
             </v-row>
-<!--            <div class="my-1">-->
-<!--              <v-row>-->
-<!--                <v-btn-->
-<!--                    class="material-icons"-->
-<!--                    color="black"-->
-<!--                    @click="deleteCustomer(item.id)"-->
-<!--                    fab-->
-<!--                    x-small-->
-<!--                    dark-->
-<!--                >-->
-<!--                  <v-icon>mdi-delete</v-icon>-->
-<!--                </v-btn>-->
-<!--                <v-btn-->
-<!--                    class="material-icons"-->
-<!--                    color="black"-->
-<!--                    fab-->
-<!--                    @click="openUpdateCustomer(item)"-->
-<!--                    x-small-->
-<!--                    dark-->
-<!--                >-->
-<!--                  <v-icon>mdi-account-edit-outline</v-icon>-->
-<!--                </v-btn>-->
-<!--              </v-row>-->
-<!--            </div>-->
           </template>
+
 
         </v-data-table>
       </v-card-text>
@@ -131,7 +112,8 @@ export default {
       showUpdateCustomerForm: false,
       search: "",
       headers: [
-        { text: '', value: 'actions'},
+        { text: '', value: 'update'},
+        { text: '', value: 'delete'},
         { text: 'Entreprise', value: 'company' },
         { text: 'Civilité', align: 'start', sortable: false, value: 'civility'},
         { text: 'Prénom', value: 'lastName' },
@@ -156,13 +138,15 @@ export default {
       this.showUpdateCustomerForm = false
     },
     deleteCustomer(id) {
-      this.$axios.delete(this.apiRoutes.deleteCustomer(id)).then(
-          () => {
-            this.$store.dispatch('getAllCustomers');
-          }, response => {
-            console.log(response);
-          }
-      )
+      if (confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) {
+        this.$axios.delete(this.apiRoutes.deleteCustomer(id)).then(
+            () => {
+              this.$store.dispatch('getAllCustomers');
+            }, response => {
+              console.log(response);
+            }
+        )
+      }
     },
     openUpdateCustomer(item) {
       this.updateCustomer = item;

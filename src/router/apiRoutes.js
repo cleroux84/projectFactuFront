@@ -35,9 +35,15 @@ export default {
     updateUser: function (id) {
         return('/updateUser/' + id)
     },
+    deleteUser: function (id) {
+      return('/deleteUser/' +id)
+    },
 
     //Bank
-    addBank: '/addBank'
+    addBank: '/addBank',
+    updateBank: function (id) {
+        return('/updateBank/' + id)
+    },
 
 
 }

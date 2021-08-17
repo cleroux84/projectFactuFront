@@ -10,7 +10,7 @@
                  outlined color="blue-grey darken-2"
                  @click="showUpdateUserForm=true">
   <!--          <router-link class="linkBtn" to="/Profile">-->
-              Modifier Mon Profile
+              Modifier Mon Profil
   <!--          </router-link>-->
           </v-btn>
         </v-row>
@@ -82,6 +82,21 @@
                           </tbody>
                         </v-simple-table>
                       </div>
+                      <v-divider class="mx-4"></v-divider>
+                      <v-row
+                          align="center"
+                          justify="end"
+                      >
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                              style="margin-top: 10px"
+                              text color="blue-grey darken-2"
+                              @click="showUpdateBankForm=true">
+                            Modifier mes coordonnées bancaires
+                          </v-btn>
+                        </v-card-actions>
+                      </v-row>
                     </div>
                   </div>
                   <div v-else>
@@ -100,6 +115,7 @@
     </template>
     <AddBankForm v-if="showAddBankForm" :myUser="this.myUser" :visible="showAddBankForm" @close="closeAddBankForm"/>
     <UpdateUserForm v-if="showUpdateUserForm" :myUser="this.myUser" :visible="showUpdateUserForm" @close="closeUpdateUserForm"/>
+    <UpdateBankForm v-if="showUpdateBankForm" :myUser="this.myUser" :visible="showUpdateBankForm" @close="closeUpdateBankForm"/>
   </v-container>
 </template>
 
@@ -107,16 +123,18 @@
 import {mapActions, mapGetters} from "vuex";
 import AddBankForm from "./AddBankForm";
 import UpdateUserForm from "./UpdateUserForm";
+import UpdateBankForm from "./UpdateBankForm";
 
 export default {
   name: "Profile",
-  components: {UpdateUserForm, AddBankForm},
+  components: {UpdateBankForm, UpdateUserForm, AddBankForm},
   data() {
     return {
       myUser: {},
       loading: false,
       showAddBankForm: false,
-      showUpdateUserForm: false
+      showUpdateUserForm: false,
+      showUpdateBankForm: false
     }
   },
   computed: {
@@ -137,6 +155,10 @@ export default {
 
     closeUpdateUserForm() {
       this.showUpdateUserForm = false
+    },
+
+    closeUpdateBankForm() {
+      this.showUpdateBankForm = false
     },
 
     getProfileComplete() {

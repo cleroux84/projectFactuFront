@@ -79,12 +79,16 @@
             :search="search"
             sort-by="firstName"
         >
-          <template v-slot:item.actions="{ item }">
+          <template v-slot:item.delete="{ item }">
             <v-row>
-              <v-icon class="material-icons" color="red" @click="deleteCustomer(item.id)">mdi-delete</v-icon>
-              <v-icon class="material-icons" color="red" @click="openUpdateCustomer(item)">mdi-account-edit-outline</v-icon>
+              <v-icon class="material-icons" color="red" @click="deleteUser(item.id)">mdi-delete</v-icon>
             </v-row>
           </template>
+<!--          <template v-slot:item.update="{ item }">-->
+<!--            <v-row>-->
+<!--              <v-icon class="material-icons" color="red" @click="updateUser(item.id)">mdi-account-edit-outline</v-icon>-->
+<!--            </v-row>-->
+<!--          </template>-->
 
         </v-data-table>
       </v-card-text>
@@ -119,6 +123,18 @@ export default {
       )
     },
 
+    deleteUser(id) {
+      if(confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
+        this.$axios.delete(this.apiRoutes.deleteUser(id)).then(
+            () => {
+              this.getAllUsers();
+            }, response => {
+              console.log(response)
+            }
+        )
+      }
+    },
+
 
     // async test(id) {
     //   if(this.$auth.isAuthenticated) {
@@ -140,13 +156,10 @@ export default {
     login() {
       this.$auth.loginWithRedirect();
     },
-    // getCurrentUser() {
-    //   this.$axios.get(this.apiRoutes.getCurrentUser(1).then(
-    //       (response) => {
-    //         console.log(response.data)
-    //       }
-    //   ))
-    // },
+    checkStringContainsValue(string, value) {
+      return (string !== null && string !== undefined && string.toLowerCase().includes(value));
+    },
+
     customSearch (value, search, item) {
       search = search.toLowerCase();
       return value != null &&
@@ -167,7 +180,8 @@ export default {
       allUsers: [],
       search: "",
       headers: [
-        { text: '', sortable: false, value: 'actions'},
+        { text: '', sortable: false, value: 'update'},
+        { text: '', sortable: false, value: 'delete'},
         { text: 'Civilité', align: 'start', sortable: false, value: 'civility'},
         { text: 'Prénom', value: 'firstName' },
         { text: 'Nom', value: 'lastName', },

@@ -135,14 +135,14 @@ export default {
         }
       }
     },
-    updateUserComputed: {
-      get: function () {
-        return this.myUser
-      },
-      set: function (v) {
-        this.$emit('userChange', v)
-      }
-    }
+    // updateUserComputed: {
+    //   get: function () {
+    //     return this.myUser
+    //   },
+    //   set: function (v) {
+    //     this.$emit('userChange', v)
+    //   }
+    // }
   },
   methods: {
     toggleDialog () {
