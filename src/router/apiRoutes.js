@@ -44,6 +44,9 @@ export default {
     updateBank: function (id) {
         return('/updateBank/' + id)
     },
+    deleteBank: function (id) {
+        return('/deleteBank/' + id)
+    }
 
 
 }

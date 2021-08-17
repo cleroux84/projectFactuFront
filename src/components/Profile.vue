@@ -93,8 +93,15 @@
                               style="margin-top: 10px"
                               text color="blue-grey darken-2"
                               @click="showUpdateBankForm=true">
-                            Modifier mes coordonnées bancaires
+                            Modifier
                           </v-btn>
+                          <v-btn
+                              style="margin-top: 10px"
+                              text color="blue-grey darken-2"
+                              @click="deleteBank()">
+                            Supprimer
+                          </v-btn>
+
                         </v-card-actions>
                       </v-row>
                     </div>
@@ -166,17 +173,20 @@ export default {
       this.$axios.get(this.apiRoutes.getProfile(this.currentUser.email)).then(
           (response) => {
             this.myUser = response.data
-            // if (this.myUser.bank !== undefined) {
-            //   console.log("a une banque")
-            // } else {
-            //   console.log("n'a pas de banque")
-            // }
-            // console.log(response.data)
-            // console.log(this.currentUser)
             this.loading = false;
           }
       )
-    }
+    },
+
+    deleteBank() {
+      if(confirm("Êtes-vous sûr de vouloir supprimer ces coordonnées bancaires ?")) {
+        this.$axios.delete(this.apiRoutes.deleteBank(this.myUser.bank.id)).then(
+            () => {
+              this.getProfileComplete()
+            }, response => console.log(response)
+        )
+      }
+    },
     // getCurrentUserData() {
     //   this.getCurrentUser("sousou@example.com")
     //   console.log(this.currentUser)
