@@ -132,9 +132,14 @@ export default {
       }
     },
 
-    addNewBank: function () {
+    async addNewBank() {
+      const accessToken = await this.$auth.getTokenSilently()
       if(this.$refs.bankForm.validate())
-        this.$axios.post(this.apiRoutes.addBank, this.formBank).then (
+        this.$axios.post(this.apiRoutes.addBank, this.formBank, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        }).then (
             () => {
               console.log(this.myUser)
               // this.updateUserWithBankId()

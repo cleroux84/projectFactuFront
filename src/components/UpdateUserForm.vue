@@ -149,8 +149,13 @@ export default {
       this.show = !this.show
       this.$emit('close', this.show)
     },
-    updateUser () {
-      this.$axios.post(this.apiRoutes.updateUser(this.myUser.user.id), this.myUser.user).then(
+    async updateUser () {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.post(this.apiRoutes.updateUser(this.myUser.user.id), this.myUser.user, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
           () => {
             this.toggleDialog()
           },

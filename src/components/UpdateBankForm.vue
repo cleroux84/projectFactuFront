@@ -119,8 +119,13 @@ export default {
         this.updateBank()
       }
     },
-    updateBank: function () {
-      this.$axios.post(this.apiRoutes.updateBank(this.myUser.bank.id), this.myUser.bank).then(
+    async updateBank () {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.post(this.apiRoutes.updateBank(this.myUser.bank.id), this.myUser.bank, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
           () => {
             // this.toggleDialog()
           },

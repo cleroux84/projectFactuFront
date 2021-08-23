@@ -120,7 +120,7 @@
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="show = false">Annuler</v-btn>
-                    <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click="checkAddCustomerForm()">Valider</v-btn>
+                    <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click.prevent="checkAddCustomerForm()">Valider</v-btn>
                   </v-card-actions>
                 </v-row>
               </v-container>
@@ -171,9 +171,14 @@ export default {
       } else this.formErrors.push("errors")
 
     },
-  addNewCustomer: function () {
+  async addNewCustomer () {
+    const accessToken = await this.$auth.getTokenSilently()
     if (this.$refs.addCustomerForm.validate())
-      this.$axios.post(this.apiRoutes.addCustomer, this.formAddCustomer).then(
+      this.$axios.post(this.apiRoutes.addCustomer, this.formAddCustomer, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
           () => {
             this.resetForm()
             this.show = false;

@@ -74,7 +74,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                   <v-btn color="blue darken-1" text @click="show = false">Annuler</v-btn>
-                  <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click="checkAddBillForm()">Valider</v-btn>
+                  <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click.prevent="checkAddBillForm()">Valider</v-btn>
                 </v-card-actions>
               </v-container>
             </v-form>
@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
+import {mapGetters} from 'vuex'
 import FormBenefit from "./FormBenefit";
 
 export default {
@@ -96,7 +96,6 @@ export default {
   components: { FormBenefit },
   computed: {
     ...mapGetters(['apiRoutes', 'allCustomers', 'rules', 'currentUser']),
-    ...mapActions(['getCurrentUser']),
     show: {
       get () {
         return this.visible
@@ -162,9 +161,14 @@ export default {
       this.addBill()
     },
 
-    addBill: function () {
+    async addBill () {
+      const accessToken = await this.$auth.getTokenSilently()
       if (this.$refs.addBillForm.validate())
-      this.$axios.post(this.apiRoutes.addBill, this.formAddBill).then(
+      this.$axios.post(this.apiRoutes.addBill, this.formAddBill, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
           () => {
             // console.log(this.formAddBill)
             this.show = false

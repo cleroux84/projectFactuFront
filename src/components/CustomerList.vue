@@ -137,9 +137,14 @@ export default {
     closeUpdateCustomerForm() {
       this.showUpdateCustomerForm = false
     },
-    deleteCustomer(id) {
+    async deleteCustomer(id) {
+      const accessToken = await this.$auth.getTokenSilently()
       if (confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) {
-        this.$axios.delete(this.apiRoutes.deleteCustomer(id)).then(
+        this.$axios.delete(this.apiRoutes.deleteCustomer(id), {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        }).then(
             () => {
               this.$store.dispatch('getAllCustomers');
             }, response => {

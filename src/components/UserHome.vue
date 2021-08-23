@@ -1,129 +1,163 @@
 <template>
   <v-container>
-
-    <template>
+    <template v-if="$auth.isAuthenticated">
       <div class="nav-container mb-3">
         <nav class="navbar navbar-expand-md navbar-light bg-light">
           <div class="container">
-            <h3 v-if="$auth.isAuthenticated">Bienvenue, {{ $auth.user.name }}</h3>
+            <h3>Bienvenue, {{ currentUser.firstName }}</h3>
           </div>
         </nav>
       </div>
+      <v-card-actions>
+        <div class="text-center">
+          <v-btn class="ma-2" outlined color="blue-grey darken-2">
+            <router-link class="linkBtn" to="/Profile">
+              Mon Profile
+            </router-link>
+          </v-btn>
+          <v-btn class="ma-2" outlined color="blue-grey darken-2">
+            <router-link class="linkBtn" to="/BillList">
+              Liste des factures
+            </router-link>
+            <v-icon
+                right
+                dark
+            >
+              mdi-view-list
+            </v-icon>
+          </v-btn>
+          <v-btn class="ma-2" outlined color="blue-grey darken-2">
+            <router-link class="linkBtn text--darken-3" to="/customerList">
+              Liste des clients
+            </router-link>
+            <v-icon
+                right
+                dark
+            >
+              mdi-folder-account
+            </v-icon>
+          </v-btn>
+        </div>
+      </v-card-actions>
+      <div v-if="currentUser.role === 1">
+        <v-card-title>
+          <v-spacer></v-spacer>
+          <v-text-field
+              v-model="search"
+              append-icon="mdi-account-search"
+              search bar
+              single-line
+              hide-details
+          ></v-text-field>
+        </v-card-title>
+        <v-divider></v-divider>
+
+        <v-card-text>
+          <v-data-table
+              :headers="headers"
+              :items="allUsers"
+              :custom-filter="customSearch"
+              :search="search"
+              sort-by="firstName"
+          >
+            <template v-slot:item.delete="{ item }">
+              <v-row>
+                <v-icon class="material-icons" color="red" @click="deleteUser(item.id)">mdi-delete</v-icon>
+              </v-row>
+            </template>
+            <!--          <template v-slot:item.update="{ item }">-->
+            <!--            <v-row>-->
+            <!--              <v-icon class="material-icons" color="red" @click="updateUser(item.id)">mdi-account-edit-outline</v-icon>-->
+            <!--            </v-row>-->
+            <!--          </template>-->
+
+          </v-data-table>
+        </v-card-text>
+      </div>
     </template>
 
-<!--    <h1>Welcome</h1>-->
-    <v-card-title>
-    <v-spacer></v-spacer>
-<!--      <h5>Connecté en tant que : </h5>-->
-<!--      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>-->
-    </v-card-title>
-    <v-card-actions>
-      <div class="text-center">
-        <v-btn class="ma-2" outlined color="blue-grey darken-2">
-          <router-link class="linkBtn" to="/Profile">
-            Mon Profile
-          </router-link>
-        </v-btn>
-        <v-btn class="ma-2" outlined color="blue-grey darken-2">
-          <router-link class="linkBtn" to="/BillList">
-            Liste des factures
-          </router-link>
-          <v-icon
-              right
-              dark
-          >
-            mdi-view-list
-          </v-icon>
-        </v-btn>
-        <v-btn class="ma-2" outlined color="blue-grey darken-2">
-          <router-link class="linkBtn text--darken-3" to="/customerList">
-            Liste des clients
-          </router-link>
-          <v-icon
-              right
-              dark
-          >
-            mdi-folder-account
-          </v-icon>
-        </v-btn>
-      </div>
-    </v-card-actions>
-
-<!--    TODO : si role admin-->
-    <div v-if="$auth.isAuthenticated">
-        {{ currentUser.email }}
-      <div>
-      </div>
-    </div>
-    <div v-else>
-      Aucune connexion
-    </div>
-    <div v-if="this.currentUser.role === 1">
-      <v-card-title>
-        <v-spacer></v-spacer>
-        <v-text-field
-            v-model="search"
-            append-icon="mdi-account-search"
-            search bar
-            single-line
-            hide-details
-        ></v-text-field>
-      </v-card-title>
-      <v-divider></v-divider>
-
-      <v-card-text>
-        <v-data-table
-            :headers="headers"
-            :items="allUsers"
-            :custom-filter="customSearch"
-            :search="search"
-            sort-by="firstName"
-        >
-          <template v-slot:item.delete="{ item }">
-            <v-row>
-              <v-icon class="material-icons" color="red" @click="deleteUser(item.id)">mdi-delete</v-icon>
-            </v-row>
-          </template>
-<!--          <template v-slot:item.update="{ item }">-->
-<!--            <v-row>-->
-<!--              <v-icon class="material-icons" color="red" @click="updateUser(item.id)">mdi-account-edit-outline</v-icon>-->
-<!--            </v-row>-->
-<!--          </template>-->
-
-        </v-data-table>
-      </v-card-text>
-    </div>
-
+    <template v-else>
+          <div class="flex-box" style="margin: auto">
+              <v-btn
+                  rounded
+                  x-large
+                  :style="{left: '50%', transform:'translateX(-50%)', marginTop: '20%'}"
+                  @click="login()"
+              >
+                Connexion requise
+              </v-btn>
+          </div>
+    </template>
+    <login-page v-if="userToRegisterForm" :visible="userToRegisterForm" @close="closeUserRegisterForm" />
   </v-container>
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
+import {mapGetters} from "vuex";
+import {getInstance} from "../auth";
+import LoginPage from "./LoginPage";
 
 export default {
   name: "UserHome",
   mounted() {
-    // this.$store.dispatch('getCurrentUser')
   },
   computed: {
-    ...mapActions(['getCurrentUser']),
-    ...mapGetters(['apiRoutes', 'currentUser'])
+    ...mapGetters(['apiRoutes', 'currentUser', 'allUsers'])
   },
+  components: {LoginPage},
   created() {
-    this.$store.dispatch('getCurrentUser', this.$auth.user.email)
-    this.getAllUsers()
-    // this.test(1)
+    //permet d'attendre que le token soit renvoyé
+    this.init(this.loadTokenInfoStore)
   },
   methods: {
-    getAllUsers() {
-      this.$axios.get(this.apiRoutes.getAllUsers).then(
-          (response) => {
-            this.allUsers = response.data
+    init(fn) {
+      var instance = getInstance();
+      instance.$watch("loading", loading => {
+        if (loading === false) {
+          fn(instance)
+        }
+      })
+    },
+
+//TODO : probleme rencontré et reglé ici pour set currentUser : https://community.auth0.com/t/auth0-client-is-null-in-vue-spa-component-on-page-refresh/38147/2
+    async initializeCurrentUser() {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.get(this.apiRoutes.getCurrentUser(this.$auth.user.email), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          response => {
+            this.$store.commit('setCurrentUser', response.data)
           }
       )
     },
-
+    async loadTokenInfoStore(instance) {
+      await instance.getTokenSilently().then((authToken) => {
+        this.$axios.get(this.apiRoutes.getAllUsers, {
+          headers: {
+            Authorization: `Bearer ${authToken}`
+          }
+        }).then(
+            (response) => {
+              this.$store.commit('setAllUsers', response.data)
+              this.connectUser()
+            }
+        )
+      })
+    },
+    connectUser() {
+      if(!this.allUsers.some(data => data.email === this.$auth.user.email)) {
+        this.userToRegisterForm = true
+      } else {
+        this.initializeCurrentUser()
+      }
+    },
+    closeUserRegisterForm() {
+      this.userToRegisterForm = false
+    },
     deleteUser(id) {
+      //TODO popup à rendre jolie
       if(confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
         this.$axios.delete(this.apiRoutes.deleteUser(id)).then(
             () => {
@@ -134,25 +168,6 @@ export default {
         )
       }
     },
-
-
-    // async test(id) {
-    //   if(this.$auth.isAuthenticated) {
-    //     const accessToken = await this.$auth.getTokenSilently()
-    //     console.log(accessToken)
-    //     this.$axios.get(this.apiRoutes.testUser(id), {
-    //       headers: {
-    //         Authorization: `Bearer ${accessToken}`
-    //       }
-    //     }).then(
-    //         response => {
-    //           console.log("user en dur :")
-    //           console.log(response.data)
-    //         }
-    //     )
-    //   }
-    // },
-
     login() {
       this.$auth.loginWithRedirect();
     },
@@ -176,8 +191,9 @@ export default {
   },
   data() {
     return {
+      userToRegisterForm: false,
       role: 0,
-      allUsers: [],
+      // allUsers: [],
       search: "",
       headers: [
         { text: '', sortable: false, value: 'update'},

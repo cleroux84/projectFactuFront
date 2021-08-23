@@ -9,6 +9,7 @@ export default new Vuex.Store({
       apiRoutes: ApiRoutes,
       allCustomers: [],
       currentUser: {},
+      allUsers: [],
       rules: {
           required: value => !!value || 'Champs obligatoire.',
           zipCode: value => value && value.length === 5 || 'Le code postal doit être composé de 5 chiffres !',
@@ -19,6 +20,7 @@ export default new Vuex.Store({
               return pattern.test(value) || 'Entrez une adresse mail valide'
           },
           vatNumber: value => value && value.length === 13 || 'Le numéro de TVA Intracommunautaire doit être composé de 11 chiffres',
+          siretNumber: value => value && value.length <= 14 && value.length >= 9|| 'Le numéro siren est composé de 9 chiffres, Le numéro siret est composé de 14 chiffres',
           phone: value => value && value.length === 10 || 'Le numéro de téléphone doit être composé de 10 chiffres',
           decimals: value => {
               const pattern = /^[1-9]\d*(\.\d+)?$/
@@ -31,12 +33,15 @@ export default new Vuex.Store({
   },
 
   mutations: {
-     setAllCustomers (state, allCustomers) {
-       state.allCustomers = allCustomers
+      setAllCustomers (state, allCustomers) {
+          state.allCustomers = allCustomers
+      },
+      setCurrentUser (state, currentUser) {
+          state.currentUser = currentUser
      },
-     setCurrentUser (state, currentUser) {
-         state.currentUser = currentUser
-     },
+      setAllUsers (state, allUsers) {
+          state.allUsers = allUsers
+      },
   },
 
   actions: {
@@ -47,13 +52,20 @@ export default new Vuex.Store({
             }
         )
     },
-      getCurrentUser({rootState, commit}, authId) {
-        Vue.axios.get(rootState.apiRoutes.getCurrentUser(authId)).then(
+      getCurrentUser({rootState, commit}, email) {
+        Vue.axios.get(rootState.apiRoutes.getCurrentUser(email)).then(
             response => {
                 commit('setCurrentUser', response.data)
             }
         )
-    }
+    },
+      getAllUsers({rootState, commit}) {
+        Vue.axios.get(rootState.apiRoutes.getAllUsers).then(
+            response => {
+                commit('setAllUsers', response.data)
+            }
+        )
+      }
   },
   modules: {
   },
@@ -61,6 +73,7 @@ export default new Vuex.Store({
       allCustomers: state => {return state.allCustomers},
       apiRoutes: state => { return state.apiRoutes },
       currentUser: state => { return state.currentUser},
-      rules: state => {return state.rules}
+      rules: state => {return state.rules},
+      allUsers: state => {return state.allUsers}
   }
 })

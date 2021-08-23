@@ -6,6 +6,15 @@
           <v-col>
             <h3>Mon Profile</h3>
           </v-col>
+          <v-btn class="ma-2" outlined >
+            <router-link class="linkBtn" to="/">Accueil</router-link>
+            <v-icon
+                right
+                dark
+            >
+              mdi-home
+            </v-icon>
+          </v-btn>
           <v-btn class="ma-2"
                  outlined color="blue-grey darken-2"
                  @click="showUpdateUserForm=true">
@@ -127,7 +136,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
+import {mapGetters} from "vuex";
 import AddBankForm from "./AddBankForm";
 import UpdateUserForm from "./UpdateUserForm";
 import UpdateBankForm from "./UpdateBankForm";
@@ -145,15 +154,10 @@ export default {
     }
   },
   computed: {
-    ...mapActions(['getCurrentUser']),
     ...mapGetters(['apiRoutes', 'currentUser', 'allCustomers']),
   },
   created () {
-    // setTimeout(this.currentUser, 1000)
-    this.$store.dispatch('getCurrentUser', this.$auth.user.email)
     this.getProfileComplete()
-
-    // setTimeout(this.getCurrentUserData, 2000)
   },
   methods: {
     closeAddBankForm() {
@@ -168,9 +172,14 @@ export default {
       this.showUpdateBankForm = false
     },
 
-    getProfileComplete() {
+    async getProfileComplete() {
+      const accessToken = await this.$auth.getTokenSilently()
       this.loading = true
-      this.$axios.get(this.apiRoutes.getProfile(this.currentUser.email)).then(
+      this.$axios.get(this.apiRoutes.getProfile(this.currentUser.email), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
           (response) => {
             this.myUser = response.data
             this.loading = false;
@@ -178,9 +187,14 @@ export default {
       )
     },
 
-    deleteBank() {
+    async deleteBank() {
+      const accessToken = await this.$auth.getTokenSilently()
       if(confirm("Êtes-vous sûr de vouloir supprimer ces coordonnées bancaires ?")) {
-        this.$axios.delete(this.apiRoutes.deleteBank(this.myUser.bank.id)).then(
+        this.$axios.delete(this.apiRoutes.deleteBank(this.myUser.bank.id), {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        }).then(
             () => {
               this.getProfileComplete()
             }, response => console.log(response)

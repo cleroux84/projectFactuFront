@@ -5,7 +5,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import './plugins/axios'
 import { domain, clientId, audience } from "../auth_config.json";
-import { Auth0Plugin } from "./auth";
+import {Auth0Plugin/*, getInstance*/} from "./auth";
 
 Vue.use(Auth0Plugin, {
   domain,
@@ -19,6 +19,16 @@ Vue.use(Auth0Plugin, {
     );
   }
 });
+
+// https://community.auth0.com/t/the-prototype-this-auth-in-vue-main-js-always-null/31993/3
+//  const instance = getInstance();
+
+// instance.$watch("loading", async loading => {
+//   if (!loading && instance.isAuthenticated) {
+//     const token = await instance.getTokenSilently();
+//     console.log(token);
+//   }
+// });
 
 Vue.config.productionTip = false
 

@@ -3,9 +3,6 @@
     <h1>Liste des factures</h1>
     <v-card-title>
       <v-spacer></v-spacer>
-      <h5>Connecté en tant que : </h5>
-      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>
-
     </v-card-title>
     <v-card-actions>
       <div class="text-center">
@@ -123,7 +120,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
+import {mapGetters} from "vuex";
 import AddCustomerForm from "./AddCustomerForm";
 import AddBillForm from "./AddBillForm";
 
@@ -132,28 +129,28 @@ export default {
   components: { AddCustomerForm, AddBillForm },
   computed: {
     ...mapGetters(['apiRoutes', 'allCustomers', 'currentUser']),
-    ...mapActions(['getCurrentUser'])
   },
 
   created() {
-    this.$store.dispatch('getCurrentUser', this.$auth.user.email)
-    if (this.currentUser.role === 0)
-    this.getAllBillsByUser();
-    else this.getAllBills()
+    this.giveGoodList()
   },
 
   methods: {
     closeAddBillForm() {
       this.showAddBillForm = false
-      this.getAllBills()
+      this.giveGoodList()
     },
     closeAddCustomerForm() {
       this.showAddCustomerForm = false
     },
 
+    giveGoodList(){
+      if (this.currentUser.role === 0) this.getAllBillsByUser();
+      else this.getAllBills()
+    },
+
     async getAllBillsByUser() {
       const accessToken = await this.$auth.getTokenSilently()
-      console.log(accessToken)
       this.$axios.get(this.apiRoutes.listBillByUser(this.currentUser.id), {
         headers: {
           Authorization: `Bearer ${accessToken}`
@@ -168,7 +165,6 @@ export default {
 
     async getAllBills() {
       const accessToken = await this.$auth.getTokenSilently()
-      console.log(accessToken)
       this.$axios.get(this.apiRoutes.listBill, {
         headers: {
           Authorization: `Bearer ${accessToken}`

@@ -4,10 +4,8 @@ import VueRouter from 'vue-router'
 import CustomerList from "../components/CustomerList";
 import UserHome from "../components/UserHome";
 import BillList from "../components/BillList";
-import LoginPage from "../components/LoginPage";
 import {authGuard} from "../auth/authGuard";
 import Profile from "../components/Profile";
-// import HomePage from "../components/HomePage";
 
 Vue.use(VueRouter)
 
@@ -23,20 +21,17 @@ const routes = [
   //   component: HomePage
   // },
   {
-    path: '/login',
-    name: 'LoginPage',
-    component: LoginPage
-  },
-  {
     path: '/profile',
     name: 'Profile',
-    component: Profile
+    component: Profile,
+    beforeEnter: authGuard
   },
 
   {
     path: '/customerList',
     name: 'CustomerList',
-    component: CustomerList
+    component: CustomerList,
+    beforeEnter: authGuard
   },
   {
     path: '/billList',
