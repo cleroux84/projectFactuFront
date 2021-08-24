@@ -156,9 +156,9 @@ export default {
     closeUserRegisterForm() {
       this.userToRegisterForm = false
     },
-    deleteUser(id) {
-      //TODO popup à rendre jolie
-      if(confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
+    async deleteUser(id) {
+      let res = await this.$confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')
+      if(res) {
         this.$axios.delete(this.apiRoutes.deleteUser(id)).then(
             () => {
               this.getAllUsers();

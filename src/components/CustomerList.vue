@@ -48,7 +48,6 @@
 <!--          max-width="600"-->
 <!--      >-->
 <!--      </v-dialog>-->
-
       <v-card-title>
         <v-spacer></v-spacer>
         <v-text-field
@@ -137,9 +136,26 @@ export default {
     closeUpdateCustomerForm() {
       this.showUpdateCustomerForm = false
     },
+    // async deleteCustomer(id) {
+    //   const accessToken = await this.$auth.getTokenSilently()
+    //   if (confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) {
+    //     this.$axios.delete(this.apiRoutes.deleteCustomer(id), {
+    //       headers: {
+    //         Authorization: `Bearer ${accessToken}`
+    //       }
+    //     }).then(
+    //         () => {
+    //           this.$store.dispatch('getAllCustomers');
+    //         }, response => {
+    //           console.log(response);
+    //         }
+    //     )
+    //   }
+    // },
     async deleteCustomer(id) {
       const accessToken = await this.$auth.getTokenSilently()
-      if (confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) {
+      let res = await this.$confirm('Êtes-vous sûr de vouloir supprimer ce client ?')
+      if (res) {
         this.$axios.delete(this.apiRoutes.deleteCustomer(id), {
           headers: {
             Authorization: `Bearer ${accessToken}`

@@ -6,6 +6,21 @@ import vuetify from './plugins/vuetify'
 import './plugins/axios'
 import { domain, clientId, audience } from "../auth_config.json";
 import {Auth0Plugin/*, getInstance*/} from "./auth";
+import VuetifYConfirm from "vuetify-confirm";
+
+Vue.use(VuetifYConfirm, {
+  vuetify,
+  buttonTrueText: 'Valider',
+  buttonFalseText: 'Annuler',
+  buttonTrueColor: 'white',
+  buttonFalseColor: 'red',
+  buttonTrueFlat: false,
+  buttonFalseFlat: true,
+  color: 'red',
+  title: 'Attention',
+  width: 500,
+  property: '$confirm'
+})
 
 Vue.use(Auth0Plugin, {
   domain,
