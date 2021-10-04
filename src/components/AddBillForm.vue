@@ -158,6 +158,7 @@ export default {
     composeAddBillForm: function () {
       this.formAddBill.created = Date.now()
       this.formAddBill.userId = this.currentUser.id
+      this.formAddBill.paid = false
       this.addBill()
     },
 

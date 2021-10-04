@@ -39,7 +39,37 @@
           </v-btn>
         </div>
       </v-card-actions>
+
+      <div>
+        <h1>Liste des factures en retard de paiement</h1>
+        <v-data-table
+            class="taleClass"
+            :headers="headersForBills"
+            :items="allLateBills"
+            :custom-filter="customSearch"
+            :search="search"
+            sort-by="firstName"
+        >
+          <template v-slot:item.dateOfIssue=" { item }">
+            <span>{{item.created}}</span>
+          </template>
+          <template v-slot:item.company=" {item} ">
+            <span>{{(item.customer.company).charAt(0).toUpperCase()+ (item.customer.company).slice(1) }}</span>
+          </template>
+          <template v-slot:item.totalHT=" { item }">
+            <span>{{item.amountHt.toFixed(2)}} €</span>
+          </template>
+          <template v-slot:item.customer=" { item }">
+            <span>{{item.customer.civility}} {{item.customer.firstName}} {{item.customer.lastName}}</span>
+          </template>
+          <template v-slot:item.email=" { item }">
+            <span><a :href="'mailto:' +  item.customer.email"> {{item.customer.email}}</a></span>
+          </template>
+        </v-data-table>
+      </div>
+
       <div v-if="currentUser.role === 1">
+        <h1>Liste des utilisateurs</h1>
         <v-card-title>
           <v-spacer></v-spacer>
           <v-text-field
@@ -102,7 +132,7 @@ export default {
   mounted() {
   },
   computed: {
-    ...mapGetters(['apiRoutes', 'currentUser', 'allUsers'])
+    ...mapGetters(['apiRoutes', 'currentUser', 'allUsers', "allLateBills"])
   },
   components: {LoginPage},
   created() {
@@ -118,7 +148,6 @@ export default {
         }
       })
     },
-
 //TODO : probleme rencontré et reglé ici pour set currentUser : https://community.auth0.com/t/auth0-client-is-null-in-vue-spa-component-on-page-refresh/38147/2
     async initializeCurrentUser() {
       const accessToken = await this.$auth.getTokenSilently()
@@ -129,6 +158,11 @@ export default {
       }).then(
           response => {
             this.$store.commit('setCurrentUser', response.data)
+            if(this.currentUser.role === 1) {
+              this.getUnpaidBills()
+            } else {
+              this.getUnpaidBillsByUser()
+            }
           }
       )
     },
@@ -142,6 +176,11 @@ export default {
             (response) => {
               this.$store.commit('setAllUsers', response.data)
               this.connectUser()
+            //   if(this.currentUser.role === 1) {
+            //     this.getLateBills()
+            //   } else {
+            //     this.getLateBillsByUser()
+            //   }
             }
         )
       })
@@ -151,11 +190,42 @@ export default {
         this.userToRegisterForm = true
       } else {
         this.initializeCurrentUser()
+
       }
     },
     closeUserRegisterForm() {
       this.userToRegisterForm = false
     },
+
+    async getUnpaidBills() {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.get(this.apiRoutes.unpaidBills, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          response => {
+            this.$store.commit('setAllLateBills', response.data)
+            console.log(this.allLateBills)
+
+          }
+      )
+    },
+
+    async getUnpaidBillsByUser() {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.get(this.apiRoutes.unpaidBillsByUser(this.currentUser.id), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          response => {
+            this.$store.commit('setAllLateBills', response.data)
+            console.log(this.allLateBills)
+          }
+      )
+    },
+
     async deleteUser(id) {
       let res = await this.$confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')
       if(res) {
@@ -191,10 +261,20 @@ export default {
   },
   data() {
     return {
+      allBills: [],
       userToRegisterForm: false,
       role: 0,
-      // allUsers: [],
       search: "",
+      headersForBills: [
+        {text: "Date d'émission", value: 'dateOfIssue', sortable: false, align: "center"},
+        {text: "Numéro facture", value: 'billNumber', align: "center"},
+        {text: "Période couverte", value: 'periodCovered', sortable: false, align: "center"},
+        {text: "Total HT", value: 'totalHT', sortable: false, align: "center"},
+        {text: "Entreprise", value: 'company', sortable: false, align: "center"},
+        {text: "Nom du contact", value: 'customer', sortable: false, align: "center"},
+        {text: "Email", value: 'email', sortable: false, align: "center"},
+
+      ],
       headers: [
         { text: '', sortable: false, value: 'update'},
         { text: '', sortable: false, value: 'delete'},

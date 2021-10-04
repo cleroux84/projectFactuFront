@@ -65,6 +65,11 @@
       ></v-text-field>
     </v-card-title>
     <v-divider></v-divider>
+    <v-switch
+        v-model="switchTable"
+        inset
+        label="Factures non payées"
+    ></v-switch>
     <v-card-text>
       <v-data-table
          class="taleClass"
@@ -91,7 +96,8 @@
         </template>
         <template v-slot:item.dateOfIssue=" { item }">
             <span>{{item.created}}</span>
-        </template>  <template v-slot:item.totalHT=" { item }">
+        </template>
+        <template v-slot:item.totalHT=" { item }">
             <span>{{item.amountHt.toFixed(2)}} €</span>
         </template>
         <template v-slot:item.totalTtc=" { item }">
@@ -110,6 +116,43 @@
               </v-icon>
             </template>
             <span>Imprimer la facture</span>
+          </v-tooltip>
+        </template>
+        <template v-slot:item.unPaid=" { item }">
+<!--          <span>{{item.paid}}</span>-->
+          <v-tooltip top>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon
+                  v-if="!item.paid && item.paymentStatus === 'latePayment'"
+                  class="material-icons"
+                  v-bind="attrs"
+                  v-on="on"
+                  color="red"
+              >
+                mdi-alert
+              </v-icon>
+              <v-icon
+                  v-if="!item.paid && item.paymentStatus === 'waitingPayment'"
+                  class="material-icons"
+                  v-bind="attrs"
+                  v-on="on"
+                  color="orange"
+              >
+                mdi-timer
+              </v-icon>
+              <v-icon
+                  v-if="item.paid"
+                  class="material-icons"
+                  v-bind="attrs"
+                  v-on="on"
+                  color="green"
+              >
+                mdi-check
+              </v-icon>
+            </template>
+            <span v-if="!item.paid && item.paymentStatus === 'latePayment'">Facture en retard de paiement</span>
+            <span v-if="!item.paid && item.paymentStatus === 'waitingPayment'">Facture en attente de paiement</span>
+            <span v-if="item.paid">Facture payée le {{item.paymentDate}} </span>
           </v-tooltip>
         </template>
       </v-data-table>
@@ -133,6 +176,20 @@ export default {
 
   created() {
     this.giveGoodList()
+  },
+
+  watch: {
+    switchTable(bool) {
+      if (bool) {
+        if(this.currentUser.role === 1) {
+          this.getLateBills()
+        } else {
+          this.getLateBillsByUser()
+        }
+      } else {
+        this.giveGoodList()
+      }
+    },
   },
 
   methods: {
@@ -173,6 +230,34 @@ export default {
           (response) => {
             // console.log(response.data)
             this.allBills = response.data
+            // console.log(response.data)
+          }
+      )
+    },
+
+    async getLateBills() {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.get(this.apiRoutes.lateBill, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          response => {
+            this.allBills = response.data
+            // console.log(this.lateBills)
+          }
+      )
+    },
+
+    async getLateBillsByUser() {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.get(this.apiRoutes.lateBillByUser(this.currentUser.id), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          response => {
+            this.allBills = response.data
           }
       )
     },
@@ -185,7 +270,6 @@ export default {
         window.open(objectUrl)
       });
     },
-
 
     checkStringContainsValue(string, value) {
       return (string !== null && string !== undefined && string.toString().toLowerCase().includes(value));
@@ -216,11 +300,17 @@ export default {
   },
   data() {
     return {
+      switchTable: false,
+      lateBills: [],
+      isLateToPaid: false,
+      isWaitingPaiement: false,
+      isPaid: false,
       showAddBillForm: false,
       showAddCustomerForm: false,
       search: "",
       headers: [
         {text: "", value: 'actions', sortable: false, align: "center"},
+        {text: "", value: 'unPaid', sortable: false, align: "center"},
         {text: "Date d'émission", value: 'dateOfIssue', sortable: false, align: "center"},
         {text: "Numéro facture", value: 'billNumber', align: "center"},
         {text: "Entreprise", value: 'company', sortable: false, align: "center"},

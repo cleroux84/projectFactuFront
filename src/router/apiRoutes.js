@@ -19,6 +19,15 @@ export default {
         return('/export/bill.pdf/' + id + '/' + email)
     },
 
+    lateBill: '/lateBill ',
+    lateBillByUser: function (userId) {
+      return('/lateBills/' +userId)
+    },
+    unpaidBills: '/unPaidBills',
+    unpaidBillsByUser: function (userId) {
+        return('/unPaidBillsByUser/' + userId)
+    },
+
     //User
     getAllUsers: '/getUserList',
     getCurrentUser: function (email) {

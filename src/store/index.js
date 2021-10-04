@@ -10,6 +10,7 @@ export default new Vuex.Store({
       allCustomers: [],
       currentUser: {},
       allUsers: [],
+      allLateBills: [],
       rules: {
           required: value => !!value || 'Champs obligatoire.',
           zipCode: value => value && value.length === 5 || 'Le code postal doit être composé de 5 chiffres !',
@@ -42,6 +43,9 @@ export default new Vuex.Store({
       setAllUsers (state, allUsers) {
           state.allUsers = allUsers
       },
+      setAllLateBills (state, allLateBills) {
+          state.allLateBills = allLateBills
+      }
   },
 
   actions: {
@@ -65,6 +69,13 @@ export default new Vuex.Store({
                 commit('setAllUsers', response.data)
             }
         )
+      },
+      getAllLateBills({rootState, commit}) {
+        Vue.axios.get(rootState.apiRoutes.lateBill).then(
+            response => {
+                commit('setAllLateBills', response.data)
+            }
+        )
       }
   },
   modules: {
@@ -74,6 +85,7 @@ export default new Vuex.Store({
       apiRoutes: state => { return state.apiRoutes },
       currentUser: state => { return state.currentUser},
       rules: state => {return state.rules},
-      allUsers: state => {return state.allUsers}
+      allUsers: state => {return state.allUsers},
+      allLateBills: state => {return state.allLateBills}
   }
 })
