@@ -117,13 +117,36 @@
             </template>
             <span>Imprimer la facture</span>
           </v-tooltip>
+          <v-tooltip top>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon
+                  v-show="!item.paid"
+                  class="material-icons"
+                  @click="getThisBill(item.id)"
+                  v-bind="attrs"
+                  v-on="on"
+              >
+                mdi-calculator
+              </v-icon>
+            </template>
+            <span>Indiquer un paiement</span>
+          </v-tooltip>
         </template>
+<!--        <v-icon-->
+<!--            v-if="!item.paid"-->
+<!--            class="material-icons"-->
+<!--            @click="showUpdatePayment = true"-->
+<!--            v-bind="attrs"-->
+<!--            v-on="on"-->
+<!--        >-->
+<!--          mdi-calculator-->
+<!--        </v-icon>-->
         <template v-slot:item.unPaid=" { item }">
 <!--          <span>{{item.paid}}</span>-->
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
               <v-icon
-                  v-if="!item.paid && item.paymentStatus === 'latePayment'"
+                  v-show="!item.paid && item.paymentStatus === 'latePayment'"
                   class="material-icons"
                   v-bind="attrs"
                   v-on="on"
@@ -132,7 +155,7 @@
                 mdi-alert
               </v-icon>
               <v-icon
-                  v-if="!item.paid && item.paymentStatus === 'waitingPayment'"
+                  v-show="!item.paid && item.paymentStatus === 'waitingPayment'"
                   class="material-icons"
                   v-bind="attrs"
                   v-on="on"
@@ -141,7 +164,7 @@
                 mdi-timer
               </v-icon>
               <v-icon
-                  v-if="item.paid"
+                  v-show="item.paid"
                   class="material-icons"
                   v-bind="attrs"
                   v-on="on"
@@ -150,15 +173,16 @@
                 mdi-check
               </v-icon>
             </template>
-            <span v-if="!item.paid && item.paymentStatus === 'latePayment'">Facture en retard de paiement</span>
-            <span v-if="!item.paid && item.paymentStatus === 'waitingPayment'">Facture en attente de paiement</span>
-            <span v-if="item.paid">Facture payée le {{item.paymentDate}} </span>
+            <span v-show="!item.paid && item.paymentStatus === 'latePayment'">Facture en retard de paiement</span>
+            <span v-show="!item.paid && item.paymentStatus === 'waitingPayment'">Facture en attente de paiement</span>
+            <span v-show="item.paid">Facture payée le {{item.paymentDate}} </span>
           </v-tooltip>
         </template>
       </v-data-table>
     </v-card-text>
     <AddCustomerForm v-if="showAddCustomerForm" :visible="showAddCustomerForm" @close="closeAddCustomerForm"/>
     <AddBillForm v-if="showAddBillForm" :visible="showAddBillForm" @close="closeAddBillForm" />
+    <UpdatePaymentForm v-if="showUpdatePayment" :myBill="myBill" :visible="showUpdatePayment" @close="closeUpdatePayment" />
   </v-container>
 </template>
 
@@ -166,10 +190,11 @@
 import {mapGetters} from "vuex";
 import AddCustomerForm from "./AddCustomerForm";
 import AddBillForm from "./AddBillForm";
+import UpdatePaymentForm from "./UpdatePaymentForm";
 
 export default {
   name: "BillList",
-  components: { AddCustomerForm, AddBillForm },
+  components: {UpdatePaymentForm, AddCustomerForm, AddBillForm },
   computed: {
     ...mapGetters(['apiRoutes', 'allCustomers', 'currentUser']),
   },
@@ -199,6 +224,10 @@ export default {
     },
     closeAddCustomerForm() {
       this.showAddCustomerForm = false
+    },
+    closeUpdatePayment() {
+      this.showUpdatePayment = false
+      this.giveGoodList()
     },
 
     giveGoodList(){
@@ -262,6 +291,16 @@ export default {
       )
     },
 
+    getThisBill(id) {
+      this.$axios.get(this.apiRoutes.getThisBill(id)).then(
+          response => {
+            this.myBill = response.data
+            // console.log(this.myBill[0].benefit)
+            this.showUpdatePayment = true
+          }
+      )
+    },
+
     exportBillPdf(id, user) {
       this.$axios.get(this.apiRoutes.exportBillPdf(id, user), { responseType: 'blob'}).then(response => {
         return new Blob([response.data], {type: 'application/pdf'});
@@ -300,6 +339,8 @@ export default {
   },
   data() {
     return {
+      myBill: {},
+      showUpdatePayment: false,
       switchTable: false,
       lateBills: [],
       isLateToPaid: false,

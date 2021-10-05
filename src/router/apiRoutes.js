@@ -27,6 +27,12 @@ export default {
     unpaidBillsByUser: function (userId) {
         return('/unPaidBillsByUser/' + userId)
     },
+    getThisBill: function (id) {
+        return('/thisBill/' + id)
+    },
+    updatePayment: function (id) {
+        return('/updatePayment/' +id)
+    },
 
     //User
     getAllUsers: '/getUserList',

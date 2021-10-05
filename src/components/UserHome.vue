@@ -206,7 +206,7 @@ export default {
       }).then(
           response => {
             this.$store.commit('setAllLateBills', response.data)
-            console.log(this.allLateBills)
+            // console.log(this.allLateBills)
 
           }
       )
