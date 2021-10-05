@@ -39,15 +39,44 @@
           </v-btn>
         </div>
       </v-card-actions>
+      <v-container>
+        <v-row>
+          <v-col cols="5" class="carre">
+            <h3>TOTAL DES FACTURES</h3>
+            <h1>{{this.billsSum}} € HT</h1>
+            <v-spacer></v-spacer>
+            <span>TOTAL DES FACTURES IMPAYEES </span>
+
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-col cols="5" class="carre">
+            <span>Factures payées</span>
+
+          </v-col>
+        </v-row>
+      </v-container>
 
       <div>
         <h1>Liste des factures en retard de paiement</h1>
+        <v-card-title>
+          <v-spacer></v-spacer>
+          <v-text-field
+              v-model="searchForLateBills"
+              append-icon="mdi-account-search"
+              search bar
+              single-line
+              hide-details
+          ></v-text-field>
+        </v-card-title>
+        <v-divider></v-divider>
+
+        <v-card-text>
         <v-data-table
             class="taleClass"
             :headers="headersForBills"
             :items="allLateBills"
-            :custom-filter="customSearch"
-            :search="search"
+            :custom-filter="customSearchForLateBills"
+            :search="searchForLateBills"
             sort-by="firstName"
         >
           <template v-slot:item.dateOfIssue=" { item }">
@@ -66,6 +95,7 @@
             <span><a :href="'mailto:' +  item.customer.email"> {{item.customer.email}}</a></span>
           </template>
         </v-data-table>
+        </v-card-text>
       </div>
 
       <div v-if="currentUser.role === 1">
@@ -160,8 +190,10 @@ export default {
             this.$store.commit('setCurrentUser', response.data)
             if(this.currentUser.role === 1) {
               this.getUnpaidBills()
+              this.getAllBills()
             } else {
               this.getUnpaidBillsByUser()
+              this.getAllBills()
             }
           }
       )
@@ -226,6 +258,44 @@ export default {
       )
     },
 
+    async getAllBills() {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.get(this.apiRoutes.listBill, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          (response) => {
+            this.allBills = response.data
+            console.log(this.allBills)
+            this.getSum()
+          }
+      )
+    },
+
+    thisYearBills: function () {
+      // var x = this.allBills.filter(created => created.toString().includes("2021"))
+      // var startDate = new Date("01-10-2021");
+      // var endDate = new Date("10-10-2021");
+
+      this.allBills = this.allBills.filter(z => {
+        var date = z.created;
+        var myCreated = new Date(date);
+        var year = myCreated.getFullYear();
+        return year === new Date().getFullYear()
+      })
+      // console.log(x)
+    },
+
+    getSum() {
+    this.thisYearBills()
+      console.log(this.allBills)
+      this.billsSum = (this.allBills.reduce(function (s, a) {
+        return s + a.amountHt;
+      }, 0)).toFixed(2)
+      console.log(this.billsSum)
+    },
+
     async deleteUser(id) {
       let res = await this.$confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')
       if(res) {
@@ -258,19 +328,33 @@ export default {
           this.checkStringContainsValue(item.city, search) ||
           this.checkStringContainsValue(item.siret, search)
     },
+    customSearchForLateBills (value, searchForLateBills, item) {
+      searchForLateBills = searchForLateBills.toLowerCase();
+      return value != null &&
+          searchForLateBills != null &&
+          typeof value === 'string' &&
+          this.checkStringContainsValue(item.customer.firstName, searchForLateBills) ||
+          this.checkStringContainsValue(item.customer.lastName, searchForLateBills) ||
+          this.checkStringContainsValue(item.customer.email, searchForLateBills) ||
+          this.checkStringContainsValue(item.billNumber, searchForLateBills) ||
+          this.checkStringContainsValue(item.customer.company, searchForLateBills) ||
+          this.checkStringContainsValue(item.customer.siret, searchForLateBills)
+    },
   },
   data() {
     return {
+      billsSum: null,
       allBills: [],
       userToRegisterForm: false,
       role: 0,
       search: "",
+      searchForLateBills: "",
       headersForBills: [
-        {text: "Date d'émission", value: 'dateOfIssue', sortable: false, align: "center"},
+        {text: "Date d'émission", value: 'dateOfIssue', align: "center"},
         {text: "Numéro facture", value: 'billNumber', align: "center"},
         {text: "Période couverte", value: 'periodCovered', sortable: false, align: "center"},
         {text: "Total HT", value: 'totalHT', sortable: false, align: "center"},
-        {text: "Entreprise", value: 'company', sortable: false, align: "center"},
+        {text: "Entreprise", value: 'company', align: "center"},
         {text: "Nom du contact", value: 'customer', sortable: false, align: "center"},
         {text: "Email", value: 'email', sortable: false, align: "center"},
 
@@ -297,5 +381,9 @@ export default {
 </script>
 
 <style scoped>
-
+.carre {
+  border-style: double;
+  margin-left: 20px;
+  height: 200px;
+}
 </style>
