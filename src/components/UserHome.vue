@@ -39,19 +39,30 @@
           </v-btn>
         </div>
       </v-card-actions>
-      <v-container>
+      <v-container style="margin: 30px">
         <v-row>
           <v-col cols="5" class="carre">
-            <h3>TOTAL DES FACTURES</h3>
+            <h3 style="margin: 20px">TOTAL DES FACTURES DEPUIS LE 1er Janvier</h3>
             <h1>{{this.billsSum}} € HT</h1>
             <v-spacer></v-spacer>
-            <span>TOTAL DES FACTURES IMPAYEES </span>
+            <h3 style="margin: 20px">TOTAL DES FACTURES IMPAYEES </h3>
+            <h1>{{this.unpaidBillsSum}} € TTC</h1>
 
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="5" class="carre">
-            <span>Factures payées</span>
-
+          <v-col cols="5" class="carre" >
+            <h3 style="margin: 20px">FACTURES IMPAYEES</h3>
+            <div>
+              <v-progress-circular
+                  v-model="averageUnpaidBills"
+                  :rotate="360"
+                  :size="125"
+                  :width="15"
+                  color="teal"
+              >
+                {{ averageUnpaidBills }} %
+              </v-progress-circular>
+            </div>
           </v-col>
         </v-row>
       </v-container>
@@ -153,7 +164,7 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import {mapGetters, mapActions} from "vuex";
 import {getInstance} from "../auth";
 import LoginPage from "./LoginPage";
 
@@ -162,7 +173,7 @@ export default {
   mounted() {
   },
   computed: {
-    ...mapGetters(['apiRoutes', 'currentUser', 'allUsers', "allLateBills"])
+    ...mapGetters(['apiRoutes', 'currentUser', 'allUsers', "allLateBills", "billsSum", "unpaidBillsSum", "averageUnpaidBills"])
   },
   components: {LoginPage},
   created() {
@@ -170,6 +181,8 @@ export default {
     this.init(this.loadTokenInfoStore)
   },
   methods: {
+    ...mapActions(['getSum', 'getUnpaidSum']),
+
     init(fn) {
       var instance = getInstance();
       instance.$watch("loading", loading => {
@@ -193,7 +206,7 @@ export default {
               this.getAllBills()
             } else {
               this.getUnpaidBillsByUser()
-              this.getAllBills()
+              this.getAllBillsByUser()
             }
           }
       )
@@ -253,7 +266,7 @@ export default {
       }).then(
           response => {
             this.$store.commit('setAllLateBills', response.data)
-            console.log(this.allLateBills)
+            // console.log(this.allLateBills)
           }
       )
     },
@@ -267,34 +280,59 @@ export default {
       }).then(
           (response) => {
             this.allBills = response.data
-            console.log(this.allBills)
-            this.getSum()
+            // console.log(this.allBills)
+            this.getSumAllBillsThisYear()
+            this.getAllUnpaidSum()
+            this.averageResult()
           }
       )
     },
 
-    thisYearBills: function () {
-      // var x = this.allBills.filter(created => created.toString().includes("2021"))
-      // var startDate = new Date("01-10-2021");
-      // var endDate = new Date("10-10-2021");
+    async getAllBillsByUser() {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.get(this.apiRoutes.listBillByUser(this.currentUser.id), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          (response) => {
+            // console.log(response.data)
+            this.allBills = response.data
+            this.getSumAllBillsThisYear()
+            this.getAllUnpaidSum()
+            this.averageResult()
+          }
+      )
+    },
 
-      this.allBills = this.allBills.filter(z => {
-        var date = z.created;
+    averageResult: function () {
+      var average = (this.unpaidBills.length * 100) / this.allBills.length //donne pourcentage de facture non payées
+      this.$store.commit('setAverageUnpaidBills', average)
+    },
+
+    getSumAllBillsThisYear() {
+      this.allBillsForSumArray = this.allBills.filter(bill => {
+        var date = bill.created;
         var myCreated = new Date(date);
         var year = myCreated.getFullYear();
         return year === new Date().getFullYear()
       })
-      // console.log(x)
+      this.getSum(this.allBillsForSumArray)
     },
 
-    getSum() {
-    this.thisYearBills()
-      console.log(this.allBills)
-      this.billsSum = (this.allBills.reduce(function (s, a) {
-        return s + a.amountHt;
-      }, 0)).toFixed(2)
-      console.log(this.billsSum)
+    getAllUnpaidSum() {
+      this.unpaidBills = this.allBills.filter(bill => {
+        return bill.paid === false
+      })
+     this.getUnpaidSum(this.unpaidBills)
     },
+
+    // getUnpaidSum() {
+    //   console.log(this.allLateBills)
+    //   this.unpaidBillsSum = (this.allLateBills.reduce(function (s, a) {
+    //     return s + a.amountHt;
+    //   }, 0)).toFixed(2)
+    // },
 
     async deleteUser(id) {
       let res = await this.$confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')
@@ -343,7 +381,13 @@ export default {
   },
   data() {
     return {
-      billsSum: null,
+      unpaidBills: [],
+      // averageResultData: null,
+      allBillsPaid: [],
+      allBillsUnpaid: [],
+      allBillsForSumArray: null,
+      // billsSum: null,
+      // unpaidBillsSum: null,
       allBills: [],
       userToRegisterForm: false,
       role: 0,
@@ -384,6 +428,7 @@ export default {
 .carre {
   border-style: double;
   margin-left: 20px;
-  height: 200px;
+  height: 300px;
+  text-align: center;
 }
 </style>

@@ -182,7 +182,7 @@
     </v-card-text>
     <AddCustomerForm v-if="showAddCustomerForm" :visible="showAddCustomerForm" @close="closeAddCustomerForm"/>
     <AddBillForm v-if="showAddBillForm" :visible="showAddBillForm" @close="closeAddBillForm" />
-    <UpdatePaymentForm v-if="showUpdatePayment" :myBill="myBill" :visible="showUpdatePayment" @close="closeUpdatePayment" />
+    <UpdatePaymentForm v-if="showUpdatePayment" :allBills="allBills" :myBill="myBill" :visible="showUpdatePayment" @close="closeUpdatePayment" />
   </v-container>
 </template>
 
@@ -207,7 +207,7 @@ export default {
     switchTable(bool) {
       if (bool) {
         if(this.currentUser.role === 1) {
-          this.getLateBills()
+          this.getUnpaidBills()
         } else {
           this.getLateBillsByUser()
         }
@@ -264,7 +264,7 @@ export default {
       )
     },
 
-    async getLateBills() {
+    async getUnpaidBills() {
       const accessToken = await this.$auth.getTokenSilently()
       this.$axios.get(this.apiRoutes.lateBill, {
         headers: {
@@ -273,7 +273,7 @@ export default {
       }).then(
           response => {
             this.allBills = response.data
-            // console.log(this.lateBills)
+            // console.log(this.allBills)
           }
       )
     },

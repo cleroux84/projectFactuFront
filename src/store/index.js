@@ -10,7 +10,11 @@ export default new Vuex.Store({
       allCustomers: [],
       currentUser: {},
       allUsers: [],
+      allBills: [],
       allLateBills: [],
+      billsSum: null,
+      unpaidBillsSum: null,
+      averageUnpaidBills: null,
       rules: {
           required: value => !!value || 'Champs obligatoire.',
           zipCode: value => value && value.length === 5 || 'Le code postal doit être composé de 5 chiffres !',
@@ -45,6 +49,18 @@ export default new Vuex.Store({
       },
       setAllLateBills (state, allLateBills) {
           state.allLateBills = allLateBills
+      },
+      setBillsSum (state, billsSum) {
+          state.billsSum = billsSum
+      },
+      setUnpaidBillsSum (state, unpaidBillsSum) {
+          state.unpaidBillsSum = unpaidBillsSum
+      },
+      setAverageUnpaidBills (state, averageUnpaidBills) {
+          state.averageUnpaidBills = averageUnpaidBills
+      },
+      setAllBills (state, allBills) {
+          state.allBills = allBills
       }
   },
 
@@ -70,13 +86,48 @@ export default new Vuex.Store({
             }
         )
       },
-      getAllLateBills({rootState, commit}) {
-        Vue.axios.get(rootState.apiRoutes.lateBill).then(
-            response => {
-                commit('setAllLateBills', response.data)
-            }
-        )
-      }
+
+      getSum: function ({commit}, allBillsForSumArray) {
+          var amountSum = (allBillsForSumArray.reduce(function (s, a) {
+              return s + a.amountHt;
+          }, 0)).toFixed(2)
+          commit('setBillsSum', amountSum)
+      },
+
+      getUnpaidSum: function ({commit}, unpaidBills) {
+          var amountSum = (unpaidBills.reduce(function (s, a) {
+              return s + a.amountHt;
+          }, 0)).toFixed(2)
+          commit('setUnpaidBillsSum', amountSum)
+      },
+
+      async getAllBills({rootState, commit}) {
+          const accessToken = await this.$auth.getTokenSilently()
+          Vue.axios.get(rootState.apiRoutes.listBill, {
+              headers: {
+                  Authorization: `Bearer ${accessToken}`
+              }
+          }).then(
+              response => {
+                  commit('setAllBills', response.data)
+              }
+          )
+      },
+      //
+      // async getAllLateBills({rootState, commit}) {
+      //     const accessToken = await this.$auth.getTokenSilently()
+      //     Vue.axios.get(rootState.apiRoutes.lateBill, {
+      //         headers: {
+      //             Authorization: `Bearer ${accessToken}`
+      //         }
+      //     }).then(
+      //       response => {
+      //           commit('setAllLateBills', response.data)
+      //       }
+      //   )
+      // },
+
+
   },
   modules: {
   },
@@ -86,6 +137,10 @@ export default new Vuex.Store({
       currentUser: state => { return state.currentUser},
       rules: state => {return state.rules},
       allUsers: state => {return state.allUsers},
-      allLateBills: state => {return state.allLateBills}
+      allBills: state => {return state.allBills},
+      allLateBills: state => {return state.allLateBills},
+      billsSum: state => { return state.billsSum},
+      unpaidBillsSum: state => { return state.unpaidBillsSum},
+      averageUnpaidBills: state => { return state.averageUnpaidBills},
   }
 })

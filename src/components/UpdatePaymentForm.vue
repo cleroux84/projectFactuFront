@@ -52,14 +52,14 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   created() {
   },
   name: "UpdatePaymentForm",
   computed: {
-    ...mapGetters(['rules', 'apiRoutes', 'currentUser', 'allLateBills']),
+    ...mapGetters(['rules', 'apiRoutes', 'currentUser', 'allLateBills', 'unpaidBillsSum']),
     show: {
       get () {
         return this.visible
@@ -109,8 +109,6 @@ export default {
     },
 
     async updatePayment () {
-      console.log(this.allLateBills)
-      console.log(this.allLateBills)
       const accessToken = await this.$auth.getTokenSilently()
       let res = await this.$confirm('Êtes-vous sûr de vouloir valider ce paiement ? Aucune modification possible' )
       if (this.$refs.updatePaymentForm.validate())
@@ -140,6 +138,7 @@ export default {
       }).then(
           response => {
             this.$store.commit('setAllLateBills', response.data)
+            this.getAllBills()
             // console.log(this.allLateBills)
 
           }
@@ -154,14 +153,60 @@ export default {
       }).then(
           response => {
             this.$store.commit('setAllLateBills', response.data)
+            this.getAllBillsByUser()
             // console.log(this.allLateBills)
           }
       )
     },
+    ...mapActions(['getUnpaidSum']),
+
+    getAllUnpaidSum() {
+      this.unpaidBills = this.allBills.filter(bill => {
+        return bill.paid === false
+      })
+      this.getUnpaidSum(this.unpaidBills)
+    },
+
+    async getAllBills() {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.get(this.apiRoutes.listBill, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          (response) => {
+            this.allBills = response.data
+            this.getAllUnpaidSum()
+            this.averageResult()
+          }
+      )
+    },
+    async getAllBillsByUser() {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.get(this.apiRoutes.listBillByUser(this.currentUser.id), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          (response) => {
+            // console.log(response.data)
+            this.allBills = response.data
+            this.getAllUnpaidSum()
+            this.averageResult()
+          }
+      )
+    },
+    averageResult: function () {
+      var average = (this.unpaidBills.length * 100) / this.allBills.length //donne pourcentage de facture non payées
+      this.$store.commit('setAverageUnpaidBills', average)
+    },
+
   },
   props: ['visible', 'myBill'],
   data() {
     return {
+      allBills: [],
+      unpaidBills: [],
       valid: false,
       formErrors: [],
       myPaymentData: {},
