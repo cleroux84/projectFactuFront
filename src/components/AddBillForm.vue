@@ -88,6 +88,7 @@
 <script>
 import {mapGetters} from 'vuex'
 import FormBenefit from "./FormBenefit";
+import BillService from "../services/BillService";
 
 export default {
   name: "AddBillForm.vue",
@@ -106,7 +107,6 @@ export default {
         }
       }
     },
-
   },
   watch: {
 
@@ -143,16 +143,6 @@ export default {
         }
       }
         this.composeAddBillForm()
-
-      // console.log("this.formAddBill.benefits.length")
-      // console.log(this.formAddBill.benefits.length)
-      // console.log("this.benefitComponents.length")
-      // console.log(this.benefitComponents.length)
-      // if(this.formAddBill.benefits.length === this.benefitComponents.length){
-      //   this.composeAddBillForm()
-      // } else {
-      //   console.log(this.formAddBill)
-      // }
     },
 
     composeAddBillForm: function () {
@@ -165,18 +155,12 @@ export default {
     async addBill () {
       const accessToken = await this.$auth.getTokenSilently()
       if (this.$refs.addBillForm.validate())
-      this.$axios.post(this.apiRoutes.addBill, this.formAddBill, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
+        BillService.addNewBill(accessToken, this.formAddBill).then(
           () => {
-            // console.log(this.formAddBill)
             this.show = false
       },
           () => {
             console.log("error")
-            // console.log(this.formAddBill)
           }
       )
     },
