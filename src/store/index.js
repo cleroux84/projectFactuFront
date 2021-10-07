@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import ApiRoutes from '../router/apiRoutes'
+import BillsListService from "../services/BillsListService";
 // import { getInstance } from "./index";
 
 Vue.use(Vuex)
@@ -69,12 +70,6 @@ export default new Vuex.Store({
       setUnpaidBills (state, unpaidBills) {
           state.unpaidBills = unpaidBills
       },
-      // setIsAuthenticated (state, isAuthenticated) {
-      //     state.isAuthenticated = isAuthenticated
-      // },
-      setToken (state, token) {
-          state.token = token
-      }
   },
 
   actions: {
@@ -133,53 +128,36 @@ export default new Vuex.Store({
           commit('setUnpaidBillsSum', amountSum)
       },
 
-      async getAllBills({rootState, commit}) {
-          const accessToken = await this.$auth.getTokenSilently()
-          Vue.axios.get(rootState.apiRoutes.listBill, {
-              headers: {
-                  Authorization: `Bearer ${accessToken}`
-              }
-          }).then(
-              response => {
-                  commit('setAllBills', response.data)
-              }
-          )
+      async getAllBillsList ({commit}, accessToken) {
+        await BillsListService.getBillsList(accessToken).then(
+            (bills => {
+                commit('setAllBills', bills)
+            })
+        )
       },
 
-      getToken ({commit}, newToken) {
-        commit('setToken', newToken)
-      },
-
-      // getIsAuthenticated({commit}, isAuth) {
-      //   commit('setIsAuthenticated', isAuth)
+      // async getAllBillsListByUser ({commit}, accessToken, userId) {
+      //     await BillsListService.getBillsListByUser(accessToken, userId).then(
+      //         (bills => {
+      //             console.log(userId)
+      //             commit('setAllBills', bills)
+      //         })
+      //     )
       // }
-      //
-      // async getAllLateBills({rootState, commit}) {
-      //     const accessToken = await this.$auth.getTokenSilently()
+
+      // async getUnpaidBills({rootState, commit}, token) {
+      //     const accessToken = await token
+      //     console.log(accessToken)
       //     Vue.axios.get(rootState.apiRoutes.lateBill, {
       //         headers: {
       //             Authorization: `Bearer ${accessToken}`
       //         }
       //     }).then(
-      //       response => {
-      //           commit('setAllLateBills', response.data)
-      //       }
-      //   )
+      //         response => {
+      //             commit('setUnpaidBills', response.data)
+      //         }
+      //     )
       // },
-
-      async getUnpaidBills({rootState, commit}, token) {
-          const accessToken = await token
-          console.log(accessToken)
-          Vue.axios.get(rootState.apiRoutes.lateBill, {
-              headers: {
-                  Authorization: `Bearer ${accessToken}`
-              }
-          }).then(
-              response => {
-                  commit('setUnpaidBills', response.data)
-              }
-          )
-      },
 
 
   },

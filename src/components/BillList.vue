@@ -154,7 +154,7 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import AddCustomerForm from "./AddCustomerForm";
 import AddBillForm from "./AddBillForm";
 import UpdatePaymentForm from "./UpdatePaymentForm";
@@ -186,6 +186,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(['getAllBillsList']),
     closeAddBillForm() {
       this.showAddBillForm = false
       this.giveGoodList()
@@ -215,11 +216,7 @@ export default {
 
     async getAllBills() {
       const accessToken = await this.$auth.getTokenSilently()
-      await BillsListService.getBillsList(accessToken).then(
-          (bills => {
-            this.$store.commit('setAllBills', bills)
-          })
-      )
+      await this.getAllBillsList(accessToken)
     },
 
     async getUnpaidBills() {

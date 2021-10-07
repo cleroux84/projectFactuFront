@@ -167,13 +167,15 @@
 import {mapGetters, mapActions} from "vuex";
 import {getInstance} from "../auth";
 import LoginPage from "./LoginPage";
+import UserService from "../services/UserService";
+import BillsListService from "../services/BillsListService";
 
 export default {
   name: "UserHome",
   mounted() {
   },
   computed: {
-    ...mapGetters(['apiRoutes', 'isAuthenticated','currentUser', 'allUsers', "allLateBills", "billsSum", "unpaidBillsSum", "averageUnpaidBills", "token"])
+    ...mapGetters(['apiRoutes','currentUser', 'allUsers', "allLateBills", "billsSum", "unpaidBillsSum", "averageUnpaidBills", 'allBills'])
   },
   components: {LoginPage},
   created() {
@@ -181,27 +183,42 @@ export default {
     this.init(this.loadTokenInfoStore)
   },
   methods: {
-    ...mapActions(['getSum', 'getUnpaidSum', 'getToken']),
+    ...mapActions(['getSum', 'getUnpaidSum', 'getAllBillsList']),
 
     init(fn) {
-      var instance = getInstance();
+      let instance = getInstance();
       instance.$watch("loading", loading => {
         if (loading === false) {
           fn(instance)
         }
       })
     },
-//TODO : probleme rencontré et reglé ici pour set currentUser : https://community.auth0.com/t/auth0-client-is-null-in-vue-spa-component-on-page-refresh/38147/2
-    async initializeCurrentUser() {
+
+    async loadTokenInfoStore(instance) {
+      await instance.getTokenSilently().then((authToken) => {
+        UserService.getAllUsers(authToken).then(
+            (allUsers => {
+              this.$store.commit('setAllUsers', allUsers)
+              this.connectUser()
+            })
+        )
+      })
+    },
+
+    connectUser() {
+      if(!this.allUsers.some(data => data.email === this.$auth.user.email)) {
+        this.userToRegisterForm = true
+      } else {
+        this.initializeCurrentUserConnexion()
+
+      }
+    },
+    //TODO : probleme rencontré et reglé ici pour set currentUser : https://community.auth0.com/t/auth0-client-is-null-in-vue-spa-component-on-page-refresh/38147/2
+    async initializeCurrentUserConnexion() {
       const accessToken = await this.$auth.getTokenSilently()
-      this.$axios.get(this.apiRoutes.getCurrentUser(this.$auth.user.email), {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
-          response => {
-            this.$store.commit('setCurrentUser', response.data)
-            this.$store.commit('setToken', accessToken)
+      UserService.getCurrentUser(accessToken, this.$auth.user.email).then(
+          (user => {
+            this.$store.commit('setCurrentUser', user)
             if(this.currentUser.role === 1) {
               this.getUnpaidBills()
               this.getAllBills()
@@ -209,94 +226,46 @@ export default {
               this.getUnpaidBillsByUser()
               this.getAllBillsByUser()
             }
-          }
+          })
       )
-    },
-    async loadTokenInfoStore(instance) {
-      await instance.getTokenSilently().then((authToken) => {
-        this.$axios.get(this.apiRoutes.getAllUsers, {
-          headers: {
-            Authorization: `Bearer ${authToken}`
-          }
-        }).then(
-            (response) => {
-              this.$store.commit('setAllUsers', response.data)
-              this.connectUser()
-            }
-        )
-      })
-    },
-    connectUser() {
-      if(!this.allUsers.some(data => data.email === this.$auth.user.email)) {
-        this.userToRegisterForm = true
-      } else {
-        this.initializeCurrentUser()
-
-      }
-    },
-    closeUserRegisterForm() {
-      this.userToRegisterForm = false
     },
 
     async getUnpaidBills() {
       const accessToken = await this.$auth.getTokenSilently()
-      this.$axios.get(this.apiRoutes.unpaidBills, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
-          response => {
-            this.$store.commit('setAllLateBills', response.data)
-            // console.log(this.allLateBills)
-
+      await BillsListService.getLateBillsList(accessToken).then(
+          unpaidBills => {
+            this.$store.commit('setAllLateBills', unpaidBills)
           }
       )
     },
 
     async getUnpaidBillsByUser() {
       const accessToken = await this.$auth.getTokenSilently()
-      this.$axios.get(this.apiRoutes.unpaidBillsByUser(this.currentUser.id), {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
-          response => {
-            this.$store.commit('setAllLateBills', response.data)
-            // console.log(this.allLateBills)
+      await BillsListService.getLateBillsListByUser(accessToken, this.currentUser.id).then(
+          unpaidBills => {
+            this.$store.commit('setAllLateBills', unpaidBills)
           }
       )
+    },
+
+    getStats() {
+      this.getSumAllBillsThisYear()
+      this.getAllUnpaidSum()
+      this.averageResult()
     },
 
     async getAllBills() {
       const accessToken = await this.$auth.getTokenSilently()
-      this.$axios.get(this.apiRoutes.listBill, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
-          (response) => {
-            this.allBills = response.data
-            // console.log(this.allBills)
-            this.getSumAllBillsThisYear()
-            this.getAllUnpaidSum()
-            this.averageResult()
-          }
-      )
+      await this.getAllBillsList(accessToken)
+            this.getStats()
     },
 
     async getAllBillsByUser() {
       const accessToken = await this.$auth.getTokenSilently()
-      this.$axios.get(this.apiRoutes.listBillByUser(this.currentUser.id), {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
-          (response) => {
-            // console.log(response.data)
-            this.allBills = response.data
-            this.getSumAllBillsThisYear()
-            this.getAllUnpaidSum()
-            this.averageResult()
+      await BillsListService.getBillsListByUser(accessToken, this.currentUser.id).then(
+          bills => {
+            this.$store.commit('setAllBills', bills)
+            this.getStats()
           }
       )
     },
@@ -323,32 +292,28 @@ export default {
      this.getUnpaidSum(this.unpaidBills)
     },
 
-    // getUnpaidSum() {
-    //   console.log(this.allLateBills)
-    //   this.unpaidBillsSum = (this.allLateBills.reduce(function (s, a) {
-    //     return s + a.amountHt;
-    //   }, 0)).toFixed(2)
+    // async deleteUser(id) {
+    //   let res = await this.$confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')
+    //   if(res) {
+    //     this.$axios.delete(this.apiRoutes.deleteUser(id)).then(
+    //         () => {
+    //           this.getAllUsers();
+    //         }, response => {
+    //           console.log(response)
+    //         }
+    //     )
+    //   }
     // },
 
-    async deleteUser(id) {
-      let res = await this.$confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')
-      if(res) {
-        this.$axios.delete(this.apiRoutes.deleteUser(id)).then(
-            () => {
-              this.getAllUsers();
-            }, response => {
-              console.log(response)
-            }
-        )
-      }
-    },
     login() {
       this.$auth.loginWithRedirect();
+    },
+    closeUserRegisterForm() {
+      this.userToRegisterForm = false
     },
     checkStringContainsValue(string, value) {
       return (string !== null && string !== undefined && string.toLowerCase().includes(value));
     },
-
     customSearch (value, search, item) {
       search = search.toLowerCase();
       return value != null &&
@@ -378,13 +343,9 @@ export default {
   data() {
     return {
       unpaidBills: [],
-      // averageResultData: null,
       allBillsPaid: [],
       allBillsUnpaid: [],
       allBillsForSumArray: null,
-      // billsSum: null,
-      // unpaidBillsSum: null,
-      allBills: [],
       userToRegisterForm: false,
       role: 0,
       search: "",

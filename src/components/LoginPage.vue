@@ -109,6 +109,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import UserService from "../services/UserService";
 
 export default {
   name: "LoginPage",
@@ -127,12 +128,6 @@ export default {
   },
   props: ['visible'],
   methods: {
-    // reset() {
-    //   this.$refs.form.reset();
-    // },
-    // resetValidation() {
-    //   this.$refs.form.resetValidation();
-    // }
     checkAddUserForm: function () {
       if(this.formAddUser.civility &&
           this.formAddUser.firstName &&
@@ -150,15 +145,16 @@ export default {
 
     composeUserFormBeforeBankExist: function() {
       this.formAddUser.authId = this.$auth.user.sub
-      this.formAddUser.role = 0
+      this.formAddUser.role = 0 //non admin par defaut
       this.formAddUser.email = this.$auth.user.email
       this.addNewUser()
     },
 
-    addNewUser: function () {
-      this.$axios.post(this.apiRoutes.addUser, this.formAddUser).then(
+    async addNewUser () {
+      const accessToken = await this.$auth.getTokenSilently()
+      if(this.$refs.registerForm.validate())
+        UserService.addUser(accessToken, this.formAddUser).then(
           () => {
-            console.log(this.formAddUser)
             this.show = false;
           },
           () => console.log("error")
@@ -206,21 +202,6 @@ export default {
       {name:"Inscription", icon:"mdi-account-outline"}
     ],
     valid: true,
-
-    // loginEmailRules: [
-    //   v => !!v || "Required",
-    //   v => /.+@.+\..+/.test(v) || "E-mail must be valid"
-    // ],
-    // emailRules: [
-    //   v => !!v || "Required",
-    //   v => /.+@.+\..+/.test(v) || "E-mail must be valid"
-    // ],
-
-    show1: false,
-    // rules: {
-    //   required: value => !!value || "Required.",
-    //   min: v => (v && v.length >= 8) || "Min 8 characters"
-    // }
   })
 }
 </script>

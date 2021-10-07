@@ -29,8 +29,26 @@ export default {
       return res.data
     },
 
+    async getLateBillsList(accessToken) {
+        let res = await _axios.get(apiRoutes.unpaidBills, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+        return res.data
+    },
+
     async getUnpaidBillsListByUser(accessToken, userId) {
         let res = await _axios.get(apiRoutes.lateBillByUser(userId), {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        });
+        return res.data
+    },
+
+    async getLateBillsListByUser(accessToken, userId) {
+        let res = await _axios.get(apiRoutes.unpaidBillsByUser(userId), {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
