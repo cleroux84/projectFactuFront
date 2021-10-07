@@ -3,8 +3,6 @@
     <h1>Liste des clients</h1>
     <v-card-title>
       <v-spacer></v-spacer>
-<!--      <h5>Connecté en tant que : </h5>-->
-<!--      <span>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</span>-->
     </v-card-title>
     <v-card-actions>
       <div class="text-center">
@@ -43,11 +41,6 @@
         </v-btn>
       </div>
     </v-card-actions>
-<!--      <v-dialog-->
-<!--          transition="dialog-top-transition"-->
-<!--          max-width="600"-->
-<!--      >-->
-<!--      </v-dialog>-->
       <v-card-title>
         <v-spacer></v-spacer>
         <v-text-field
@@ -77,8 +70,6 @@
               <v-icon class="material-icons" color="black" @click="openUpdateCustomer(item)">mdi-account-edit-outline</v-icon>
             </v-row>
           </template>
-
-
         </v-data-table>
       </v-card-text>
     <add-customer-form v-if="showAddCustomerForm" :visible="showAddCustomerForm" @close="closeAddCustomerForm"></add-customer-form>
@@ -98,7 +89,7 @@ export default {
   mounted() {
   },
   computed: {
-    ...mapGetters(['apiRoutes', 'allCustomers'/*, 'currentUser'*/]),
+    ...mapGetters(['apiRoutes', 'allCustomers']),
   },
   component: {
     AddCustomerForm, UpdateCustomerForm
@@ -135,39 +126,6 @@ export default {
     },
     closeUpdateCustomerForm() {
       this.showUpdateCustomerForm = false
-    },
-    // async deleteCustomer(id) {
-    //   const accessToken = await this.$auth.getTokenSilently()
-    //   if (confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) {
-    //     this.$axios.delete(this.apiRoutes.deleteCustomer(id), {
-    //       headers: {
-    //         Authorization: `Bearer ${accessToken}`
-    //       }
-    //     }).then(
-    //         () => {
-    //           this.$store.dispatch('getAllCustomers');
-    //         }, response => {
-    //           console.log(response);
-    //         }
-    //     )
-    //   }
-    // },
-    async deleteCustomer(id) {
-      const accessToken = await this.$auth.getTokenSilently()
-      let res = await this.$confirm('Êtes-vous sûr de vouloir supprimer ce client ?')
-      if (res) {
-        this.$axios.delete(this.apiRoutes.deleteCustomer(id), {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        }).then(
-            () => {
-              this.$store.dispatch('getAllCustomers');
-            }, response => {
-              console.log(response);
-            }
-        )
-      }
     },
     openUpdateCustomer(item) {
       this.updateCustomer = item;
