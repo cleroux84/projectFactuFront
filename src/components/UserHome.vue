@@ -173,7 +173,7 @@ export default {
   mounted() {
   },
   computed: {
-    ...mapGetters(['apiRoutes', 'currentUser', 'allUsers', "allLateBills", "billsSum", "unpaidBillsSum", "averageUnpaidBills"])
+    ...mapGetters(['apiRoutes', 'isAuthenticated','currentUser', 'allUsers', "allLateBills", "billsSum", "unpaidBillsSum", "averageUnpaidBills", "token"])
   },
   components: {LoginPage},
   created() {
@@ -181,7 +181,7 @@ export default {
     this.init(this.loadTokenInfoStore)
   },
   methods: {
-    ...mapActions(['getSum', 'getUnpaidSum']),
+    ...mapActions(['getSum', 'getUnpaidSum', 'getToken']),
 
     init(fn) {
       var instance = getInstance();
@@ -201,6 +201,7 @@ export default {
       }).then(
           response => {
             this.$store.commit('setCurrentUser', response.data)
+            this.$store.commit('setToken', accessToken)
             if(this.currentUser.role === 1) {
               this.getUnpaidBills()
               this.getAllBills()
@@ -221,11 +222,6 @@ export default {
             (response) => {
               this.$store.commit('setAllUsers', response.data)
               this.connectUser()
-            //   if(this.currentUser.role === 1) {
-            //     this.getLateBills()
-            //   } else {
-            //     this.getLateBillsByUser()
-            //   }
             }
         )
       })

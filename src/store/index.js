@@ -1,11 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import ApiRoutes from '../router/apiRoutes'
+// import { getInstance } from "./index";
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+      token: null,
+      // isAuthenticated: false,
       apiRoutes: ApiRoutes,
       allCustomers: [],
       currentUser: {},
@@ -15,6 +18,7 @@ export default new Vuex.Store({
       billsSum: null,
       unpaidBillsSum: null,
       averageUnpaidBills: null,
+      unpaidBills: [],
       rules: {
           required: value => !!value || 'Champs obligatoire.',
           zipCode: value => value && value.length === 5 || 'Le code postal doit être composé de 5 chiffres !',
@@ -61,10 +65,38 @@ export default new Vuex.Store({
       },
       setAllBills (state, allBills) {
           state.allBills = allBills
+      },
+      setUnpaidBills (state, unpaidBills) {
+          state.unpaidBills = unpaidBills
+      },
+      // setIsAuthenticated (state, isAuthenticated) {
+      //     state.isAuthenticated = isAuthenticated
+      // },
+      setToken (state, token) {
+          state.token = token
       }
   },
 
   actions: {
+      // retrieveTokenFromAuthz(context) {
+      //     return new Promise((resolve, reject) => {
+      //         const instance = getInstance();
+      //         instance.$watch("loading", loading => {
+      //             if (loading === false && instance.isAuthenticated) {
+      //                 instance
+      //                     .getTokenSilently()
+      //                     .then(authToken => {
+      //                         context.commit("setToken", authToken);
+      //                         resolve(authToken);
+      //                     })
+      //                     .catch(error => {
+      //                         reject(error);
+      //                     });
+      //             }
+      //         });
+      //     });
+      // },
+
     getAllCustomers({rootState, commit}) {
         Vue.axios.get(rootState.apiRoutes.listCustomer).then(
             response => {
@@ -113,6 +145,14 @@ export default new Vuex.Store({
               }
           )
       },
+
+      getToken ({commit}, newToken) {
+        commit('setToken', newToken)
+      },
+
+      // getIsAuthenticated({commit}, isAuth) {
+      //   commit('setIsAuthenticated', isAuth)
+      // }
       //
       // async getAllLateBills({rootState, commit}) {
       //     const accessToken = await this.$auth.getTokenSilently()
@@ -127,11 +167,26 @@ export default new Vuex.Store({
       //   )
       // },
 
+      async getUnpaidBills({rootState, commit}, token) {
+          const accessToken = await token
+          console.log(accessToken)
+          Vue.axios.get(rootState.apiRoutes.lateBill, {
+              headers: {
+                  Authorization: `Bearer ${accessToken}`
+              }
+          }).then(
+              response => {
+                  commit('setUnpaidBills', response.data)
+              }
+          )
+      },
+
 
   },
   modules: {
   },
   getters: {
+      // isAuthenticated: state => {return state.isAuthenticated},
       allCustomers: state => {return state.allCustomers},
       apiRoutes: state => { return state.apiRoutes },
       currentUser: state => { return state.currentUser},
@@ -142,5 +197,7 @@ export default new Vuex.Store({
       billsSum: state => { return state.billsSum},
       unpaidBillsSum: state => { return state.unpaidBillsSum},
       averageUnpaidBills: state => { return state.averageUnpaidBills},
+      unpaidBills: state => {return state.unpaidBills},
+      token: state => {return state.token}
   }
 })

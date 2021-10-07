@@ -9,7 +9,7 @@
 
 <script>
 
-import {mapGetters} from "vuex";
+import {/*mapActions,*/ mapGetters} from "vuex";
 import Nav from "./components/partials/Nav";
 
 export default {
@@ -18,6 +18,12 @@ export default {
   mounted() {
     // this.$store.dispatch('getCurrentUser', this.$auth.user.email)
     this.$store.dispatch('getAllCustomers')
+  },
+  created() {
+    // this.retrieveTokenFromAuthz()
+  },
+  methods: {
+    // ...mapActions(['retrieveTokenFromAuthz']),
   },
   computed: {
     ...mapGetters(['currentUser'])

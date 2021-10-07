@@ -6,25 +6,17 @@
     </v-card-title>
     <v-card-actions>
       <div class="text-center">
-        <v-btn class="ma-2" outlined >
-          <router-link class="linkBtn" to="/">Accueil</router-link>
-          <v-icon
-              right
-              dark
-          >
-            mdi-home
-          </v-icon>
-        </v-btn>
+        <router-link class="linkBtn" to="/">
+          <v-btn class="ma-2" outlined >
+            Accueil
+            <v-icon right dark> mdi-home </v-icon>
+          </v-btn>
+        </router-link>
         <v-btn class="ma-2" outlined color="blue-grey darken-2">
           <router-link class="linkBtn text--darken-3" to="/customerList">
             Liste des clients
           </router-link>
-          <v-icon
-              right
-              dark
-          >
-            mdi-folder-account
-          </v-icon>
+          <v-icon right dark> mdi-folder-account </v-icon>
         </v-btn>
         <v-btn
             class="ma-2"
@@ -32,12 +24,7 @@
             @click="showAddBillForm = true"
         >
           Nouvelle Facture
-          <v-icon
-              right
-              dark
-          >
-            mdi-calculator
-          </v-icon>
+          <v-icon right dark> mdi-calculator </v-icon>
         </v-btn>
         <v-btn
             class="ma-2"
@@ -45,12 +32,7 @@
             @click="showAddCustomerForm=true"
         >
           Nouveau Client
-          <v-icon
-              right
-              dark
-          >
-            mdi-factory
-          </v-icon>
+          <v-icon right dark> mdi-factory </v-icon>
         </v-btn>
       </div>
     </v-card-actions>
@@ -79,11 +61,6 @@
         :search="search"
         sort-by="firstName"
         >
-<!--            <template v-slot:item.customerId=" { item }">-->
-<!--              <span >{{ (item.customer.civility).charAt(0).toUpperCase()+ (item.customer.civility).slice(1) }}-->
-<!--                {{ (item.customer.firstName).toUpperCase() }}-->
-<!--                {{ (item.customer.lastName).charAt(0).toUpperCase()+ (item.customer.lastName).slice(1) }} </span>-->
-<!--            </template>-->
         <template v-slot:item.company=" {item} ">
           <span>{{(item.customer.company).charAt(0).toUpperCase()+ (item.customer.company).slice(1) }}</span>
         </template>
@@ -132,17 +109,7 @@
             <span>Indiquer un paiement</span>
           </v-tooltip>
         </template>
-<!--        <v-icon-->
-<!--            v-if="!item.paid"-->
-<!--            class="material-icons"-->
-<!--            @click="showUpdatePayment = true"-->
-<!--            v-bind="attrs"-->
-<!--            v-on="on"-->
-<!--        >-->
-<!--          mdi-calculator-->
-<!--        </v-icon>-->
         <template v-slot:item.unPaid=" { item }">
-<!--          <span>{{item.paid}}</span>-->
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
               <v-icon
@@ -191,12 +158,13 @@ import {mapGetters} from "vuex";
 import AddCustomerForm from "./AddCustomerForm";
 import AddBillForm from "./AddBillForm";
 import UpdatePaymentForm from "./UpdatePaymentForm";
+import BillsListService from "../services/BillsListService";
 
 export default {
   name: "BillList",
   components: {UpdatePaymentForm, AddCustomerForm, AddBillForm },
   computed: {
-    ...mapGetters(['apiRoutes', 'allCustomers', 'currentUser']),
+    ...mapGetters(['apiRoutes', 'allBills', 'currentUser', 'unpaidBills']),
   },
 
   created() {
@@ -209,7 +177,7 @@ export default {
         if(this.currentUser.role === 1) {
           this.getUnpaidBills()
         } else {
-          this.getLateBillsByUser()
+          this.getUnpaidBillsByUser()
         }
       } else {
         this.giveGoodList()
@@ -235,69 +203,49 @@ export default {
       else this.getAllBills()
     },
 
+    //methods service appel à la DB
     async getAllBillsByUser() {
       const accessToken = await this.$auth.getTokenSilently()
-      this.$axios.get(this.apiRoutes.listBillByUser(this.currentUser.id), {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
-          (response) => {
-            // console.log(response.data)
-            this.allBills = response.data
+      await BillsListService.getBillsListByUser(accessToken, this.currentUser.id).then(
+          bills => {
+            this.$store.commit('setAllBills', bills)
           }
       )
     },
 
     async getAllBills() {
       const accessToken = await this.$auth.getTokenSilently()
-      this.$axios.get(this.apiRoutes.listBill, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
-          (response) => {
-            // console.log(response.data)
-            this.allBills = response.data
-            // console.log(response.data)
-          }
+      await BillsListService.getBillsList(accessToken).then(
+          (bills => {
+            this.$store.commit('setAllBills', bills)
+          })
       )
     },
 
     async getUnpaidBills() {
       const accessToken = await this.$auth.getTokenSilently()
-      this.$axios.get(this.apiRoutes.lateBill, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
-          response => {
-            this.allBills = response.data
-            // console.log(this.allBills)
+      await BillsListService.getUnpaidBillsList(accessToken).then(
+          unpaidBills => {
+            this.$store.commit('setAllBills', unpaidBills)
           }
       )
     },
 
-    async getLateBillsByUser() {
+    async getUnpaidBillsByUser() {
       const accessToken = await this.$auth.getTokenSilently()
-      this.$axios.get(this.apiRoutes.lateBillByUser(this.currentUser.id), {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
-          response => {
-            this.allBills = response.data
-          }
+      await BillsListService.getUnpaidBillsListByUser(accessToken, this.currentUser.id).then(
+          (unPaidBills => {
+            this.$store.commit('setAllBills', unPaidBills)
+          })
       )
     },
 
-    getThisBill(id) {
-      this.$axios.get(this.apiRoutes.getThisBill(id)).then(
-          response => {
-            this.myBill = response.data
-            // console.log(this.myBill[0].benefit)
+    async getThisBill(id) {
+      await BillsListService.getBill(id).then(
+          (bill => {
+            this.myBill = bill
             this.showUpdatePayment = true
-          }
+          })
       )
     },
 
@@ -310,6 +258,7 @@ export default {
       });
     },
 
+    //methods pour la barre de recherche
     checkStringContainsValue(string, value) {
       return (string !== null && string !== undefined && string.toString().toLowerCase().includes(value));
     },
@@ -327,15 +276,6 @@ export default {
           this.checkStringContainsValue(item.unitPrice, search) ||
           this.checkStringContainsValue(item.vatRate, search)
     },
-    // deleteBill(id) {
-    //   this.$axios.delete(this.apiRoutes.deleteBill(id)).then(
-    //       () => {
-    //         this.getAllBills();
-    //       }, response => {
-    //         console.log(response)
-    //       }
-    //   )
-    // }
   },
   data() {
     return {
@@ -359,12 +299,10 @@ export default {
         {text: "Prestations", value: 'benefit', sortable: false, align: "center"},
         {text: "Total HT", value: 'totalHT', sortable: false, align: "center"},
         {text: "Total TTC", value: 'totalTtc', sortable: false, align: "center"},
-  ],
-      allBills: []
-    }
+      ],
     }
   }
-
+}
 </script>
 
 <style>
