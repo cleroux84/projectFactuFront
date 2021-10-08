@@ -140,6 +140,7 @@ import {mapGetters} from "vuex";
 import AddBankForm from "./AddBankForm";
 import UpdateUserForm from "./UpdateUserForm";
 import UpdateBankForm from "./UpdateBankForm";
+import BankService from "../services/BankService";
 
 export default {
   name: "Profile",
@@ -192,12 +193,9 @@ export default {
 
     async deleteBank() {
       const accessToken = await this.$auth.getTokenSilently()
-      if(confirm("Êtes-vous sûr de vouloir supprimer ces coordonnées bancaires ?")) {
-        this.$axios.delete(this.apiRoutes.deleteBank(this.myUser.bank.id), {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        }).then(
+      let res = await this.$confirm("Êtes-vous sûr de vouloir supprimer ces coordonnées bancaires ?")
+      if(res) {
+       BankService.deleteBank(accessToken, this.myUser.bank.id).then(
             () => {
               this.getProfileComplete()
             }, response => console.log(response)

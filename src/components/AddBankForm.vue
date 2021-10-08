@@ -78,6 +78,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import BankService from "../services/BankService";
 
 export default {
   name: "AddBankForm",
@@ -135,11 +136,7 @@ export default {
     async addNewBank() {
       const accessToken = await this.$auth.getTokenSilently()
       if(this.$refs.bankForm.validate())
-        this.$axios.post(this.apiRoutes.addBank, this.formBank, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        }).then (
+      BankService.addNewBank(accessToken, this.formBank).then (
             () => {
               this.show = false
             },

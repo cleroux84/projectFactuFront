@@ -72,6 +72,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import BankService from "../services/BankService";
 // import apiRoutes from "../router/apiRoutes";
 
 export default {
@@ -120,21 +121,13 @@ export default {
     },
     async updateBank () {
       const accessToken = await this.$auth.getTokenSilently()
-      this.$axios.post(this.apiRoutes.updateBank(this.myUser.bank.id), this.myUser.bank, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
+    BankService.updateBank(accessToken, this.myUser.bank.id, this.myUser.bank).then(
           () => {
             this.show = false;
           },
           response => console.log(response)
       )
     },
-    // toggleDialog () {
-    //   this.show = !this.show
-    //   this.$emit('close', this.show)
-    // },
   }
 }
 </script>
