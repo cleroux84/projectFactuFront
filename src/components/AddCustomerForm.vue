@@ -136,6 +136,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import CustomerService from "../services/CustomerService";
 
 export default {
   name: "AddCustomerForm",
@@ -174,11 +175,7 @@ export default {
   async addNewCustomer () {
     const accessToken = await this.$auth.getTokenSilently()
     if (this.$refs.addCustomerForm.validate())
-      this.$axios.post(this.apiRoutes.addCustomer, this.formAddCustomer, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
+      CustomerService.addCustomer(accessToken, this.formAddCustomer).then(
           () => {
             this.resetForm()
             this.show = false;

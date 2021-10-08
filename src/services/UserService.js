@@ -27,5 +27,13 @@ export default {
                 Authorization: `Bearer ${accessToken}`
             }
         })
-    }
+    },
+
+    async updateProfile(accessToken, userId, updatedProfile) {
+        return await _axios.post(apiRoutes.updateUser(userId), updatedProfile, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
+    },
 }

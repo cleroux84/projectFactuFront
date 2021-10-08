@@ -134,6 +134,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import CustomerService from "../services/CustomerService";
 
 export default {
   name: "UpdateCustomerForm",
@@ -181,11 +182,7 @@ export default {
     async updateCurrentCustomer () {
       const accessToken = await this.$auth.getTokenSilently()
       if (this.$refs.updateCustomerForm.validate())
-        this.$axios.post(this.apiRoutes.updateCustomer(this.updateCustomerComputed.id), this.updateCustomerComputed, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        }).then(
+       await CustomerService.updateCustomer(accessToken, this.updateCustomerComputed.id, this.updateCustomerComputed).then(
           () => {
             this.toggleDialog()
           },

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import ApiRoutes from '../router/apiRoutes'
 import BillsListService from "../services/BillsListService";
+import CustomerService from "../services/CustomerService";
 // import { getInstance } from "./index";
 
 Vue.use(Vuex)
@@ -71,30 +72,11 @@ export default new Vuex.Store({
   },
 
   actions: {
-      // retrieveTokenFromAuthz(context) {
-      //     return new Promise((resolve, reject) => {
-      //         const instance = getInstance();
-      //         instance.$watch("loading", loading => {
-      //             if (loading === false && instance.isAuthenticated) {
-      //                 instance
-      //                     .getTokenSilently()
-      //                     .then(authToken => {
-      //                         context.commit("setToken", authToken);
-      //                         resolve(authToken);
-      //                     })
-      //                     .catch(error => {
-      //                         reject(error);
-      //                     });
-      //             }
-      //         });
-      //     });
-      // },
-
-    getAllCustomers({rootState, commit}) {
-        Vue.axios.get(rootState.apiRoutes.listCustomer).then(
-            response => {
-              commit('setAllCustomers', response.data)
-            }
+    async getAllCustomers({commit}, accessToken) {
+        await CustomerService.getCustomersList(accessToken).then(
+            (customers => {
+                commit('setAllCustomers', customers)
+            })
         )
     },
       getCurrentUser({rootState, commit}, email) {

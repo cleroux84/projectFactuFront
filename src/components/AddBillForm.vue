@@ -137,8 +137,6 @@ export default {
            // this.composeAddBillForm()
         } else {
           this.$refs.benefitForm[i].resetFormBenefit()
-          //TODO dire : tu valides pas mais tu gardes pas en mémoire
-          console.log("presta mal remplie non prise en compte")
           this.formErrors.push("errors")
         }
       }

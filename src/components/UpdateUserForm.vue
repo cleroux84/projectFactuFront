@@ -117,6 +117,7 @@
 
 <script>
 import {mapGetters} from "vuex";
+import UserService from "../services/UserService";
 
 export default {
   // created() {
@@ -135,14 +136,6 @@ export default {
         }
       }
     },
-    // updateUserComputed: {
-    //   get: function () {
-    //     return this.myUser
-    //   },
-    //   set: function (v) {
-    //     this.$emit('userChange', v)
-    //   }
-    // }
   },
   methods: {
     toggleDialog () {
@@ -151,15 +144,10 @@ export default {
     },
     async updateUser () {
       const accessToken = await this.$auth.getTokenSilently()
-      this.$axios.post(this.apiRoutes.updateUser(this.myUser.user.id), this.myUser.user, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      }).then(
+  UserService.updateProfile(accessToken, this.myUser.user.id, this.myUser.user).then(
           () => {
             this.show = false
             this.$store.commit('setCurrentUser', this.myUser.user)
-
           },
           response => console.log(response)
       )

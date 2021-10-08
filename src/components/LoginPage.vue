@@ -137,13 +137,13 @@ export default {
           this.formAddUser.city &&
           this.formAddUser.siret
       ) {
-        this.composeUserFormBeforeBankExist()
+        this.composeUserForm()
 
       } else this.formErrors.push("errors")
 
     },
 
-    composeUserFormBeforeBankExist: function() {
+    composeUserForm: function() {
       this.formAddUser.authId = this.$auth.user.sub
       this.formAddUser.role = 0 //non admin par defaut
       this.formAddUser.email = this.$auth.user.email

@@ -65,11 +65,11 @@
               pageText: '{0}-{1} sur {2}'}"
 
         >
-          <template v-slot:item.delete="{ item }">
-            <v-row>
-              <v-icon class="material-icons" color="black" @click="deleteCustomer(item.id)">mdi-delete</v-icon>
-            </v-row>
-          </template>
+<!--          <template v-slot:item.delete="{ item }">-->
+<!--            <v-row>-->
+<!--              <v-icon class="material-icons" color="black" @click="deleteCustomer(item.id)">mdi-delete</v-icon>-->
+<!--            </v-row>-->
+<!--          </template>-->
           <template v-slot:item.update="{ item }">
             <v-row>
               <v-icon class="material-icons" color="black" @click="openUpdateCustomer(item)">mdi-account-edit-outline</v-icon>
@@ -108,7 +108,7 @@ export default {
       search: "",
       headers: [
         { text: '', value: 'update'},
-        { text: '', value: 'delete'},
+        // { text: '', value: 'delete'},
         { text: 'Entreprise', value: 'company' },
         { text: 'Civilité', align: 'start', sortable: false, value: 'civility'},
         { text: 'Prénom', value: 'lastName' },
