@@ -26,7 +26,7 @@
             :footer-props="{
               itemsPerPageText: 'Clients par page par page',
               pageText: '{0}-{1} sur {2}'}"
-
+            :header-props="{sortByText: 'trier par'}"
         >
 <!--          <template v-slot:item.delete="{ item }">-->
 <!--            <v-row>-->

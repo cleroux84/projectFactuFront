@@ -32,6 +32,7 @@
          :footer-props="{
           itemsPerPageText: 'Factures par page',
           pageText: '{0}-{1} sur {2}'}"
+         :header-props="{sortByText: 'trier par'}"
       >
         <template v-slot:item.company=" {item} ">
           <span>{{(item.customer.company).charAt(0).toUpperCase()+ (item.customer.company).slice(1) }}</span>

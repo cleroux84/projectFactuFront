@@ -8,7 +8,7 @@
           </div>
         </nav>
       </div>
-      <v-container fluid>
+      <v-container fluid v-if="!this.isMobile">
         <v-row dense>
           <v-col cols="5" class="carre">
             <v-card height="290px">
@@ -40,8 +40,44 @@
           </v-col>
         </v-row>
       </v-container>
+      <v-container fluid v-else>
+          <v-col cols="12" class="carreMobile">
+            <v-card>
+              <p v-if="currentUser.role === 1">TOTAL DES FACTURES <br> depuis 1er Janvier</p>
+              <p v-else>TOTAL de mes FACTURES <br> depuis LE 1er Janvier</p>
+              <v-card-title class="text-h6" style="justify-content: center">{{this.billsSum}} € HT
+              </v-card-title>
+              <v-spacer></v-spacer>
+              <p v-if="currentUser.role ===1">TOTAL DES FACTURES IMPAYEES</p>
+              <p v-else>TOTAL DE MES FACTURES IMPAYEES</p>
+              <v-card-title class="text-h6" style="justify-content: center">{{this.unpaidBillsSum}} € TTC</v-card-title>
+            </v-card>
+          </v-col>
+          <v-col cols="12" class="carreMobile">
+            <v-card height="290px" >
+              <p>POURCENTAGE DES FACTURES IMPAYEES</p>
+              <div style="margin-top: 50px">
+                <v-progress-circular
+                    v-model="averageUnpaidBills"
+                    :rotate="360"
+                    :size="125"
+                    :width="15"
+                    color="teal"
+                >
+                  {{ averageUnpaidBills }} %
+                </v-progress-circular>
+              </div>
+            </v-card>
+          </v-col>
+      </v-container>
       <div>
-        <h1>Liste des factures en retard de paiement</h1>
+        <v-expansion-panels style="margin-top: 40px">
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              <h1 v-if="!this.isMobile">Liste des factures en retard de paiement</h1>
+              <h4 v-else>Factures en retard de paiement</h4>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
         <v-card-title>
           <v-spacer></v-spacer>
           <v-text-field
@@ -53,41 +89,51 @@
           ></v-text-field>
         </v-card-title>
         <v-divider></v-divider>
-
-        <v-card-text>
-        <v-data-table
-            class="taleClass"
-            :headers="headersForBills"
-            :items="allLateBills"
-            :custom-filter="customSearchForLateBills"
-            :search="searchForLateBills"
-            sort-by="firstName"
-            no-data-text="Aucune facture en retard de paiement"
-            :footer-props="{
-              itemsPerPageText: 'Factures par page',
-              pageText: '{0}-{1} sur {2}'}"
-        >
-          <template v-slot:item.dateOfIssue=" { item }">
-            <span>{{item.created}}</span>
-          </template>
-          <template v-slot:item.company=" {item} ">
-            <span>{{(item.customer.company).charAt(0).toUpperCase()+ (item.customer.company).slice(1) }}</span>
-          </template>
-          <template v-slot:item.totalHT=" { item }">
-            <span>{{item.amountHt.toFixed(2)}} €</span>
-          </template>
-          <template v-slot:item.customer=" { item }">
-            <span>{{item.customer.civility}} {{item.customer.firstName}} {{item.customer.lastName}}</span>
-          </template>
-          <template v-slot:item.email=" { item }">
-            <span><a :href="'mailto:' +  item.customer.email"> {{item.customer.email}}</a></span>
-          </template>
-        </v-data-table>
-        </v-card-text>
+            <v-card-text>
+              <v-data-table
+                  class="taleClass"
+                  :headers="headersForBills"
+                  :items="allLateBills"
+                  :custom-filter="customSearchForLateBills"
+                  :search="searchForLateBills"
+                  sort-by="firstName"
+                  no-data-text="Aucune facture en retard de paiement"
+                  :footer-props="{
+                    itemsPerPageText: 'Factures par page',
+                    pageText: '{0}-{1} sur {2}'}"
+                  :header-props="{sortByText: 'trier par'}"
+              >
+                <template v-slot:item.dateOfIssue=" { item }">
+                  <span>{{item.created}}</span>
+                </template>
+                <template v-slot:item.company=" {item} ">
+                  <span>{{(item.customer.company).charAt(0).toUpperCase()+ (item.customer.company).slice(1) }}</span>
+                </template>
+                <template v-slot:item.totalHT=" { item }">
+                  <span>{{item.amountHt.toFixed(2)}} €</span>
+                </template>
+                <template v-slot:item.customer=" { item }">
+                  <span>{{item.customer.civility}} {{item.customer.firstName}} {{item.customer.lastName}}</span>
+                </template>
+                <template v-slot:item.email=" { item }">
+                  <span><a :href="'mailto:' +  item.customer.email"> {{item.customer.email}}</a></span>
+                </template>
+              </v-data-table>
+            </v-card-text>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </div>
 
       <div v-if="currentUser.role === 1">
-        <h1>Liste des utilisateurs</h1>
+        <v-expansion-panels>
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              <h4 v-if="isMobile">Liste des utilisateurs</h4>
+              <h1 v-else>Liste des utilisateurs</h1>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+
         <v-card-title>
           <v-spacer></v-spacer>
           <v-text-field
@@ -111,12 +157,13 @@
               :footer-props="{
                 itemsPerPageText: 'Utilisateurs par page',
                 pageText: '{0}-{1} sur {2}'}"
+              :header-props="{sortByText: 'trier par'}"
           >
-            <template v-slot:item.delete="{ item }">
-              <v-row>
-                <v-icon class="material-icons" color="red" @click="deleteUser(item.id)">mdi-delete</v-icon>
-              </v-row>
-            </template>
+<!--            <template v-slot:item.delete="{ item }">-->
+<!--              <v-row>-->
+<!--                <v-icon class="material-icons" color="red" @click="deleteUser(item.id)">mdi-delete</v-icon>-->
+<!--              </v-row>-->
+<!--            </template>-->
             <!--          <template v-slot:item.update="{ item }">-->
             <!--            <v-row>-->
             <!--              <v-icon class="material-icons" color="red" @click="updateUser(item.id)">mdi-account-edit-outline</v-icon>-->
@@ -125,6 +172,9 @@
 
           </v-data-table>
         </v-card-text>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </div>
     </template>
 
@@ -159,7 +209,7 @@ export default {
   mounted() {
   },
   computed: {
-    ...mapGetters(['apiRoutes','currentUser', 'allUsers', "allLateBills", "billsSum", "unpaidBillsSum", "averageUnpaidBills", 'allBills'])
+    ...mapGetters(['apiRoutes','currentUser', 'allUsers', "allLateBills", "billsSum", "unpaidBillsSum", "averageUnpaidBills", 'allBills', 'isMobile'])
   },
   components: {LoginPage},
   created() {
@@ -346,7 +396,7 @@ export default {
       ],
       headers: [
         { text: '', sortable: false, value: 'update'},
-        { text: '', sortable: false, value: 'delete'},
+        // { text: '', sortable: false, value: 'delete'},
         { text: 'Civilité', align: 'start', sortable: false, value: 'civility'},
         { text: 'Prénom', value: 'firstName' },
         { text: 'Nom', value: 'lastName', },
@@ -371,6 +421,9 @@ export default {
   margin-left: 50px;
   text-align: center;
   height: 300px;
+}
+.carreMobile{
+  text-align: center;
 }
 .button {
   -webkit-border-radius: 10px;
