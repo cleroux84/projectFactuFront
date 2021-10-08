@@ -137,7 +137,7 @@ export default {
   name: "BillList",
   components: {UpdatePaymentForm, AddCustomerForm, AddBillForm },
   computed: {
-    ...mapGetters(['apiRoutes', 'allBills', 'currentUser', 'unpaidBills']),
+    ...mapGetters(['apiRoutes', 'allBills', 'currentUser', 'unpaidBills', 'isMobile']),
   },
 
   created() {
