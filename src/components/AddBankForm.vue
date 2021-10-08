@@ -96,9 +96,6 @@ export default {
     }
   },
   props: ['visible', 'myUser'],
-  created() {
-    // console.log(this.myUser)
-  },
   data() {
     return {
       formBank: {

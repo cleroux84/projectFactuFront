@@ -4,38 +4,11 @@
     <v-card-title>
       <v-spacer></v-spacer>
     </v-card-title>
-    <v-card-actions>
-      <div class="text-center">
-        <router-link class="linkBtn" to="/">
-          <v-btn class="ma-2" outlined >
-            Accueil
-            <v-icon right dark> mdi-home </v-icon>
-          </v-btn>
-        </router-link>
-        <v-btn class="ma-2" outlined color="blue-grey darken-2">
-          <router-link class="linkBtn text--darken-3" to="/customerList">
-            Liste des clients
-          </router-link>
-          <v-icon right dark> mdi-folder-account </v-icon>
-        </v-btn>
-        <v-btn
-            class="ma-2"
-            outlined color="blue-grey darken-2"
-            @click="showAddBillForm = true"
-        >
-          Nouvelle Facture
-          <v-icon right dark> mdi-calculator </v-icon>
-        </v-btn>
-        <v-btn
-            class="ma-2"
-            outlined color="blue-grey darken-2"
-            @click="showAddCustomerForm=true"
-        >
-          Nouveau Client
-          <v-icon right dark> mdi-factory </v-icon>
-        </v-btn>
-      </div>
-    </v-card-actions>
+    <v-switch
+        v-model="switchTable"
+        inset
+        label="Factures non payées"
+    ></v-switch>
     <v-card-title>
       <v-spacer></v-spacer>
       <v-text-field
@@ -47,11 +20,6 @@
       ></v-text-field>
     </v-card-title>
     <v-divider></v-divider>
-    <v-switch
-        v-model="switchTable"
-        inset
-        label="Factures non payées"
-    ></v-switch>
     <v-card-text>
       <v-data-table
          class="taleClass"

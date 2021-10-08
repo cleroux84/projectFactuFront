@@ -9,6 +9,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+      isMobile: false,
       apiRoutes: ApiRoutes,
       allCustomers: [],
       currentUser: {},
@@ -69,6 +70,9 @@ export default new Vuex.Store({
       setUnpaidBills (state, unpaidBills) {
           state.unpaidBills = unpaidBills
       },
+      setIsMobile (state, isMobile) {
+          state.isMobile = isMobile
+      }
   },
 
   actions: {
@@ -92,6 +96,10 @@ export default new Vuex.Store({
                 commit('setAllUsers', response.data)
             }
         )
+      },
+
+      getIsMobile: function ({commit}, isMobileBool) {
+        commit('setIsMobile', isMobileBool)
       },
 
       getSum: function ({commit}, allBillsForSumArray) {
@@ -123,27 +131,10 @@ export default new Vuex.Store({
               })
           )
       }
-
-      // async getUnpaidBills({rootState, commit}, token) {
-      //     const accessToken = await token
-      //     console.log(accessToken)
-      //     Vue.axios.get(rootState.apiRoutes.lateBill, {
-      //         headers: {
-      //             Authorization: `Bearer ${accessToken}`
-      //         }
-      //     }).then(
-      //         response => {
-      //             commit('setUnpaidBills', response.data)
-      //         }
-      //     )
-      // },
-
-
   },
   modules: {
   },
   getters: {
-      // isAuthenticated: state => {return state.isAuthenticated},
       allCustomers: state => {return state.allCustomers},
       apiRoutes: state => { return state.apiRoutes },
       currentUser: state => { return state.currentUser},
@@ -155,6 +146,6 @@ export default new Vuex.Store({
       unpaidBillsSum: state => { return state.unpaidBillsSum},
       averageUnpaidBills: state => { return state.averageUnpaidBills},
       unpaidBills: state => {return state.unpaidBills},
-      token: state => {return state.token}
+      isMobile: state => {return state.isMobile}
   }
 })

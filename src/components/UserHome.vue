@@ -8,38 +8,6 @@
           </div>
         </nav>
       </div>
-      <v-card-actions>
-        <div class="text-center">
-          <v-btn class="ma-2" outlined color="blue-grey darken-2">
-            <router-link class="linkBtn" to="/Profile">
-              Mon Profile
-            </router-link>
-          </v-btn>
-          <v-btn class="ma-2" outlined color="blue-grey darken-2">
-            <router-link class="linkBtn" to="/BillList">
-              Liste des factures
-            </router-link>
-            <v-icon
-                right
-                dark
-            >
-              mdi-view-list
-            </v-icon>
-          </v-btn>
-          <v-btn class="ma-2" outlined color="blue-grey darken-2">
-            <router-link class="linkBtn text--darken-3" to="/customerList">
-              Liste des clients
-            </router-link>
-            <v-icon
-                right
-                dark
-            >
-              mdi-folder-account
-            </v-icon>
-          </v-btn>
-        </div>
-      </v-card-actions>
-
       <v-container fluid>
         <v-row dense>
           <v-col cols="5" class="carre">
@@ -166,7 +134,10 @@
                   rounded
                   x-large
                   :style="{left: '50%', transform:'translateX(-50%)', marginTop: '20%'}"
+                  color="blue-grey darken-2"
                   @click="login()"
+                  dark
+                  class="button"
               >
                 Connexion requise
               </v-btn>
@@ -400,5 +371,23 @@ export default {
   margin-left: 50px;
   text-align: center;
   height: 300px;
+}
+.button {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  border: none;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 20px;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  -webkit-animation: glowing 1500ms infinite;
+}
+@-webkit-keyframes glowing {
+  0% { background-color: #223149; -webkit-box-shadow: 0 0 3px #23272d; }
+  50% { background-color: #353b3e; -webkit-box-shadow: 0 0 40px #1c1a1a; }
+  100% { background-color: #2d2d34; -webkit-box-shadow: 0 0 3px #262628; }
 }
 </style>

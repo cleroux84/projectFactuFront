@@ -4,43 +4,6 @@
     <v-card-title>
       <v-spacer></v-spacer>
     </v-card-title>
-    <v-card-actions>
-      <div class="text-center">
-        <v-btn class="ma-2" outlined >
-          <router-link class="linkBtn" to="/">Accueil</router-link>
-          <v-icon
-              right
-              dark
-          >
-            mdi-home
-          </v-icon>
-        </v-btn>
-        <v-btn
-            class="ma-2"
-            outlined color="blue-grey darken-2"
-            @click="showAddCustomerForm=true"
-        >
-          Nouveau Client
-          <v-icon
-              right
-              dark
-          >
-            mdi-factory
-          </v-icon>
-        </v-btn>
-        <v-btn class="ma-2" outlined color="blue-grey darken-2">
-          <router-link class="linkBtn" to="/BillList">
-            Liste des factures
-          </router-link>
-          <v-icon
-              right
-              dark
-          >
-            mdi-view-list
-          </v-icon>
-        </v-btn>
-      </div>
-    </v-card-actions>
       <v-card-title>
         <v-spacer></v-spacer>
         <v-text-field

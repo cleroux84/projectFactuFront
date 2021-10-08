@@ -161,8 +161,8 @@ export default {
       civilityItems: ['M.', 'Mme', 'Mlle'],
       labelForm : {
         civility: "Civility",
-        firstName: "Nom",
-        lastName: "Prénom",
+        firstName: "Prénom",
+        lastName: "Nom",
         email: "Email",
         phone: "Téléphone",
         address: "Adresse",

@@ -1,44 +1,11 @@
 <template>
   <v-container>
-    <v-card-actions>
-      <div class="text-center">
-        <v-row>
-          <v-col>
-            <h3>Mon Profile</h3>
-          </v-col>
-          <v-btn class="ma-2" outlined >
-            <router-link class="linkBtn" to="/">Accueil</router-link>
-            <v-icon
-                right
-                dark
-            >
-              mdi-home
-            </v-icon>
-          </v-btn>
-          <v-btn class="ma-2"
-                 outlined color="blue-grey darken-2"
-                 @click="showUpdateUserForm=true">
-  <!--          <router-link class="linkBtn" to="/Profile">-->
-              Modifier Mon Profil
-  <!--          </router-link>-->
-          </v-btn>
-        </v-row>
-      </div>
-      <div>
-
-      </div>
-    </v-card-actions>
     <template>
       <v-card
           class="mx-auto my-12"
           max-width="374"
       >
         <template slot="progress">
-          <v-progress-linear
-              color="deep-purple"
-              height="10"
-              indeterminate
-          ></v-progress-linear>
         </template>
         <v-card-title>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</v-card-title>
         <v-card-text>
