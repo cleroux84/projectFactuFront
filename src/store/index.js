@@ -8,8 +8,6 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-      token: null,
-      // isAuthenticated: false,
       apiRoutes: ApiRoutes,
       allCustomers: [],
       currentUser: {},
@@ -115,14 +113,14 @@ export default new Vuex.Store({
       },
 
       getSum: function ({commit}, allBillsForSumArray) {
-          var amountSum = (allBillsForSumArray.reduce(function (s, a) {
+          let amountSum = (allBillsForSumArray.reduce(function (s, a) {
               return s + a.amountHt;
           }, 0)).toFixed(2)
           commit('setBillsSum', amountSum)
       },
 
       getUnpaidSum: function ({commit}, unpaidBills) {
-          var amountSum = (unpaidBills.reduce(function (s, a) {
+          let amountSum = (unpaidBills.reduce(function (s, a) {
               return s + a.amountHt;
           }, 0)).toFixed(2)
           commit('setUnpaidBillsSum', amountSum)
@@ -136,14 +134,13 @@ export default new Vuex.Store({
         )
       },
 
-      // async getAllBillsListByUser ({commit}, accessToken, userId) {
-      //     await BillsListService.getBillsListByUser(accessToken, userId).then(
-      //         (bills => {
-      //             console.log(userId)
-      //             commit('setAllBills', bills)
-      //         })
-      //     )
-      // }
+      async getAllBillsListByUser ({commit}, accessToken, payload) {
+          await BillsListService.getBillsListByUser(accessToken, payload).then(
+              (bills => {
+                  commit('setAllBills', bills)
+              })
+          )
+      }
 
       // async getUnpaidBills({rootState, commit}, token) {
       //     const accessToken = await token

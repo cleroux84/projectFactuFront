@@ -64,7 +64,7 @@
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="show = false">Annuler</v-btn>
-                    <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click="checkAddBankForm()">Valider</v-btn>
+                    <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click.prevent="checkAddBankForm()">Valider</v-btn>
                   </v-card-actions>
                 </v-row>
               </v-container>
@@ -141,10 +141,7 @@ export default {
           }
         }).then (
             () => {
-              console.log(this.myUser)
-              // this.updateUserWithBankId()
-              // this.show = false;
-
+              this.show = false
             },
             response => console.log(response)
         )

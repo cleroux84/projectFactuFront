@@ -55,12 +55,16 @@
     <v-card-text>
       <v-data-table
          class="taleClass"
-        :headers="headers"
-        :items="allBills"
-        :custom-filter="customSearch"
-        :search="search"
-        sort-by="firstName"
-        >
+         :headers="headers"
+         :items="allBills"
+         :custom-filter="customSearch"
+         :search="search"
+         sort-by="firstName"
+         no-data-text="Aucune facture"
+         :footer-props="{
+          itemsPerPageText: 'Factures par page',
+          pageText: '{0}-{1} sur {2}'}"
+      >
         <template v-slot:item.company=" {item} ">
           <span>{{(item.customer.company).charAt(0).toUpperCase()+ (item.customer.company).slice(1) }}</span>
         </template>

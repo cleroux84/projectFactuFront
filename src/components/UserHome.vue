@@ -39,34 +39,39 @@
           </v-btn>
         </div>
       </v-card-actions>
-      <v-container style="margin: 30px">
-        <v-row>
-          <v-col cols="5" class="carre">
-            <h3 style="margin: 20px">TOTAL DES FACTURES DEPUIS LE 1er Janvier</h3>
-            <h1>{{this.billsSum}} € HT</h1>
-            <v-spacer></v-spacer>
-            <h3 style="margin: 20px">TOTAL DES FACTURES IMPAYEES </h3>
-            <h1>{{this.unpaidBillsSum}} € TTC</h1>
 
+      <v-container fluid>
+        <v-row dense>
+          <v-col cols="5" class="carre">
+            <v-card height="290px">
+              <p class="text-h6" v-if="currentUser.role === 1">TOTAL DES FACTURES <br> depuis 1er Janvier</p>
+              <p v-else>TOTAL de mes FACTURES <br> depuis LE 1er Janvier</p>
+              <v-card-title class="text-h4" style="justify-content: center">{{this.billsSum}} € HT
+              </v-card-title>
+              <v-spacer></v-spacer>
+              <p class="text-h6" v-if="currentUser.role ===1">TOTAL DES FACTURES IMPAYEES</p>
+              <p v-else>TOTAL DE MES FACTURES IMPAYEES</p>
+              <v-card-title class="text-h4" style="justify-content: center">{{this.unpaidBillsSum}} € TTC</v-card-title>
+            </v-card>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="5" class="carre" >
-            <h3 style="margin: 20px">FACTURES IMPAYEES</h3>
-            <div>
-              <v-progress-circular
-                  v-model="averageUnpaidBills"
-                  :rotate="360"
-                  :size="125"
-                  :width="15"
-                  color="teal"
-              >
-                {{ averageUnpaidBills }} %
-              </v-progress-circular>
-            </div>
+          <v-col cols="5" class="carre">
+            <v-card height="290px" >
+              <p class="text-h6">POURCENTAGE DES FACTURES IMPAYEES</p>
+              <div style="margin-top: 50px">
+                <v-progress-circular
+                    v-model="averageUnpaidBills"
+                    :rotate="360"
+                    :size="125"
+                    :width="15"
+                    color="teal"
+                >
+                  {{ averageUnpaidBills }} %
+                </v-progress-circular>
+              </div>
+            </v-card>
           </v-col>
         </v-row>
       </v-container>
-
       <div>
         <h1>Liste des factures en retard de paiement</h1>
         <v-card-title>
@@ -89,6 +94,10 @@
             :custom-filter="customSearchForLateBills"
             :search="searchForLateBills"
             sort-by="firstName"
+            no-data-text="Aucune facture en retard de paiement"
+            :footer-props="{
+              itemsPerPageText: 'Factures par page',
+              pageText: '{0}-{1} sur {2}'}"
         >
           <template v-slot:item.dateOfIssue=" { item }">
             <span>{{item.created}}</span>
@@ -130,6 +139,10 @@
               :custom-filter="customSearch"
               :search="search"
               sort-by="firstName"
+              no-data-text="Aucun utilisateur n'est encore enregistré"
+              :footer-props="{
+                itemsPerPageText: 'Utilisateurs par page',
+                pageText: '{0}-{1} sur {2}'}"
           >
             <template v-slot:item.delete="{ item }">
               <v-row>
@@ -271,7 +284,7 @@ export default {
     },
 
     averageResult: function () {
-      var average = (this.unpaidBills.length * 100) / this.allBills.length //donne pourcentage de facture non payées
+      var average = ((this.unpaidBills.length * 100) / this.allBills.length).toFixed(2) //donne pourcentage de facture non payées
       this.$store.commit('setAverageUnpaidBills', average)
     },
 
@@ -384,8 +397,8 @@ export default {
 <style scoped>
 .carre {
   border-style: double;
-  margin-left: 20px;
-  height: 300px;
+  margin-left: 50px;
   text-align: center;
+  height: 300px;
 }
 </style>

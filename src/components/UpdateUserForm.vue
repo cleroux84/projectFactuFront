@@ -98,7 +98,7 @@
                         <v-card-actions>
                           <v-spacer></v-spacer>
                           <v-btn color="blue darken-1" text @click=toggleDialog()>Annuler</v-btn>
-                          <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click="updateUser()">Valider</v-btn>
+                          <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click.prevent="updateUser()">Valider</v-btn>
                         </v-card-actions>
                       </v-row>
                     </v-row>
@@ -157,7 +157,9 @@ export default {
         }
       }).then(
           () => {
-            this.toggleDialog()
+            this.show = false
+            this.$store.commit('setCurrentUser', this.myUser.user)
+
           },
           response => console.log(response)
       )

@@ -59,6 +59,11 @@
             :custom-filter="customSearch"
             :search="search"
             sort-by="firstName"
+            no-data-text="Aucun client"
+            :footer-props="{
+              itemsPerPageText: 'Clients par page par page',
+              pageText: '{0}-{1} sur {2}'}"
+
         >
           <template v-slot:item.delete="{ item }">
             <v-row>

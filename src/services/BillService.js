@@ -9,4 +9,13 @@ export default {
             }
         })
     },
+
+    async updatePaymentBill(accessToken, paymentData, billId) {
+        return await _axios.post(apiRoutes.updatePayment(billId), paymentData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
+    },
+
 }

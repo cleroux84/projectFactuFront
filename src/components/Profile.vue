@@ -162,14 +162,17 @@ export default {
   methods: {
     closeAddBankForm() {
       this.showAddBankForm = false
+      this.getProfileComplete()
     },
 
     closeUpdateUserForm() {
       this.showUpdateUserForm = false
+      this.getProfileComplete()
     },
 
     closeUpdateBankForm() {
       this.showUpdateBankForm = false
+      this.getProfileComplete()
     },
 
     async getProfileComplete() {
@@ -201,22 +204,6 @@ export default {
         )
       }
     },
-    // getCurrentUserData() {
-    //   this.getCurrentUser("sousou@example.com")
-    //   console.log(this.currentUser)
-    // }
-    // currentUser() {
-    //   // const userId = (this.$auth.user.sub).slice(6)
-    //   // console.log(userId)
-    //   this.$axios.get(this.apiRoutes.getCurrentUser(this.$auth.user.email)).then(
-    //       (response) =>
-    //       {
-    //         this.myUser = response.data
-    //         console.log(response.data)
-    //       },
-    //       response => console.log(response.data)
-    //   )
-    // }
   }
 }
 </script>

@@ -58,7 +58,7 @@
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" text @click="show = false">Annuler</v-btn>
-                    <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click="checkUpdateBankForm()">Valider</v-btn>
+                    <v-btn type="submit" value="submit" text color="blue-grey darken-2" @click.prevent="checkUpdateBankForm()">Valider</v-btn>
                   </v-card-actions>
                 </v-row>
               </v-container>
@@ -91,7 +91,6 @@ export default {
     }
   },
   created() {
-    console.log(this.myUser.bank)
   },
   data() {
     return{
@@ -127,15 +126,15 @@ export default {
         }
       }).then(
           () => {
-            // this.toggleDialog()
+            this.show = false;
           },
           response => console.log(response)
       )
     },
-    toggleDialog () {
-      this.show = !this.show
-      this.$emit('close', this.show)
-    },
+    // toggleDialog () {
+    //   this.show = !this.show
+    //   this.$emit('close', this.show)
+    // },
   }
 }
 </script>
