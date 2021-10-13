@@ -9,6 +9,18 @@
         </nav>
       </div>
       <v-container fluid v-if="!this.isMobile">
+        <v-col cols="4">
+          <v-select
+              v-if="currentUser.role === 1"
+              :items="allUsers"
+              :item-text="(row) => {return row.firstName+ ' ' + row.lastName;}"
+              item-value="id"
+              v-model="billUser"
+              label="Trier par utilisateur"
+              :clearable="true"
+          >
+          </v-select>
+        </v-col>
         <v-row dense>
           <v-col cols="5" class="carre">
             <v-card height="290px">
@@ -216,6 +228,13 @@ export default {
     //permet d'attendre que le token soit renvoyé
     this.init(this.loadTokenInfoStore)
   },
+  watch: {
+    billUser(billUserId) {
+      if(billUserId !== null && billUserId !== undefined) {
+        this.getListByUser(this.billUser)
+      } else this.getAllBills()
+    }
+  },
   methods: {
     ...mapActions(['getSum', 'getUnpaidSum', 'getAllBillsList']),
 
@@ -253,6 +272,7 @@ export default {
       UserService.getCurrentUser(accessToken, this.$auth.user.email).then(
           (user => {
             this.$store.commit('setCurrentUser', user)
+            
             if(this.currentUser.role === 1) {
               this.getUnpaidBills()
               this.getAllBills()
@@ -307,6 +327,20 @@ export default {
     averageResult: function () {
       var average = ((this.unpaidBills.length * 100) / this.allBills.length).toFixed(2) //donne pourcentage de facture non payées
       this.$store.commit('setAverageUnpaidBills', average)
+    },
+
+    async getListByUser() {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.get(this.apiRoutes.listBillByUser(this.billUser), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          response => {
+            this.$store.commit('setAllBills', response.data)
+            this.getStats()
+          }
+      )
     },
 
     getSumAllBillsThisYear() {
@@ -376,6 +410,7 @@ export default {
   },
   data() {
     return {
+      billUser: null,
       unpaidBills: [],
       allBillsPaid: [],
       allBillsUnpaid: [],

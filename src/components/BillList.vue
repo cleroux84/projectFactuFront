@@ -4,11 +4,27 @@
     <v-card-title>
       <v-spacer></v-spacer>
     </v-card-title>
-    <v-switch
-        v-model="switchTable"
-        inset
-        label="Factures non payées"
-    ></v-switch>
+    <v-row>
+      <v-col cols="6">
+        <v-switch
+            v-model="switchTable"
+            inset
+            label="Factures non payées"
+        ></v-switch>
+      </v-col>
+      <v-col cols="6">
+        <v-select
+            v-if="currentUser.role === 1"
+            :items="allUsers"
+            :item-text="(row) => {return row.firstName+ ' ' + row.lastName;}"
+            item-value="id"
+            v-model="billUser"
+            label="Trier par utilisateur"
+            :clearable="true"
+
+        ></v-select>
+      </v-col>
+    </v-row>
     <v-card-title>
       <v-spacer></v-spacer>
       <v-text-field
@@ -137,7 +153,7 @@ export default {
   name: "BillList",
   components: {UpdatePaymentForm, AddCustomerForm, AddBillForm },
   computed: {
-    ...mapGetters(['apiRoutes', 'allBills', 'currentUser', 'unpaidBills', 'isMobile']),
+    ...mapGetters(['apiRoutes', 'allBills', 'currentUser', 'unpaidBills', 'isMobile', 'allUsers']),
   },
 
   created() {
@@ -148,18 +164,54 @@ export default {
     switchTable(bool) {
       if (bool) {
         if(this.currentUser.role === 1) {
-          this.getUnpaidBills()
+          if(this.billUser !== null && this.billUser !== undefined) {
+            this.getUnpaidListByUser(this.billUser)
+          } else {
+            this.getUnpaidBills()
+          }
         } else {
           this.getUnpaidBillsByUser()
         }
       } else {
-        this.giveGoodList()
+        if(this.billUser !== null && this.billUser !== undefined) {
+          this.getListByUser(this.billUser)
+        } else {
+          this.giveGoodList()
+        }
       }
     },
+
+    billUser(billUserId) {
+      if(billUserId !== null && billUserId !== undefined) {
+        if(this.switchTable === true) {
+          this.getUnpaidListByUser(this.billUser)
+        } else {
+          this.getListByUser(this.billUser)
+        }
+      } else {
+        if(this.switchTable === true) {
+          this.getUnpaidBills()
+        } else {
+          this.getAllBills()
+        }
+      }
+    }
   },
 
   methods: {
     ...mapActions(['getAllBillsList']),
+    async getListByUser() {
+      const accessToken = await this.$auth.getTokenSilently()
+      this.$axios.get(this.apiRoutes.listBillByUser(this.billUser), {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }).then(
+          response =>
+              this.$store.commit('setAllBills', response.data)
+      )
+    },
+
     closeAddBillForm() {
       this.showAddBillForm = false
       this.giveGoodList()
@@ -210,6 +262,15 @@ export default {
       )
     },
 
+    async getUnpaidListByUser() {
+      const accessToken = await this.$auth.getTokenSilently()
+      await BillsListService.getUnpaidBillsListByUser(accessToken, this.billUser).then(
+          (unPaidBills => {
+            this.$store.commit('setAllBills', unPaidBills)
+          })
+      )
+    },
+
     async getThisBill(id) {
       await BillsListService.getBill(id).then(
           (bill => {
@@ -249,6 +310,7 @@ export default {
   },
   data() {
     return {
+      billUser: null,
       myBill: {},
       showUpdatePayment: false,
       switchTable: false,
