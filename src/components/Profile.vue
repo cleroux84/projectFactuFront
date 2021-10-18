@@ -7,20 +7,37 @@
       >
         <template slot="progress">
         </template>
-        <v-card-title>{{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}</v-card-title>
+        <v-card-title>
+          <v-col cols="10">
+            {{ currentUser.civility }} {{ currentUser.firstName }} {{ currentUser.lastName }}
+          </v-col>
+          <v-col cols="2">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon
+                       v-bind="attrs"
+                       v-on="on"
+                       @click="showUpdateUserForm=true">
+                  <v-icon> mdi-pen </v-icon>
+                </v-btn>
+              </template>
+              <span>Modifier mon profil</span>
+            </v-tooltip></v-col>
+        </v-card-title>
         <v-card-text>
           <v-row
               align="center"
               class="mx-0"
           >
           </v-row>
-
           <div class="my-4 text-subtitle-1">
-            <address>{{ currentUser.address }}</address>
-            <address>{{ currentUser.zipCode }} {{ currentUser.city }} </address>
-            <div>{{ currentUser.phone }}</div>
-            <v-spacer></v-spacer>
-            <div>Siret : {{ currentUser.siret }}</div>
+            <v-col>
+              <address>{{ currentUser.address }}</address>
+              <address>{{ currentUser.zipCode }} {{ currentUser.city }} </address>
+              <div>{{ currentUser.phone }}</div>
+              <v-spacer></v-spacer>
+              <div>Siret : {{ currentUser.siret }}</div>
+            </v-col>
           </div>
         </v-card-text>
         <v-divider class="mx-4"></v-divider>

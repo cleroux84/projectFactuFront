@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import ApiRoutes from '../router/apiRoutes'
 import BillsListService from "../services/BillsListService";
 import CustomerService from "../services/CustomerService";
-// import { getInstance } from "./index";
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex)
 
@@ -41,8 +41,12 @@ export default new Vuex.Store({
           }
       }
   },
+    plugins: [createPersistedState({
+        paths: ['currentUser', 'allUsers', 'allCustomers', 'allLateBills', 'billsSum', 'unpaidBillsSum', 'averageUnpaidBills', 'allBills', 'unPaidBills'],
+    })
+    ],
 
-  mutations: {
+    mutations: {
       setAllCustomers (state, allCustomers) {
           state.allCustomers = allCustomers
       },
