@@ -86,9 +86,10 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 import FormBenefit from "./FormBenefit";
 import BillService from "../services/BillService";
+import BillsListService from "../services/BillsListService";
 
 export default {
   name: "AddBillForm.vue",
@@ -113,6 +114,7 @@ export default {
   },
   props: ['visible', 'formBenefits'],
   methods: {
+    ...mapActions(['getAllBillsList']),
     deleteBenefit() {
       this.benefitComponents.pop()
     },
@@ -155,13 +157,26 @@ export default {
       if (this.$refs.addBillForm.validate())
         BillService.addNewBill(accessToken, this.formAddBill).then(
           () => {
-            this.show = false
+            this.resetForm()
+            this.show = false;
+            if (this.currentUser.role === 1) this.getAllBillsList(accessToken)
+            else {
+              BillsListService.getBillsListByUser(accessToken, this.currentUser.id).then(
+                  bills => {
+                    this.$store.commit('setAllBills', bills)
+                  }
+              )
+
+            }
       },
           () => {
             console.log("error")
           }
       )
     },
+    resetForm: function () {
+      this.formAddBill = ""
+    }
   },
 
   data() {
