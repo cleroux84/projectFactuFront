@@ -129,9 +129,9 @@
                 mdi-check
               </v-icon>
             </template>
+            <span v-show="item.paid">Facture payée le {{item.paymentDate}} </span>
             <span v-show="!item.paid && item.paymentStatus === 'latePayment'">Facture en retard de paiement</span>
             <span v-show="!item.paid && item.paymentStatus === 'waitingPayment'">Facture en attente de paiement</span>
-            <span v-show="item.paid">Facture payée le {{item.paymentDate}} </span>
           </v-tooltip>
         </template>
       </v-data-table>

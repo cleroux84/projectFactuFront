@@ -84,7 +84,7 @@ export default {
     composeData() {
       this.myPaymentData.userId = this.currentUser.id
       this.myPaymentData.benefits = this.myBill[0].benefit
-      this.myPaymentData.created = Date.parse(this.myBill[0].created)
+      this.myPaymentData.created = Date.now()
       this.myPaymentData.customerId = this.myBill[0].customer.id
       this.myPaymentData.periodCovered = this.myBill[0].periodCovered
       if (!this.myPaymentData.paid) {
@@ -161,7 +161,7 @@ export default {
     },
 
     averageResult: function () {
-      let average = (this.unpaidBills.length * 100) / this.allBills.length //donne pourcentage de facture non payées
+      let average = ((this.unpaidBills.length * 100) / this.allBills.length).toFixed(2) //donne pourcentage de facture non payées
       this.$store.commit('setAverageUnpaidBills', average)
     },
 

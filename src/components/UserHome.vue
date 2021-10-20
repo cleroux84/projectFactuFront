@@ -346,7 +346,8 @@ export default {
     getSumAllBillsThisYear() {
       this.allBillsForSumArray = this.allBills.filter(bill => {
         var date = bill.created;
-        var myCreated = new Date(date);
+        var newdate = date.split("-").reverse().join("-");
+        var myCreated = new Date(newdate);
         var year = myCreated.getFullYear();
         return year === new Date().getFullYear()
       })
