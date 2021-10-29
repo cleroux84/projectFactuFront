@@ -16,7 +16,6 @@ export default {
   name: 'App',
   components: { Nav },
   mounted() {
-    // this.$store.dispatch('getCurrentUser', this.$auth.user.email)
     this.$store.dispatch('getAllCustomers')
   },
   created() {

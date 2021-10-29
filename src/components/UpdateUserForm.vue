@@ -125,7 +125,7 @@ export default {
   // },
   name: "UpdateUserForm",
   computed: {
-    ...mapGetters(['rules', 'apiRoutes']),
+    ...mapGetters(['rules', 'apiRoutes', "currentUser", "allUsers"]),
     show: {
       get () {
         return this.visible
@@ -147,7 +147,7 @@ export default {
   UserService.updateProfile(accessToken, this.myUser.user.id, this.myUser.user).then(
           () => {
             this.show = false
-            this.$store.commit('setCurrentUser', this.myUser.user)
+            if (this.currentUser.role !== 1) this.$store.commit('setCurrentUser', this.myUser.user)
           },
           response => console.log(response)
       )

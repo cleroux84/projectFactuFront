@@ -176,11 +176,11 @@
 <!--                <v-icon class="material-icons" color="red" @click="deleteUser(item.id)">mdi-delete</v-icon>-->
 <!--              </v-row>-->
 <!--            </template>-->
-            <!--          <template v-slot:item.update="{ item }">-->
-            <!--            <v-row>-->
-            <!--              <v-icon class="material-icons" color="red" @click="updateUser(item.id)">mdi-account-edit-outline</v-icon>-->
-            <!--            </v-row>-->
-            <!--          </template>-->
+                      <template v-slot:item.update="{ item }">
+                        <v-row>
+                          <v-icon class="material-icons" color="red" @click="openUpdateUserForm(item)">mdi-account-edit-outline</v-icon>
+                        </v-row>
+                      </template>
 
           </v-data-table>
         </v-card-text>
@@ -206,6 +206,7 @@
           </div>
     </template>
     <login-page v-if="userToRegisterForm" :visible="userToRegisterForm" @close="closeUserRegisterForm" />
+    <updateUserForm v-if="showUpdateUserForm" :myUser="this.myUser" :visible="showUpdateUserForm" @close="showUpdateUserForm = false"/>
   </v-container>
 </template>
 
@@ -215,6 +216,7 @@ import {getInstance} from "../auth";
 import LoginPage from "./LoginPage";
 import UserService from "../services/UserService";
 import BillsListService from "../services/BillsListService";
+import UpdateUserForm from "./UpdateUserForm";
 
 export default {
   name: "UserHome",
@@ -223,7 +225,7 @@ export default {
   computed: {
     ...mapGetters(['apiRoutes','currentUser', 'allUsers', "allLateBills", "billsSum", "unpaidBillsSum", "averageUnpaidBills", 'allBills', 'isMobile'])
   },
-  components: {LoginPage},
+  components: {LoginPage, UpdateUserForm},
   created() {
     //permet d'attendre que le token soit renvoyé
     this.init(this.loadTokenInfoStore)
@@ -282,6 +284,11 @@ export default {
             }
           })
       )
+    },
+
+    openUpdateUserForm(item) {
+      this.showUpdateUserForm = true
+      this.myUser.user = item
     },
 
     async getUnpaidBills() {
@@ -411,6 +418,10 @@ export default {
   },
   data() {
     return {
+      myUser: {
+        user: {}
+      },
+      showUpdateUserForm: false,
       billUser: null,
       unpaidBills: [],
       allBillsPaid: [],

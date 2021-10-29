@@ -22,7 +22,8 @@
                 </v-btn>
               </template>
               <span>Modifier mon profil</span>
-            </v-tooltip></v-col>
+            </v-tooltip>
+          </v-col>
         </v-card-title>
         <v-card-text>
           <v-row

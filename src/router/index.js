@@ -15,11 +15,6 @@ const routes = [
     name: 'Home',
     component: UserHome
   },
-  // {
-  //   path: '/',
-  //   name: 'home',
-  //   component: HomePage
-  // },
   {
     path: '/profile',
     name: 'Profile',
