@@ -274,7 +274,7 @@ export default {
       UserService.getCurrentUser(accessToken, this.$auth.user.email).then(
           (user => {
             this.$store.commit('setCurrentUser', user)
-            
+
             if(this.currentUser.role === 1) {
               this.getUnpaidBills()
               this.getAllBills()

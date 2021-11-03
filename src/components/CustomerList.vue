@@ -33,7 +33,7 @@
 <!--              <v-icon class="material-icons" color="black" @click="deleteCustomer(item.id)">mdi-delete</v-icon>-->
 <!--            </v-row>-->
 <!--          </template>-->
-          <template v-slot:item.update="{ item }">
+          <template v-if="currentUser.role === 1" v-slot:item.update="{ item }">
             <v-row>
               <v-icon class="material-icons" color="black" @click="openUpdateCustomer(item)">mdi-account-edit-outline</v-icon>
             </v-row>
@@ -57,7 +57,7 @@ export default {
   mounted() {
   },
   computed: {
-    ...mapGetters(['apiRoutes', 'allCustomers']),
+    ...mapGetters(['apiRoutes', 'allCustomers', "currentUser"]),
   },
   component: {
     AddCustomerForm, UpdateCustomerForm

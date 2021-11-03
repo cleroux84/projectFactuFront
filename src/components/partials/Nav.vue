@@ -6,7 +6,7 @@
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title v-if="!isMobile">FacTruc</v-toolbar-title>
+      <v-toolbar-title v-if="!isMobile">FactuPro</v-toolbar-title>
       <v-spacer></v-spacer>
       <div>
 
