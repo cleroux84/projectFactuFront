@@ -144,7 +144,7 @@ export default {
     },
     async updateUser () {
       const accessToken = await this.$auth.getTokenSilently()
-  UserService.updateProfile(accessToken, this.myUser.user.id, this.myUser.user).then(
+      UserService.updateProfile(accessToken, this.myUser.user.id, this.myUser.user).then(
           () => {
             this.show = false
             if (this.currentUser.role !== 1) this.$store.commit('setCurrentUser', this.myUser.user)

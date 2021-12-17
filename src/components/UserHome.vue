@@ -268,7 +268,6 @@ export default {
 
       }
     },
-    //TODO : probleme rencontré et reglé ici pour set currentUser : https://community.auth0.com/t/auth0-client-is-null-in-vue-spa-component-on-page-refresh/38147/2
     async initializeCurrentUserConnexion() {
       const accessToken = await this.$auth.getTokenSilently()
       UserService.getCurrentUser(accessToken, this.$auth.user.email).then(

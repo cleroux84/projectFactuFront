@@ -4,11 +4,12 @@ import Vue from 'vue'
 
 export let config = {
     baseURL: 'http://localhost:9000'
+    // baseURL: 'https://hidden-sierra-81724.herokuapp.com/'
 }
 
 export const _axios = axios.create(config);
 
-Plugin.install = function(Vue) {
+Plugin.install =function(Vue) {
     Vue.axios = _axios;
     window.axios = _axios;
     Object.defineProperties(Vue.prototype, {
